@@ -58,7 +58,7 @@ cmake --build . --config release
 - 安卓端可以使用termux（亲测可用）
 - iPhone端可以使用iSh（暂未测试）
 
-![termux](https://github.com/taynpg/csp/raw/main/images/csp_qm_sjzpcjzr_android.jpg){:width="300px" height="200px"}
+![termux](https://github.com/taynpg/csp/raw/main/images/csp_qm_sjzpcjzr_android.jpg)
 
 构建：方法与电脑端一致。
 
