@@ -1,0 +1,31 @@
+{
+   "files.autoSave": "onFocusChange",
+   "editor.fontSize": 16,
+   "editor.fontFamily": "'Sarasa Term SC Nerd', 'Sarasa Term SC Nerd', 'Sarasa Term SC Nerd'",
+   "cmake.configureOnOpen": true,
+   "cmake.debugConfig": {
+       "externalConsole": true
+   },
+   "cmake.generator": "Ninja",
+   "C_Cpp.intelliSenseEngine": "disabled",
+   "clangd.arguments": [
+        "--header-insertion=never",
+        "--all-scopes-completion",
+        "--completion-style=detailed",
+        "--clang-tidy",
+        "-j=4",
+        "--pch-storage=memory",
+        "--compile-commands-dir=build",
+        "--background-index",
+        "--ranking-model=heuristics"
+   ],
+   "editor.inlayHints.enabled": "off",
+   "editor.unicodeHighlight.allowedLocales": {
+        "ja": true,
+        "zh-hant": true,
+        "zh-hans": true
+    },
+    "files.associations": {
+        "iostream": "cpp"
+    },
+}
