@@ -4,7 +4,8 @@
    "editor.fontFamily": "'Sarasa Term SC Nerd', 'Sarasa Term SC Nerd', 'Sarasa Term SC Nerd'",
    "cmake.configureOnOpen": true,
    "cmake.debugConfig": {
-       "externalConsole": true
+       "console": "integratedTerminal",
+       "args": ["--t", "0"]
    },
    "cmake.generator": "Ninja",
    "C_Cpp.intelliSenseEngine": "disabled",
