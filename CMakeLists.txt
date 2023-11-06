@@ -45,19 +45,10 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(qm)
 
 add_subdirectory(box_calendar)
-include_directories(box_calendar)
-
 add_subdirectory(box_base)
-include_directories(box_base)
-
 add_subdirectory(box_qimen)
-include_directories(box_qimen)
-
 add_subdirectory(box_yxbase)
-include_directories(box_yxbase)
-
 add_subdirectory(box_zhdata)
-include_directories(box_zhdata)
 
 add_executable(csp ${PROJECT_SOURCES})
 target_link_libraries(csp box_qimen box_base box_zhdata box_calendar ${Boost_LIBRARIES})

@@ -7,3 +7,4 @@ add_library(box_calendar SHARED
     "calendar_base.h" "calendar_base.cpp"
     )
 target_compile_definitions(box_calendar PRIVATE CPP_CALENDAR_LIB)
+target_include_directories(box_calendar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
