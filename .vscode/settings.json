@@ -1,7 +1,7 @@
 {
    "files.autoSave": "onFocusChange",
-   "editor.fontSize": 16,
-   "editor.fontFamily": "'Sarasa Term SC Nerd', 'Sarasa Term SC Nerd', 'Sarasa Term SC Nerd'",
+   "editor.fontSize": 14,
+   "editor.fontFamily": "'Fira Code', 'Fira Code', 'Fira Code'",
    "cmake.configureOnOpen": true,
    "cmake.debugConfig": {
        "console": "integratedTerminal",
@@ -18,7 +18,9 @@
         "--pch-storage=memory",
         "--compile-commands-dir=build",
         "--background-index",
-        "--ranking-model=heuristics"
+        "--ranking-model=heuristics",
+        "--function-arg-placeholders=false",
+        "--query-driver=/usr/bin/clang++"
    ],
    "editor.inlayHints.enabled": "off",
    "editor.unicodeHighlight.allowedLocales": {

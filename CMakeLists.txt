@@ -7,9 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(APEEND_THID_LIB_DIR
         "C:/Dev/Boost"
-        "/Users/sinx/Boost/"
+        "/Users/tangyunpeng/mdev/Boost/"
         "/data/data/com.termux/files/home/dev/Boost"
-        "/Users/sinx/dev/Boost"
 )
 list(APPEND CMAKE_PREFIX_PATH ${APEEND_THID_LIB_DIR})
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
