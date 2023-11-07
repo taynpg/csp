@@ -37,10 +37,15 @@ void CCmdPrint::PrintOne(int nGong)
     std::string bashen = CZhData::ZhBaShen(m_qm->getBaShen()[nGong]);
     std::cout << COLOR_WHITE << "  " << bashen << " ";
     if (nGong == m_qm->getMaXing()) {
-        std::cout << COLOR_CYAN << "（" << CZhData::ZhMaXing() + "） " << COLOR_RESET;
+        if (nGong == m_qm->getKong()[0] || nGong == m_qm->getKong()[1]) {
+            std::cout << COLOR_CYAN << " (" << CZhData::ZhMaXing() + CZhData::ZhKongWang() + ")" << COLOR_RESET;
+        }
+        else {
+            std::cout << COLOR_CYAN << "  (" << CZhData::ZhMaXing() + ") " << COLOR_RESET;
+        }
     }
     else if (nGong == m_qm->getKong()[0] || nGong == m_qm->getKong()[1]) {
-        std::cout << COLOR_CYAN << "（" << CZhData::ZhKongWang() + "） " << COLOR_RESET;
+        std::cout << COLOR_CYAN << " (" << CZhData::ZhKongWang() + ")  " << COLOR_RESET;
     }
     else {
         std::cout << "       ";
@@ -134,7 +139,20 @@ void CCmdPrint::PrintBase()
     std::cout << CZhData::ZhZhi(gz.m_nMZhi) << "  ";
     std::cout << CZhData::ZhZhi(gz.m_nDZhi) << "  ";
     std::cout << CZhData::ZhZhi(gz.m_nHZhi) << "      " << COLOR_RESET;
-    std::cout << COLOR_CYAN << "<时家转盘超接置润法>" << COLOR_RESET << std::endl;
+
+    switch (m_type) {
+    case 0: {
+        std::cout << COLOR_CYAN << "<时家转盘超接置润法>" << COLOR_RESET << std::endl;
+        break;
+    }
+    case 1: {
+        std::string szYueJiang = CZhData::ZhZhi(12 - m_qm->getCalendar()->getLunarDateTime().m_date.m_nMon);
+        std::cout << COLOR_CYAN << " (月将:" << szYueJiang << ")(时家阴盘)" << COLOR_RESET << std::endl;
+        break;
+    }
+    default:
+        break;
+    }
 
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
@@ -215,8 +233,9 @@ void CCmdPrint::PrintOther()
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 }
 
-void CCmdPrint::Run(cppbox::CQimen* qm)
+void CCmdPrint::Run(cppbox::CQimen* qm, int nType)
 {
+    m_type = nType;
 #ifdef _WIN32
     // 获取标准输出句柄
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

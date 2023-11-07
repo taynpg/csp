@@ -47,12 +47,14 @@ namespace cppbox {
         int m_nMon = 0;
         int m_nDay = 0;
     };
+    
     // 时间
     struct CPP_CALENDAR_API CTime {
         int m_nHour = 0;
         int m_nMin = 0;
         int m_nSec = 0;
     };
+
     // 日期和时间
     struct CPP_CALENDAR_API CDateTime {
         CDateTime(int y, int m, int d, int h, int min, int sec);
@@ -63,7 +65,9 @@ namespace cppbox {
         CTime m_time;
         explicit CDateTime(const CDate& rh);
     };
+
     struct CPP_CALENDAR_API CJieQi {
+
         CDateTime       datetime;
         // 二十四节气索引，以 0 为小寒
         int             index;

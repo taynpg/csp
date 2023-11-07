@@ -11,7 +11,7 @@ public:
     CCmdPrint();
     ~CCmdPrint();
 public:
-    void Run(cppbox::CQimen* qm);
+    void Run(cppbox::CQimen* qm, int nType);
 
 private:
     void PrintOne(int nGong);
@@ -21,6 +21,7 @@ private:
     void PrintOther();
 private:
     cppbox::CQimen* m_qm{};
+    int             m_type{};
 };
 
 #endif

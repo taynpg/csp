@@ -2,10 +2,6 @@
 #include <cstdio>
 #include <cmath>
 
-#ifdef _DEBUG
-#include <iostream>
-#endif
-
 namespace cppbox {
 
 CQiMenV1::CQiMenV1()
@@ -237,7 +233,7 @@ void CQiMenV1::genDiPan()  {
 
     // 所谓的几局，就是甲子戊居于第几宫
     int nStartIndex = cb::getRemainder(9, m_nJushu - 1);
-    int nPosition =  m_nContra[nStartIndex];
+                                        int nPosition =  m_nContra[nStartIndex];
     // 甲子戊
     m_nDiPan[nPosition] = 4;
     int nk = 0;

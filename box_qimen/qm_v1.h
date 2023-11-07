@@ -21,7 +21,7 @@ public:
 public:
     // 传入日期数据
     bool Run(const QiInfomation& info, CalendarType type) override;
-private:
+protected:
     // 推算一年的日历
     void inferenceDate();
     // 排地盘

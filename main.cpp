@@ -64,7 +64,8 @@ bool cmd(int argc, char** argv, CMDParam& param)
             "格式:2000-2-3-15-32-11")
             ("t", opt::value<int>(), "==> 盘式类型【必填】\n"
             "涉及到的参数: --date, --j\n"
-            "[0,时家超接置润转盘]")
+            "[0,时家转盘超接置润]\n"
+            "[1,时家转盘阴盘]")
             ("j", opt::value<int>(), "==> 局数(默认自动局数)");
 
         opt::variables_map vm;
@@ -122,6 +123,7 @@ int main(int argc, char** argv)
 
     switch (param.nType) {
     case 0:
+    case 1:
     {
         CQimenUse qmuse;
         if (param.year == 0) {

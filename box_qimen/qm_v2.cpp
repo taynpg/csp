@@ -23,6 +23,17 @@ bool CQimenV2::Run(const QiInfomation& info, CalendarType type)
         getJushu(info.datetime);
     }
 
+        // 这里跑一下今天的日期以供后续使用
+    m_pCal->setDateTime(m_datetime);
+
+    genDiPan();
+    genZhi();
+    genJiuXing();
+    genBaMen();
+    genBaShen();
+    genTianPan();
+    genOther();
+
     return true;
 }
 
@@ -73,7 +84,10 @@ void CQimenV2::getJushu(const CDateTime& datetime)
     if (pCalendar->getSecondByTwoDateTime(datetime, xz) > 0 && 
         pCalendar->getSecondByTwoDateTime(datetime, dz) <= 0) {
             // 夏至后，冬至前为阴遁
-            m_nJushu = -m_nJushu;
+            m_isYinDun = true;
+    }
+    else {
+        m_isYinDun = false;
     }
     CCalenderFactory::freeCalender(pCalendar);
 }

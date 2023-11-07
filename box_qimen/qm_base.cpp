@@ -1,6 +1,6 @@
 #include "qm_v1.h"
 #include "qm_base.h"
-
+#include "qm_v2.h"
 
 namespace cppbox {
 
@@ -11,6 +11,10 @@ CQimen* CQimenFactory::createInstance(QIMEN_STYLE type) {
     switch (type) {
     case SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {   // 时家超接置润法
         pQimen = new CQiMenV1();
+        break;
+    }
+    case SHIJIA_ZHUANPAN_YINPAN: {
+        pQimen = new CQimenV2();
         break;
     }
     default:

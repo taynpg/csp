@@ -12,14 +12,28 @@ bool CQimenUse::Run(const CMDParam& param)
     info.datetime.m_time.m_nSec = param.sec;
 
     info.nJu = param.nJu;
+    CQimen* qm = nullptr;
 
-    CQimen* qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
-    qm->Init();
-    if (qm->Run(info, cppbox::CALENDAR_V1)) {
-        m_print.Run(qm);
+    switch (param.nType) {
+    case 0:
+    {
+        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
+        break;
     }
-    else {
+    case 1:
+    {
+        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
+        break;
+    }
+    default:
         return false;
     }
+
+    qm->Init();
+    if (!qm->Run(info, cppbox::CALENDAR_V1)) {
+        return false;
+    }
+    m_print.Run(qm, param.nType);
+
     return true;
 }

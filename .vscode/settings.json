@@ -5,7 +5,7 @@
    "cmake.configureOnOpen": true,
    "cmake.debugConfig": {
        "console": "integratedTerminal",
-       "args": ["--t", "0"]
+       "args": ["--t", "1"]
    },
    "cmake.generator": "Ninja",
    "C_Cpp.intelliSenseEngine": "disabled",
