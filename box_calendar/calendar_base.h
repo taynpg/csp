@@ -91,8 +91,21 @@ namespace cppbox {
         virtual void getNextDay(CDate& date) = 0;
         // 检查日期格式是否正确
         virtual bool checkFormat(const CDateTime& datetime) = 0;
+    public:
+        // 返回距离 00:00:00 的秒数
+        static int getSecondsFromBase(const CTime& time);
+        // 是否是闰年
+        static bool isLeap(int nYear);
+        // 返回公历日期的后一天日期
+        static void getNextDay(const CDateTime& datetime, CDateTime& outtime);
+        // 返回两个日期时间的秒数差
+        static long long getSecondByTwoDateTime(const CDateTime& datetimeA, const CDateTime& datetimeB);
+        // 返回两个时间之间的秒数差
+        static int getDiffByTwoTime(const CTime& timeA, const CTime& timeB);
+        // 返回距离 1900.1.1 的天数
+        static int getDaysFromBase(const CDate& date);
         // 返回两个日期之间的天数差
-        virtual int getDiffByTwoDate(const CDate& dateA, const CDate& dateB) = 0;
+        static int getDiffByTwoDate(const CDate& dateA, const CDate& dateB);
     public:
         // 获取四柱
         CGanZhi const& getSizhu() const;

@@ -73,12 +73,12 @@ namespace cppbox {
     class CPP_QIMEN_API CQimen {
     public:
         CQimen();
-        virtual ~CQimen() = default;
+        virtual ~CQimen();
     public:
         // 初始化
         virtual void Init();
         // 进行计算
-        virtual bool Run(const QiInfomation& info, CalendarType type) = 0;
+        virtual bool Run(const QiInfomation& info, CalendarType type);
         // 设置九宫的原始九星位置[位置-九星]
         virtual void setJiuXingPre();
         // 设置九星的旋转位置[相对顺序]
@@ -184,6 +184,7 @@ namespace cppbox {
         int                         m_sanhe[12]{};            // 地支三和
         int                         m_zhichong[12]{};         // 地支相冲
         int                         m_dizhi[12]{};            // 十二地支的位置
+        CalendarType                m_calType;                // 日历的类型
     };
 
     // 奇门工厂类

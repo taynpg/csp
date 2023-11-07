@@ -20,12 +20,6 @@ namespace cppbox {
         // 检查日期格式是否正确
         bool checkFormat(const CDateTime& datetime) override;
     private:
-        // 返回距离 1900.1.1 的天数
-        int getDaysFromBase(const CDate& date);
-        // 返回距离 00:00:00 的秒数
-        static int getSecondsFromBase(const CTime& time);
-        // 是否是闰年
-        static bool isLeap(int nYear);
         // 农历指定年所闰的月数，没有返回0
         int getLeapMon(int nYear);
         // 返回农历 xx 年闰月的天数
@@ -41,8 +35,6 @@ namespace cppbox {
         static void getPreDay(const CDateTime& datetime, CDateTime& outtime);
         void getPreDay(CDateTime& datetime) override;
         void getPreDay(CDate& date) override;
-        // 返回公历日期的后一天日期
-        static void getNextDay(const CDateTime& datetime, CDateTime& outtime);
         void getNextDay(CDateTime& datetime) override;
         void getNextDay(CDate& date) override;
         // 获取某年第 x 个节气为几号(从 0 小寒算起)
@@ -53,12 +45,7 @@ namespace cppbox {
         void getYMGanZhi();
         // 计算时辰的干支(在计算完年月干支后进行)
         void getHourGanZhi();
-        // 返回两个日期之间的天数差
-        int getDiffByTwoDate(const CDate& dateA, const CDate& dateB) override;
-        // 返回两个时间之间的秒数差
-        static int getDiffByTwoTime(const CTime& timeA, const CTime& timeB);
-        // 返回两个日期时间的秒数差
-        long long getSecondByTwoDateTime(const CDateTime& datetimeA, const CDateTime& datetimeB);
+
     private:
         // 返回下一个月的年干支月干支信息
         void getNextJie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi, int& nYearJiaZi);

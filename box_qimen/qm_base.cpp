@@ -24,7 +24,8 @@ void CQimenFactory::freeInstance(CQimen* pQimen) {
     delete pQimen;
 }
 
-CQimen::CQimen() {
+CQimen::CQimen() : m_pCal(nullptr)
+{
     m_sanhe[0] = 8; m_sanhe[1] = 5; m_sanhe[2] = 2;
     m_sanhe[3] = 2; m_sanhe[4] = 8; m_sanhe[5] = 5;
     m_sanhe[6] = 2; m_sanhe[7] = 11; m_sanhe[8] = 8;
@@ -33,6 +34,12 @@ CQimen::CQimen() {
     m_zhichong[8] = 2; m_zhichong[5] = 11; m_zhichong[2] = 8;
     m_zhichong[2] = 8; m_zhichong[11] = 5;
 }
+
+CQimen::~CQimen()
+{
+    CCalenderFactory::freeCalender(m_pCal);
+}
+
 // 设置十二地支位置对应
 void CQimen::setDizhi() {
 
@@ -103,6 +110,20 @@ void CQimen::prepare() {
 void CQimen::setJiGong(int nGong) {
 
     m_nJiGong = nGong;
+}
+
+bool CQimen::Run(const QiInfomation& info, CalendarType type)
+{
+    m_calType = type;
+    prepare();
+
+    CCalenderFactory::freeCalender(m_pCal);
+    m_pCal = CCalenderFactory::creatInstance(m_calType);
+    if (!m_pCal->checkFormat(info.datetime)) {
+        return false;
+    }
+    m_datetime = info.datetime;
+    return true;
 }
 
 // 获取六十甲子下标

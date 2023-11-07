@@ -35,19 +35,11 @@ CQiMenV1::~CQiMenV1()
 
 // 传入日期数据
 bool CQiMenV1::Run(const QiInfomation& info, CalendarType type) {
-    
-    m_calType = type;
-    prepare();
-    if (m_pCal) {
-        CCalenderFactory::freeCalender(m_pCal);
-    }
-    m_pCal = CCalenderFactory::creatInstance(m_calType);
 
-    if (!m_pCal->checkFormat(info.datetime)) {
+    if (!CQimen::Run(info, type)) {
         return false;
     }
 
-    m_datetime = info.datetime;
     if (info.nJu == 0) {
         inferenceDate();
         //printYearDay();

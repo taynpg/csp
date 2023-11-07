@@ -52,7 +52,6 @@ private:
     void getXunKong(int nJiazi, int& nKongA, int& nKongB);
 private:
     std::vector<OneDay *>    m_pOneYear;     // 四柱节气的一年推算
-    CalendarType             m_calType;      // 日历的类型
     bool                     m_zhirun{};
     int                      m_nJuQi[24]{};    // 节气和局的关系对照表
 };
