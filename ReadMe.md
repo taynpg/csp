@@ -39,19 +39,28 @@ csp-(cpp shi pan，C++式盘)，一个cmd命令行起盘工具，计划支持排
 
 构建方法：
 
-1.windows、macos、linux构建
+1.在根目录CMakeLists.txt中的`set(APEEND_THID_LIB_DIR)`中添加你自己的Boost所在的目录。
 
-在根目录CMakeLists.txt中的`set(APEEND_THID_LIB_DIR)`中添加你自己的Boost所在的目录。
+2.MacOS和Linux
 
 ```shell
 cd csp
 mkdir build
 cd build
-cmake .. (可选-G)
+cmake ..
+cmake --build . --config release
+```
+3.Windows
+
+```shell
+cd csp
+mkdir build
+cd build
+cmake .. -DGBK_EXE=ON
 cmake --build . --config release
 ```
 
-2.手机端构建
+4.手机端构建
 
 环境：
 
@@ -60,7 +69,7 @@ cmake --build . --config release
 
 ![termux](https://github.com/taynpg/csp/raw/main/images/csp_qm_sjzpcjzr_android.jpg)
 
-构建：方法与电脑端一致。
+构建：方法与MacOS和Linux一致。
 
 # 5.最后
 
