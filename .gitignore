@@ -32,7 +32,6 @@ out
 *.app
 build
 .cache
-third/glfw-3.3.8.bin.WIN64
 .vs
 outBuild
 cout
@@ -42,3 +41,4 @@ out
 CMakeLists.txt.user
 cmake-build-debug
 cmake-build-release
+qtbuild

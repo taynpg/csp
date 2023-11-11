@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(APEEND_THID_LIB_DIR
-        "C:/Dev/Boost"
+        "C:/bin/Boost"
         "/Users/tangyunpeng/mdev/Boost/"
         "/data/data/com.termux/files/home/dev/Boost"
 )
