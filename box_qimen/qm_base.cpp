@@ -116,7 +116,7 @@ void CQimen::setJiGong(int nGong) {
     m_nJiGong = nGong;
 }
 
-bool CQimen::Run(const QiInfomation& info, CalendarType type)
+bool CQimen::BaseRun(const QiInfomation& info, CalendarType type)
 {
     m_calType = type;
     prepare();

@@ -32,7 +32,7 @@ CQiMenV1::~CQiMenV1()
 // 传入日期数据
 bool CQiMenV1::Run(const QiInfomation& info, CalendarType type) {
 
-    if (!CQimen::Run(info, type)) {
+    if (!BaseRun(info, type)) {
         return false;
     }
 

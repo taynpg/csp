@@ -16,14 +16,14 @@ CQimenV2::~CQimenV2()
 
 bool CQimenV2::Run(const QiInfomation& info, CalendarType type)
 {
-    if (!CQimen::Run(info, type)) {
+    if (!BaseRun(info, type)) {
         return false;
     }
     if (info.nJu == 0) {
         getJushu(info.datetime);
     }
 
-        // 这里跑一下今天的日期以供后续使用
+    // 这里跑一下今天的日期以供后续使用
     m_pCal->setDateTime(m_datetime);
 
     genDiPan();

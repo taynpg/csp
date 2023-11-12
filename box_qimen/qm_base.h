@@ -79,7 +79,8 @@ namespace cppbox {
         // 初始化
         virtual void Init();
         // 进行计算
-        virtual bool Run(const QiInfomation& info, CalendarType type);
+        virtual bool Run(const QiInfomation& info, CalendarType type) = 0;
+        virtual bool BaseRun(const QiInfomation& info, CalendarType type);
         // 设置九宫的原始九星位置[位置-九星]
         virtual void setJiuXingPre();
         // 设置九星的旋转位置[相对顺序]
