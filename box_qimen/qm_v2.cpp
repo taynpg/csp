@@ -14,7 +14,7 @@ CQimenV2::~CQimenV2()
     CCalenderFactory::freeCalender(m_pCal);
 }
 
-bool CQimenV2::Run(const QiInfomation& info, CalendarType type)
+bool CQimenV2::Run(const QiParam& info, CalendarType type)
 {
     if (!BaseRun(info, type)) {
         return false;

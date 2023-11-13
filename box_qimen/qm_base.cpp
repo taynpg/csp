@@ -28,7 +28,7 @@ void CQimenFactory::freeInstance(CQimen* pQimen) {
     delete pQimen;
 }
 
-CQimen::CQimen() : m_pCal(nullptr)
+CQimen::CQimen() : m_pCal(nullptr), m_calType(CALENDAR_V1)
 {
     m_sanhe[0] = 8; m_sanhe[1] = 5; m_sanhe[2] = 2;
     m_sanhe[3] = 2; m_sanhe[4] = 8; m_sanhe[5] = 5;
@@ -96,31 +96,33 @@ void CQimen::setBaShenPre() {
 // 设置九宫的数字对应
 void CQimen::setGongBaseNum() {
 
-    m_nGongBaseNum[0] = 5; m_nGongBaseNum[1] = 6; m_nGongBaseNum[2] = 1;
-    m_nGongBaseNum[3] = 8; m_nGongBaseNum[4] = 3; m_nGongBaseNum[5] = 2;
-    m_nGongBaseNum[6] = 7; m_nGongBaseNum[7] = 0; m_nGongBaseNum[8] = 4;
+    // 定义位置从 0 开始分别对应卦序
+    m_nPos2GuaNum[0] = 5; m_nPos2GuaNum[1] = 6; m_nPos2GuaNum[2] = 1;
+    m_nPos2GuaNum[3] = 8; m_nPos2GuaNum[4] = 3; m_nPos2GuaNum[5] = 2;
+    m_nPos2GuaNum[6] = 7; m_nPos2GuaNum[7] = 0; m_nPos2GuaNum[8] = 4;
 }
 
 // 设置初始内容之后，执行此函数，对初始内容整理并生成所需的信息。
 void CQimen::prepare() {
 
-    // 生成基位置和定义位置顺序的对照表
+    // m_nGuaNum2Pos 就是后天八卦的顺序数和定义位置的对照。
     for (int i = 0; i < 9; ++i) {
-        m_nContra[m_nGongBaseNum[i]] = i;
+        m_nGuaNum2Pos[m_nPos2GuaNum[i]] = i;
     }
 }
 
 // 设置寄宫
 void CQimen::setJiGong(int nGong) {
 
-    m_nJiGong = nGong;
+    // 这里减 1 是取索引
+    int nIndex = nGong - 1;
+    // 这里要把寄宫转成位置
+    m_nJiGongPos = m_nGuaNum2Pos[nIndex];
 }
 
-bool CQimen::BaseRun(const QiInfomation& info, CalendarType type)
+bool CQimen::BaseRun(const QiParam& info, CalendarType type)
 {
     m_calType = type;
-    prepare();
-
     CCalenderFactory::freeCalender(m_pCal);
     m_pCal = CCalenderFactory::creatInstance(m_calType);
     if (!m_pCal->checkFormat(info.datetime)) {
@@ -144,7 +146,7 @@ int CQimen::getJiaziIndex(int nTianIndex, int nDiIndex) {
 }
 
 // 查找内容所在的下标
-int CQimen::getIndex(int* pData, int nSize, int nValue) {
+int CQimen::getIndex(const int* pData, int nSize, int nValue) {
 
     if (!pData) {
         return -1;;
@@ -226,13 +228,13 @@ const int* CQimen::getXunKong() const
 // 获取值班人员
 int CQimen::getDuty() const {
 
-    return m_nzhifu;
+    return m_nZhiFuPos;
 }
 
 // 获取寄宫
 int CQimen::getJiGong() const {
     
-    return m_nJiGong;
+    return m_nJiGongPos;
 }
 
 // 获取三元
@@ -256,9 +258,8 @@ bool CQimen::getIsYinDun() const {
     return m_isYinDun;
 }
 
-void CQimen::Init() {
-    // 默认寄宫寄 坤二宫
-    setJiGong(2);
+void CQimen::BaseInit() {
+
     setJiuXingPre();
     setJiuXingTurn();
     setGongBaseNum();
@@ -266,5 +267,10 @@ void CQimen::Init() {
     setBaMenTurn();
     setBaShenPre();
     setDizhi();
+
+    prepare();
+    // 默认寄宫寄 坤二宫
+    setJiGong(2);
 }
+
 }

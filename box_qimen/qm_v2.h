@@ -11,7 +11,7 @@ public:
     ~CQimenV2() override;
 public:
     // 传入日期数据
-    bool Run(const QiInfomation& info, CalendarType type) override;
+    bool Run(const QiParam& info, CalendarType type) override;
 
 private:
     void getJushu(const CDateTime& datetime);

@@ -3,7 +3,7 @@ using namespace cppbox;
 
 bool CQimenUse::Run(const CMDParam& param)
 {
-    QiInfomation info;
+    QiParam info;
     info.datetime.m_date.m_nYear = param.year;
     info.datetime.m_date.m_nMon = param.mon;
     info.datetime.m_date.m_nDay = param.day;
@@ -12,7 +12,7 @@ bool CQimenUse::Run(const CMDParam& param)
     info.datetime.m_time.m_nSec = param.sec;
 
     info.nJu = param.nJu;
-    CQimen* qm = nullptr;
+    CQimen* qm{};
 
     switch (param.nType) {
     case 0:
@@ -29,11 +29,12 @@ bool CQimenUse::Run(const CMDParam& param)
         return false;
     }
 
-    qm->Init();
+    qm->BaseInit();
     if (!qm->Run(info, cppbox::CALENDAR_V1)) {
         return false;
     }
     m_print.Run(qm, param.nType);
 
+    CQimenFactory::freeInstance(qm);
     return true;
 }

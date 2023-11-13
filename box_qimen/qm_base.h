@@ -65,7 +65,7 @@ namespace cppbox {
     */
 
     // 排盘的参数信息
-    struct CPP_QIMEN_API QiInfomation {
+    struct CPP_QIMEN_API QiParam {
 
         int         nJu{};        // 局数，默认: 0 为程序自动选择，其他指定。
         CDateTime   datetime{};   // 时间日期
@@ -77,10 +77,11 @@ namespace cppbox {
         virtual ~CQimen();
     public:
         // 初始化
-        virtual void Init();
+        virtual void BaseInit();
         // 进行计算
-        virtual bool Run(const QiInfomation& info, CalendarType type) = 0;
-        virtual bool BaseRun(const QiInfomation& info, CalendarType type);
+        virtual bool BaseRun(const QiParam& info, CalendarType type);
+        virtual bool Run(const QiParam& info, CalendarType type) = 0;
+
         // 设置九宫的原始九星位置[位置-九星]
         virtual void setJiuXingPre();
         // 设置九星的旋转位置[相对顺序]
@@ -93,18 +94,18 @@ namespace cppbox {
         virtual void setBaMenTurn();
         // 设置八神的初始位置[位置-八神]
         virtual void setBaShenPre();
-        // 设置寄宫[固定位置]
+        // 设置寄宫[固定位置](这里的寄宫是各家自家的卦数)
         virtual void setJiGong(int nGong);
         // 设置十二地支位置对应
         virtual void setDizhi();
         // 获取六十甲子下标
         static int getJiaziIndex(int nTianIndex, int nDiIndex);
         // 查找内容所在的下标
-        static int getIndex(int* pData, int nSize, int nValue);
+        static int getIndex(const int* pData, int nSize, int nValue);
         // 获取下 n 个值所在的原始位置(正值代表向下数，负值代表向上数)
         // static int getNextPosition(int* pData, int nSize, int nCur, int nValue);
-    public:
-        // 设置初始内容之后，执行此函数，对初始内容整理并生成所需的信息。
+    protected:
+        // 设置初始内容之后，执行此函数，自动生成所需的信息。
         void prepare();
     public:
         // 排地盘
@@ -159,30 +160,30 @@ namespace cppbox {
         int                         m_JiuXingRe[g_num]{};     // 九星的计算结果
         int                         m_JiuXingPre[g_num]{};    // 九星的原始位置
         int                         m_JiuXingTurn[g_num]{};   // 九星的旋转位置，不足9个的从后向前留空
-        int                         m_nGongBaseNum[g_num]{};  // 宫对应的数字
+        int                         m_nPos2GuaNum[g_num]{};   // 位置转卦数
         int                         m_nBamenPre[g_num]{};     // 八门的原始位置
         int                         m_nBamenRe[g_num]{};      // 八门的计算结果
         int                         m_nBamenTurn[g_num]{};    // 八门的旋转位置
         int                         m_nBaShenPre[g_num]{};    // 八神的原始位置
         int                         m_nBaShenRe[g_num]{};     // 八神的计算结果
         int                         m_nTianPan[g_num]{};      // 天盘
-        int                         m_nDiPan[g_num]{};        // 地盘
-        int                         m_nJiGong{};              // 天禽星寄宫
+        int                         m_nDiPan[g_num]{};        // 地盘 [定义位置：10天干]
+        int                         m_nJiGongPos{};           // 天禽星寄宫
         int                         m_nMaXing{};              // 马星位置
         int                         m_nKongWang[2]{};         // 空亡位置
         int                         m_nXunKong[8]{};          // 寻空位置
         bool                        m_isYinDun{};             // 是否是阴遁
         int                         m_nYuan{};                // 三元 0 手动, 1下，2中，3上
         bool                        m_auto{};                 // 是否是自动排局
-        int                         m_nzhifu{};               // 值符
-        int                         m_nzhishi{};              // 值使
+        int                         m_nZhiFuPos{};            // 值符
+        int                         m_nZhiShiPos{};           // 值使
         int                         m_nmaxing{};              // 马星
         int                         m_nJieQi{};               // 当日节气
         int                         m_nJiaZi{};               // 当日六十甲子
     protected:
         CDateTime                   m_datetime;
         CCalenderBase*              m_pCal{};                 // 日历实例
-        int                         m_nContra[g_num]{};       // 基位置和定义顺序的对照表
+        int                         m_nGuaNum2Pos[g_num]{};   // 卦数转位置
         int                         m_sanhe[12]{};            // 地支三和
         int                         m_zhichong[12]{};         // 地支相冲
         int                         m_dizhi[12]{};            // 十二地支的位置
