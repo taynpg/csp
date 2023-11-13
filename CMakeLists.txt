@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(csp VERSION 1.1 LANGUAGES CXX)
+project(csp VERSION 1.1.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,11 +12,7 @@ set(APEEND_THID_LIB_DIR
 )
 list(APPEND CMAKE_PREFIX_PATH ${APEEND_THID_LIB_DIR})
 if (MSVC)
-    if (GBK_EXE)
-        add_compile_options(/source-charset:utf-8)
-    else()
-        add_compile_options(/utf-8)
-    endif()
+    add_compile_options(/source-charset:utf-8)
 endif()
 message(STATUS "System: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Compiler C ID: ${CMAKE_CXX_COMPILER_ID}")

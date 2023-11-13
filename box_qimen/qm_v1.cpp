@@ -282,7 +282,9 @@ void CQiMenV1::genJiuXing() {
     int nxing = m_JiuXingPre[m_nzhifu];
     // 如果当前的值符为天禽星，那么也归为原寄宫星
     if (nxing == 4) {
-        nxing = m_nContra[m_nJiGong];
+        // m_nContra[m_nJiGong - 1] 返回的只是个位置, -1 是因为取索引
+        int xIndex = m_nContra[m_nJiGong - 1];
+        nxing =  m_JiuXingPre[xIndex];
     }
     m_JiuXingRe[nstart] = nxing;
     // 查找当前的九星的起始相对位置

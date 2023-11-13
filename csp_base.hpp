@@ -1,7 +1,7 @@
 #ifndef CSP_HEADER_H
 #define CSP_HEADER_H
 
-#define CSP_VERSION "v1.1.0"
+#define CSP_VERSION "v1.1.1"
 
 #ifdef _WIN32
 #include <windows.h>

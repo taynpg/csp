@@ -21,6 +21,7 @@ csp-(cpp shi pan，C++式盘)，一个cmd命令行起盘工具，计划支持排
 ![示例图片](https://github.com/taynpg/csp/raw/main/images/csp_qm_sjzpcjzr.png)
 
 - 时家，转盘，超接置润法
+- 时家，转盘，阴盘
 
 ## 大六壬
 
@@ -41,7 +42,7 @@ csp-(cpp shi pan，C++式盘)，一个cmd命令行起盘工具，计划支持排
 
 1.在根目录CMakeLists.txt中的`set(APEEND_THID_LIB_DIR)`中添加你自己的Boost所在的目录。
 
-2.MacOS和Linux
+2.Windows、MacOS和Linux
 
 ```shell
 cd csp
@@ -50,17 +51,8 @@ cd build
 cmake ..
 cmake --build . --config release
 ```
-3.Windows
 
-```shell
-cd csp
-mkdir build
-cd build
-cmake .. -DGBK_EXE=ON
-cmake --build . --config release
-```
-
-4.手机端构建
+3.手机端构建
 
 环境：
 
