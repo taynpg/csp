@@ -11,7 +11,11 @@ set(APEEND_THID_LIB_DIR
         "/data/data/com.termux/files/home/dev/Boost"
 )
 list(APPEND CMAKE_PREFIX_PATH ${APEEND_THID_LIB_DIR})
-add_compile_options(/source-charset:utf-8)
+
+if (MSVC)
+    add_compile_options(/source-charset:utf-8)
+endif()
+
 #if (MSVC)
 #    if (EXE_GBK)
 #        add_compile_options(/source-charset:utf-8)
@@ -19,6 +23,7 @@ add_compile_options(/source-charset:utf-8)
 #        add_compile_options(/utf-8)
 #    endif ()
 #endif()
+
 message(STATUS "System: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Compiler C ID: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "Compiler CXX ID: ${CMAKE_CXX_COMPILER_ID}")
@@ -48,7 +53,6 @@ message(STATUS "Boost Libs: ${Boost_LIBRARIES}")
 include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(qm)
-
 add_subdirectory(box_calendar)
 add_subdirectory(box_base)
 add_subdirectory(box_qimen)

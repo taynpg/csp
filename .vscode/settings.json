@@ -31,4 +31,7 @@
     "files.associations": {
         "iostream": "cpp"
     },
+    "workbench.colorCustomizations": {
+        //"editor.background": "#C0C0C0"
+    }
 }

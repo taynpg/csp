@@ -41,7 +41,7 @@ void CCmdPrint::PrintOne(int nGong)
             std::cout << COLOR_CYAN << " (" << CZhData::ZhMaXing() + CZhData::ZhKongWang() + ")" << COLOR_RESET;
         }
         else {
-            std::cout << COLOR_CYAN << "  (" << CZhData::ZhMaXing() + ") " << COLOR_RESET;
+            std::cout << COLOR_CYAN << " (" << CZhData::ZhMaXing() + ")  " << COLOR_RESET;
         }
     }
     else if (nGong == m_qm->getKong()[0] || nGong == m_qm->getKong()[1]) {
