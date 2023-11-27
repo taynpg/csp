@@ -304,19 +304,27 @@ void CQiMenV1::genBaMen() {
     if (m_isYinDun) {
         nk = -1;
     }
-    // m_nPos2GuaNum 用于位置转卦序
-    int guaIndex = m_nPos2GuaNum[m_nZhiShiPos];
-    for (int i = 0; i < ndiff; ++i) {
-        guaIndex = cb::getRemainder(9, guaIndex += nk);
-    }
-    //
-    int nPos = m_nGuaNum2Pos[guaIndex];
 
     // m_nBamenPre 中仅有 8 个数据，当值符值使位置在中宫8的时候，转成寄宫
     int startPos = m_nZhiShiPos;
     if (startPos == 8) {
         startPos = m_nJiGongPos;
     }
+
+    // m_nPos2GuaNum 用于位置转卦序
+    int guaIndex = m_nPos2GuaNum[startPos];
+    
+    for (int i = 0; i < ndiff; ++i) {
+        guaIndex = cb::getRemainder(9, guaIndex += nk);
+    }
+    //
+    int nPos = m_nGuaNum2Pos[guaIndex];
+
+    // 如果门转到了中宫，也是按照寄宫处理。
+    if (nPos == 8) {
+        nPos = m_nJiGongPos;
+    }
+
     int menIndex = getIndex(m_nBamenTurn, 8, m_nBamenPre[startPos]);
     for (int i = 0; i < 8; ++i, nPos--, ++menIndex) {
         m_nBamenRe[cb::getRemainder(8, nPos)] = m_nBamenTurn[cb::getRemainder(8, menIndex)];
