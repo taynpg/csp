@@ -9,6 +9,7 @@ set(APEEND_THID_LIB_DIR
         "C:/bin/Boost"
         "/Users/tangyunpeng/mdev/Boost/"
         "/data/data/com.termux/files/home/dev/Boost"
+        "/home/tanx/mlib/Boost"
 )
 list(APPEND CMAKE_PREFIX_PATH ${APEEND_THID_LIB_DIR})
 

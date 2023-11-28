@@ -1,5 +1,4 @@
 #include "calendar_v1.h"
-#include <cstdlib>
 #include "calendar_v1_data.h"
 
 namespace cppbox {
