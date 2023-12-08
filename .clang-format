@@ -1,0 +1,12 @@
+# .clang-format
+
+# 风格格式化
+BasedOnStyle: Google 
+# 4 空格缩进
+IndentWidth: 4 
+# 连续对齐变量的声明
+AlignConsecutiveDeclarations: true
+# 指针左侧对齐
+PointerAlignment: Left 
+# 访问说明符(public、private等)的偏移
+AccessModifierOffset: -4

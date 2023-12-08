@@ -8,6 +8,7 @@
 #else
 #include <time.h>
 #endif
+#include <string>
 
 struct CMDParam
 {
@@ -19,6 +20,7 @@ struct CMDParam
     int sec{};
     int nJu{};
     int nType = -1;
+    std::string datetime_{};
 };
 
 inline void FillTime(CMDParam& param)

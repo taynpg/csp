@@ -141,11 +141,11 @@ void CCmdPrint::PrintBase()
     std::cout << CZhData::ZhZhi(gz.m_nHZhi) << "      " << COLOR_RESET;
 
     switch (m_type) {
-    case 0: {
+    case 1: {
         std::cout << COLOR_CYAN << "<时家转盘超接置润法>" << COLOR_RESET << std::endl;
         break;
     }
-    case 1: {
+    case 2: {
         std::string szYueJiang = CZhData::ZhZhi(12 - m_qm->getCalendar()->getLunarDateTime().m_date.m_nMon);
         std::cout << COLOR_CYAN << " (月将:" << szYueJiang << ")(时家阴盘)" << COLOR_RESET << std::endl;
         break;

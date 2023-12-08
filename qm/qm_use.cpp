@@ -15,12 +15,12 @@ bool CQimenUse::Run(const CMDParam& param)
     CQimen* qm{};
 
     switch (param.nType) {
-    case 0:
+    case 1:
     {
         qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
         break;
     }
-    case 1:
+    case 2:
     {
         qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
         break;
