@@ -2,20 +2,15 @@
 
 namespace cppbox {
 
-CQimenV2::CQimenV2()
-{
+CQimenV2::CQimenV2() {
     m_pCal = nullptr;
     m_nJushu = 0;
     m_calType = CALENDAR_V1;
 }
 
-CQimenV2::~CQimenV2()
-{
-    CCalenderFactory::freeCalender(m_pCal);
-}
+CQimenV2::~CQimenV2() { CCalenderFactory::freeCalender(m_pCal); }
 
-bool CQimenV2::Run(const QiParam& info, CalendarType type)
-{
+bool CQimenV2::Run(const QiParam& info, CalendarType type) {
     if (!BaseRun(info, type)) {
         return false;
     }
@@ -37,8 +32,7 @@ bool CQimenV2::Run(const QiParam& info, CalendarType type)
     return true;
 }
 
-void CQimenV2::getJushu(const CDateTime& datetime)
-{
+void CQimenV2::getJushu(const CDateTime& datetime) {
     CCalenderBase* pCalendar = CCalenderFactory::creatInstance(m_calType);
     pCalendar->setDateTime(datetime);
     // 年支数
@@ -81,15 +75,14 @@ void CQimenV2::getJushu(const CDateTime& datetime)
     xz.m_time.m_nSec = pCalendar->getJieSecond().datetime.m_time.m_nSec;
 
     // ------- 阳遁 ------- 夏至 ------- 阴遁 ------- 冬至 ------- 阳遁
-    if (pCalendar->getSecondByTwoDateTime(datetime, xz) > 0 && 
+    if (pCalendar->getSecondByTwoDateTime(datetime, xz) > 0 &&
         pCalendar->getSecondByTwoDateTime(datetime, dz) <= 0) {
-            // 夏至后，冬至前为阴遁
-            m_isYinDun = true;
-    }
-    else {
+        // 夏至后，冬至前为阴遁
+        m_isYinDun = true;
+    } else {
         m_isYinDun = false;
     }
     CCalenderFactory::freeCalender(pCalendar);
 }
 
-}
+}  // namespace cppbox

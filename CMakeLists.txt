@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(csp VERSION 1.1.2 LANGUAGES CXX)
+project(csp VERSION 1.1.3 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -25,7 +25,7 @@ set(PROJECT_SOURCES
 )
 
 include_directories(qm)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd/CLI11)
+include_directories(${CMAKE_SOURCE_DIR}/3rd/CLI11)
 add_subdirectory(box_calendar)
 add_subdirectory(box_qimen)
 add_subdirectory(box_yxbase)

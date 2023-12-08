@@ -1,8 +1,7 @@
 #include "qm_use.h"
 using namespace cppbox;
 
-bool CQimenUse::Run(const CMDParam& param)
-{
+bool CQimenUse::Run(const CMDParam& param) {
     QiParam info;
     info.datetime.m_date.m_nYear = param.year;
     info.datetime.m_date.m_nMon = param.mon;
@@ -15,18 +14,17 @@ bool CQimenUse::Run(const CMDParam& param)
     CQimen* qm{};
 
     switch (param.nType) {
-    case 1:
-    {
-        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
-        break;
-    }
-    case 2:
-    {
-        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
-        break;
-    }
-    default:
-        return false;
+        case 1: {
+            qm = CQimenFactory::createInstance(
+                cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
+            break;
+        }
+        case 2: {
+            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
+            break;
+        }
+        default:
+            return false;
     }
 
     qm->BaseInit();

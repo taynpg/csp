@@ -6,6 +6,7 @@ out
 *.lo
 *.o
 *.obj
+compile_commands.json
 
 # Precompiled Headers
 *.gch

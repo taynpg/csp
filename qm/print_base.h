@@ -5,11 +5,11 @@
 
 using namespace cppbox;
 
-class CCmdPrint
-{
+class CCmdPrint {
 public:
     CCmdPrint();
     ~CCmdPrint();
+
 public:
     void Run(cppbox::CQimen* qm, int nType);
 
@@ -19,6 +19,7 @@ private:
     void PrintThree(int nGong);
     void PrintBase();
     void PrintOther();
+
 private:
     cppbox::CQimen* m_qm{};
     int             m_type{};

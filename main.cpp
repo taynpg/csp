@@ -49,16 +49,18 @@ bool ParseDate(const std::string& str, CMDParam& param) {
 }
 
 bool cmd(int argc, char** argv, CMDParam& param) {
-    CLI::App app{"命令行排盘工具 csp"};
+    std::string intro("命令行排盘工具 csp");
+    intro.append(CSP_VERSION);
+    CLI::App app(intro);
 
     app.add_option("-t,--type", param.nType,
-                 "盘式类型(必填)\n"
-                 "[1,时家转盘超接置润]\n"
-                 "[2,时家转盘阴盘]");
+                   "盘式类型(必填)\n"
+                   "[1,时家转盘超接置润]\n"
+                   "[2,时家转盘阴盘]");
 
     app.add_option("-d,--date", param.datetime_,
-                 "输入日期(默认当前时间)\n"
-                 "格式: 2000-2-3-15-32-11");
+                   "输入日期(默认当前时间)\n"
+                   "格式: 2000-2-3-15-32-11");
 
     app.add_option("-j,--ju", param.nJu, "局数(默认自动局数)");
     CLI11_PARSE(app, argc, argv);
@@ -71,8 +73,9 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    if (param.nType == 0) {
-        std::cout << "盘式类型为必填项，-t，可使用--help查看帮助。" << std::endl;
+    if (param.nType == -1) {
+        std::cout << "盘式类型为必填项，-t，可使用--help查看帮助。"
+                  << std::endl;
         return -1;
     }
 
