@@ -49,7 +49,7 @@ bool ParseDate(const std::string& str, CMDParam& param) {
 }
 
 bool cmd(int argc, char** argv, CMDParam& param) {
-    std::string intro("命令行排盘工具 csp");
+    std::string intro("命令行排盘工具 csp  ");
     intro.append(CSP_VERSION);
     CLI::App app(intro);
 
