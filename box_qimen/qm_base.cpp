@@ -2,6 +2,7 @@
 
 #include "qm_v1.h"
 #include "qm_v2.h"
+#include "qm_v3.h"
 
 namespace cppbox {
 
@@ -15,6 +16,10 @@ CQimen* CQimenFactory::createInstance(QIMEN_STYLE type) {
         }
         case SHIJIA_ZHUANPAN_YINPAN: {
             pQimen = new CQimenV2();
+            break;
+        }
+        case SHIJIA_ZHUANPAN_CHAIBU: {
+            pQimen = new CQimenV3();
             break;
         }
         default:

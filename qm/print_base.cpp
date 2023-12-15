@@ -161,6 +161,11 @@ void CCmdPrint::PrintBase() {
                       << COLOR_RESET << std::endl;
             break;
         }
+        case 3: {
+            std::cout << COLOR_CYAN << "    <时家转盘拆补法>" << COLOR_RESET
+                      << std::endl;
+            break;
+        }
         default:
             break;
     }

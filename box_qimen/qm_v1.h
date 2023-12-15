@@ -67,7 +67,7 @@ private:
     // 获取给定甲子的两个寻空
     static void getXunKong(int nJiazi, int& nKongA, int& nKongB);
 
-private:
+protected:
     std::vector<OneDay*> m_pOneYear;  // 四柱节气的一年推算
     bool                 m_zhirun{};
     int                  m_nJuQi[24]{};  // 节气和局的关系对照表

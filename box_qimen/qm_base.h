@@ -24,6 +24,7 @@ constexpr int g_num = 9;
 enum QIMEN_STYLE {
     SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN = 0,  // 时家转盘，超接置润法
     SHIJIA_ZHUANPAN_YINPAN,              // 时家转盘，阴盘
+    SHIJIA_ZHUANPAN_CHAIBU,              // 时家转盘，拆补
     NOT_DEFINE                           // 未定义
 };
 

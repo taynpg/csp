@@ -56,7 +56,8 @@ bool cmd(int argc, char** argv, CMDParam& param) {
     app.add_option("-t,--type", param.nType,
                    "盘式类型(必填)\n"
                    "[1,时家转盘超接置润]\n"
-                   "[2,时家转盘阴盘]");
+                   "[2,时家转盘阴盘]\n"
+                   "[3,时家转盘拆补]");
 
     app.add_option("-d,--date", param.datetime_,
                    "输入日期(默认当前时间)\n"
@@ -85,7 +86,8 @@ int main(int argc, char** argv) {
 
     switch (param.nType) {
         case 1:
-        case 2: {
+        case 2:
+        case 3: {
             CQimenUse qmuse;
             if (param.year == 0) {
                 FillTime(param);

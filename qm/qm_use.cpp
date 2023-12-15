@@ -23,6 +23,10 @@ bool CQimenUse::Run(const CMDParam& param) {
             qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
             break;
         }
+        case 3: {
+            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAIBU);
+            break;
+        }
         default:
             return false;
     }
