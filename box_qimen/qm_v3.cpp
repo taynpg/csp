@@ -30,12 +30,16 @@ bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type) {
 
         int nResult = 0;
         if (diffA >=0 && diffB < 0) {
-            nResult = m_nJuQi[m_pCal->getJieFirst().index];
+            m_nJieQi = m_pCal->getJieFirst().index;
+            nResult = m_nJuQi[m_nJieQi];
         }
         else if (diffA < 0) {
-            nResult = m_nJuQi[CCalenderBase::getRemainder(24, m_pCal->getJieFirst().index - 1)];
+            m_nJieQi = CCalenderBase::getRemainder(
+                24, m_pCal->getJieFirst().index - 1);
+            nResult = m_nJuQi[m_nJieQi];
         }
         else {
+            m_nJieQi = m_pCal->getJieSecond().index;
             nResult = m_nJuQi[m_pCal->getJieSecond().index];
         }
         if ((nResult % 10) == 1) {
@@ -55,6 +59,17 @@ bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type) {
             m_nYuan = 2;
             m_nJushu = (nResult / 100) % 10;
         }
+    } else {
+        m_nJushu = std::abs(info.nJu);
+        if ((m_nJushu - 9) > 0) {
+            return false;
+        }
+        if (info.nJu < 0) {
+            m_isYinDun = true;
+        } else {
+            m_isYinDun = false;
+        }
+        m_nYuan = 0;
     }
 
     genDiPan();

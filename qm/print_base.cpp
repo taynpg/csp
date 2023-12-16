@@ -195,8 +195,7 @@ void CCmdPrint::PrintBase() {
         default:
             break;
     }
-    std::string jieQi =
-        CZhData::ZhJieQi(m_qm->getCalendar()->getJieFirst().index);
+    std::string jieQi = CZhData::ZhJieQi(m_qm->getJieQi());
     if (m_qm->getYuan() == 0) {
         szYuan = "   [" + szYuan + "]";
     } else {
