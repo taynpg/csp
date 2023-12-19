@@ -8,7 +8,7 @@ CQimenV2::CQimenV2() {
     m_calType = CALENDAR_V1;
 }
 
-CQimenV2::~CQimenV2() { CCalenderFactory::freeCalender(m_pCal); }
+CQimenV2::~CQimenV2() = default;
 
 bool CQimenV2::Run(const QiParam& info, CalendarType type) {
     if (!BaseRun(info, type)) {
