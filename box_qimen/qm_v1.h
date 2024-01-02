@@ -62,8 +62,6 @@ private:
     OneDay* searchDay(const CDateTime& datetime);
     // 打印所推演的一年日历
     // void printYearDay();
-    // 获取两个日期的天数差
-    static int getDayDifference(const CDate& dateA, const CDate& dateB);
     // 获取给定甲子的两个寻空
     static void getXunKong(int nJiazi, int& nKongA, int& nKongB);
 

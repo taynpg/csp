@@ -19,9 +19,10 @@ namespace cppbox {
 
 // 日历的不同实现版本
 enum CalendarType {
-
-    CALENDAR_V1 =
-        0,  // 日历实现类的第一个版本，基于查表实现的日历，有效范围(1901 ~ 2099)
+    // 日历实现类的第一个版本，基于查表实现的日历，有效范围(1901 ~ 2099)
+    CALENDAR_V1 = 0,
+    CALENDAR_V2  // 日历实现类的第二个版本，基于天文历算法实现的日历，有效范围(公元前722年
+                 // ~ 9999)
 };
 
 // 四柱
@@ -96,24 +97,22 @@ public:
     virtual void getNextDay(CDate& date) = 0;
     // 检查日期格式是否正确
     virtual bool checkFormat(const CDateTime& datetime) = 0;
-
-public:
-    // 返回距离 00:00:00 的秒数
-    static int getSecondsFromBase(const CTime& time);
-    // 是否是闰年
-    static bool isLeap(int nYear);
-    // 返回公历日期的后一天日期
-    static void getNextDay(const CDateTime& datetime, CDateTime& outtime);
-    // 返回两个日期时间的秒数差
-    static long long getSecondByTwoDateTime(const CDateTime& datetimeA,
-                                            const CDateTime& datetimeB);
-    // 返回两个时间之间的秒数差
-    static int getDiffByTwoTime(const CTime& timeA, const CTime& timeB);
-    // 返回距离 1900.1.1 的天数
-    static int getDaysFromBase(const CDate& date);
     // 返回两个日期之间的天数差
-    static int getDiffByTwoDate(const CDate& dateA, const CDate& dateB);
+    virtual int getDiffByTwoDate(const CDate& dateA, const CDate& dateB) = 0;
+    // 基于基础时间和差值计算新的日期
+    virtual void getDateTimeBySecond(const CDateTime& basetime,
+                                    CDateTime& outtime, long long nSecond) = 0;
+    // 返回距离 00:00:00 的秒数
+    virtual int getSecondsFromBase(const CTime& time) = 0;
 
+    // 复制日期
+    static void copyDateTime(const CDateTime& datetime, CDateTime& outtime);
+    // 返回两个时间之间的秒数差
+    virtual int getDiffByTwoTime(const CTime& timeA, const CTime& timeB) = 0;
+
+    // 返回两个日期时间的秒数差
+    virtual long long getSecondByTwoDateTime(const CDateTime& datetimeA,
+                                     const CDateTime& datetimeB) = 0;
 public:
     // 获取四柱
     CGanZhi const& getSizhu() const;

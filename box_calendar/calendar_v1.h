@@ -1,5 +1,5 @@
-#ifndef BOX_CALENDAR_HEADER_
-#define BOX_CALENDAR_HEADER_
+#ifndef BOX_CALENDAR_HEADER_V1
+#define BOX_CALENDAR_HEADER_V1
 
 #include "calendar_base.h"
 
@@ -7,20 +7,42 @@ namespace cppbox {
 constexpr int g_cnum = 10;
 using cb = CCalenderBase;
 // 日期处理类
-class CCalender : public CCalenderBase {
+class CCalenderV1 : public CCalenderBase {
 public:
-    CCalender();
-    ~CCalender() override;
+    CCalenderV1();
+    ~CCalenderV1() override;
 
 public:
     // 设置日期并计算，返回是否成功。
     bool setDateTime(const CDateTime& datetime) override;
+    // 检查日期格式是否正确
+    bool checkFormat(const CDateTime& datetime) override;
+    // 获取前一天
+    void getPreDay(CDateTime& datetime) override;
+    void getPreDay(CDate& date) override;
+    // 获取后一天
+    void getNextDay(CDateTime& datetime) override;
+    void getNextDay(CDate& date) override;
+    // 返回两个日期之间的天数差
+    int getDiffByTwoDate(const CDate& dateA, const CDate& dateB) override;
+
+    // 基于基础时间和差值计算新的日期
+    void getDateTimeBySecond(const CDateTime& basetime, CDateTime& outtime,
+                             long long nSecond) override;
+
+    // 返回距离 00:00:00 的秒数
+    int getSecondsFromBase(const CTime& time) override;
+
+    // 返回两个时间之间的秒数差
+    int getDiffByTwoTime(const CTime& timeA, const CTime& timeB) override;
+
+    // 返回两个日期时间的秒数差
+    long long getSecondByTwoDateTime(const CDateTime& datetimeA,
+                                     const CDateTime& datetimeB) override;
 
 private:
     // 初始化数据
     void initSelf();
-    // 检查日期格式是否正确
-    bool checkFormat(const CDateTime& datetime) override;
 
 private:
     // 农历指定年所闰的月数，没有返回0
@@ -33,25 +55,26 @@ private:
     int getLunarDay(int nYear, int nMon);
 
 private:
-    // 基于基础时间和差值计算新的日期
-    static void getDateTimeBySecond(const CDateTime& basetime,
-                                    CDateTime& outtime, long long nSecond);
     // 返回公历日期的前一天日期
     static void getPreDay(const CDateTime& datetime, CDateTime& outtime);
-    void        getPreDay(CDateTime& datetime) override;
-    void        getPreDay(CDate& date) override;
-    void        getNextDay(CDateTime& datetime) override;
-    void        getNextDay(CDate& date) override;
+
     // 获取某年第 x 个节气为几号(从 0 小寒算起)
     int getLunarSterm(int nYear, int nth, CDateTime& datetime);
-    // 复制日期
-    static void copyDateTime(const CDateTime& datetime, CDateTime& outtime);
+
     // 计算农历的年干支，月干支 (立春为新年)
     void getYMGanZhi();
     // 计算时辰的干支(在计算完年月干支后进行)
     void getHourGanZhi();
 
 private:
+    // 是否是闰年
+    static bool isLeap(int nYear);
+    // 返回公历日期的后一天日期
+    static void getNextDay(const CDateTime& datetime, CDateTime& outtime);
+
+    // 返回距离 1900.1.1 的天数
+    static int getDaysFromBase(const CDate& date);
+
     // 返回下一个月的年干支月干支信息
     void getNextJie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi,
                     int& nYearJiaZi);

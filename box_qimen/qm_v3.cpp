@@ -25,8 +25,8 @@ bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type) {
         const CDateTime& JieB = m_pCal->getJieSecond().datetime;
 
         // --- 节气1 --- 时间 --- 节气2 ----
-        long long diffA = CCalenderBase::getSecondByTwoDateTime(m_datetime, JieA);
-        long long diffB = CCalenderBase::getSecondByTwoDateTime(m_datetime, JieB);
+        long long diffA = m_pCal->getSecondByTwoDateTime(m_datetime, JieA);
+        long long diffB = m_pCal->getSecondByTwoDateTime(m_datetime, JieB);
 
         int nResult = 0;
         if (diffA >=0 && diffB < 0) {

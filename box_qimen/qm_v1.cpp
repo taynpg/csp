@@ -151,7 +151,8 @@ void CQiMenV1::inferenceDate() {
     // 递增日期此时存的是最后一个日期的下一个日期，所以这里算差值要回退一天
     dateTem = CDateTime(cycleDatetime.m_date);
     m_pCal->getPreDay(dateTem);
-    int nDayDiff = getDayDifference(dateTem.m_date, dateJieTime.m_date);
+    int nDayDiff = m_pCal->getDiffByTwoDate(dateTem.m_date, dateJieTime.m_date);
+    nDayDiff = nDayDiff < 0 ? -nDayDiff : nDayDiff;
     // 保存芒种三元
     savePart(cycleDatetime.m_date, nStartJie, nJiazi, -1, 14);
     if (nDayDiff < 9) {
@@ -163,7 +164,8 @@ void CQiMenV1::inferenceDate() {
     dateTem = CDateTime(cycleDatetime.m_date);
     // 递增日期此时存的是最后一个日期的下一个日期，所以这里算差值要回退一天
     m_pCal->getPreDay(dateTem);
-    nDayDiff = getDayDifference(dateTem.m_date, dateJieTime.m_date);
+    nDayDiff = m_pCal->getDiffByTwoDate(dateTem.m_date, dateJieTime.m_date);
+    nDayDiff = nDayDiff < 0 ? -nDayDiff : nDayDiff;
     // 保存大雪的三元
     savePart(cycleDatetime.m_date, nStartJie, nJiazi, -1, 14);
     if (nDayDiff < 9) {
@@ -226,14 +228,6 @@ OneDay* CQiMenV1::searchDay(const CDateTime& datetime) {
         (*it)->date.m_nDay, (*it)->nJieIndex, (*it)->nGanZhiIndex);
     }
 }*/
-
-int CQiMenV1::getDayDifference(const CDate& dateA, const CDate& dateB) {
-    int nd = cppbox::CCalenderBase::getDiffByTwoDate(dateA, dateB);
-    if (nd < 0) {
-        nd = -nd;
-    }
-    return nd;
-}
 
 // 获取给定甲子的两个寻空
 void CQiMenV1::getXunKong(int nJiazi, int& nKongA, int& nKongB) {
