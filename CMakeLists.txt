@@ -30,6 +30,7 @@ add_subdirectory(box_calendar)
 add_subdirectory(box_qimen)
 add_subdirectory(box_yxbase)
 add_subdirectory(box_zhdata)
+add_subdirectory(3rd/sxtwl_cpp)
 
 add_executable(csp ${PROJECT_SOURCES})
 target_link_libraries(csp box_qimen box_zhdata box_calendar)
