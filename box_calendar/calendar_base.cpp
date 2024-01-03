@@ -70,6 +70,14 @@ CDateTime& CDateTime::operator=(const CDateTime& datetime) {
     return *this;
 }
 
+CDateTime& CDateTime::operator=(const CDate& date)
+{
+    this->m_date.m_nYear = date.m_nYear;
+    this->m_date.m_nMon = date.m_nMon;
+    this->m_date.m_nDay = date.m_nDay;
+    return *this;
+}
+
 CCalenderBase* CCalenderFactory::creatInstance(CalendarType etype) {
     CCalenderBase* pResult = nullptr;
 

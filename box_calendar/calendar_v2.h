@@ -3,6 +3,9 @@
 
 #include "calendar_base.h"
 
+#include <const.h>
+#include <sxtwl.h>
+
 namespace cppbox {
 
 class CCalenderV2 : public CCalenderBase {
@@ -32,6 +35,15 @@ public:
     // 返回两个日期时间的秒数差
     long long getSecondByTwoDateTime(const CDateTime& datetimeA,
                                      const CDateTime& datetimeB) override;
+
+private:
+    void sxtime2DateTime(Time& time, CDateTime& datetime);
+    void sxday2DateTimeLunar(Day* day, CDate& date);
+    void sxday2DateTimeSolar(Day* day, CDate& date);
+    int  roundDouble(double number);
+
+private:
+    Day* day_{};
 };
 
 }  // namespace cppbox

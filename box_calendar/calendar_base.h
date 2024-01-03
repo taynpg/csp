@@ -61,6 +61,7 @@ struct CPP_CALENDAR_API CTime {
 struct CPP_CALENDAR_API CDateTime {
     CDateTime(int y, int m, int d, int h, int min, int sec);
     CDateTime& operator=(const CDateTime& datetime);
+    CDateTime& operator=(const CDate& date);
     CDateTime() = default;
     ~CDateTime() = default;
     CDate m_date;
@@ -69,9 +70,9 @@ struct CPP_CALENDAR_API CDateTime {
 };
 
 struct CPP_CALENDAR_API CJieQi {
-    CDateTime datetime;
+    CDateTime datetime{};
     // 二十四节气索引，以 0 为小寒
-    int index;
+    int index{};
 };
 
 // 日历处理基类

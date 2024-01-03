@@ -32,7 +32,7 @@ bool CQimenUse::Run(const CMDParam& param) {
     }
 
     qm->BaseInit();
-    if (!qm->Run(info, cppbox::CALENDAR_V1)) {
+    if (!qm->Run(info, cppbox::CALENDAR_V2)) {
         return false;
     }
     m_print.Run(qm, param.nType);
