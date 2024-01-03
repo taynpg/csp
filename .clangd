@@ -1,0 +1,12 @@
+Hover:
+    ShowAKA: Yes
+Diagnostics:
+    UnusedIncludes: None        # 禁用未使用头文件提示
+    Suppress: [
+        anon_type_definition,   # 禁用匿名的typedef提示
+        unused-variable,        # 禁用未使用变量提示
+        unused-function,        # 禁用未使用函数提示
+        unused-includes,        # 禁用未使用的头文件提示
+    ]
+    ClangTidy:
+        Remove: misc-unused-alias-decls

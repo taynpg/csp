@@ -10,3 +10,8 @@ AlignConsecutiveDeclarations: true
 PointerAlignment: Left 
 # 访问说明符(public、private等)的偏移
 AccessModifierOffset: -4
+# 大括号
+BreakBeforeBraces: Custom
+BraceWrapping:
+	# 函数定义后面大括号在新行
+	AfterFunction: true
