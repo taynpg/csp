@@ -49,7 +49,7 @@ v1.3.0 Pre1 版本及以后已加入寿星万年历，可以支持一万年跨�
 
 - C++11语法
 
-## 4.2 通用构建方法：
+## 4.2 通用构建方法（跨平台）：
 
 ```shell
 cd csp
@@ -67,8 +67,6 @@ cmake --build . --config release
 - iPhone端可以使用iSh（暂未测试）
 
 ![termux](https://github.com/taynpg/csp/raw/main/images/csp_qm_sjzpcjzr_android.jpg)
-
-构建：方法与MacOS和Linux一致。
 
 # 五、最后
 
