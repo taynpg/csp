@@ -20,7 +20,7 @@
         "--background-index",
         "--ranking-model=heuristics",
         "--function-arg-placeholders=false",
-        "--query-driver=/usr/bin/clang++"
+        "--query-driver=D:/program/mingw64/bin/g++.exe"
    ],
    "editor.inlayHints.enabled": "off",
    "editor.unicodeHighlight.allowedLocales": {

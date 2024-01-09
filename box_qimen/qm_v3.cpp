@@ -2,6 +2,7 @@
 // Created by taynpg on 2023/12/16.
 //
 #include "qm_v3.h"
+#include <cmath>
 
 bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type) {
     if (!BaseRun(info, type)) {
@@ -60,7 +61,7 @@ bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type) {
             m_nJushu = (nResult / 100) % 10;
         }
     } else {
-        m_nJushu = std::abs(info.nJu);
+        m_nJushu = abs(info.nJu);
         if ((m_nJushu - 9) > 0) {
             return false;
         }

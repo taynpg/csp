@@ -1,12 +1,18 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(csp VERSION 1.3.0 LANGUAGES CXX)
+project(csp VERSION 1.3.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
     add_compile_options(/source-charset:utf-8)
     add_compile_options(/wd4018) #有符号与无符号的比较 （主要作用与三方库）
+endif()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_SYSTEM_NAME MATCHES "Windows")
+    MESSAGE(STATUS "Add MinGW Param.")
+    add_compile_options(-finput-charset=utf-8)
+    add_compile_options(-fexec-charset=gbk)
 endif()
 
 message(STATUS "System: ${CMAKE_SYSTEM_NAME}")
