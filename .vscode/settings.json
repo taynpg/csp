@@ -8,6 +8,7 @@
        "args": ["-t", "1"]
    },
    "cmake.generator": "Ninja",
+   "cmake.options.statusBarVisibility": "visible",
    "C_Cpp.intelliSenseEngine": "disabled",
    "clangd.arguments": [
         "--header-insertion=never",

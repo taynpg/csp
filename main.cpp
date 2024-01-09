@@ -9,7 +9,8 @@
 #include "csp_base.hpp"
 #include "qm_use.h"
 
-bool ParseDate(const std::string& str, CMDParam& param) {
+bool ParseDate(const std::string& str, CMDParam& param)
+{
     std::regex dateRegex(R"(\d{4}-\d{1,2}-\d{1,2}-\d{1,2}-\d{1,2}-\d{1,2})");
     // 使用正则表达式进行匹配
     if (std::regex_match(str, dateRegex)) {
@@ -48,7 +49,8 @@ bool ParseDate(const std::string& str, CMDParam& param) {
     return true;
 }
 
-bool cmd(int argc, char** argv, CMDParam& param) {
+bool cmd(int argc, char** argv, CMDParam& param)
+{
     std::string intro("命令行排盘工具 csp  ");
     intro.append(CSP_VERSION);
     CLI::App app(intro);
@@ -64,11 +66,18 @@ bool cmd(int argc, char** argv, CMDParam& param) {
                    "格式: 2000-2-3-15-32-11");
 
     app.add_option("-j,--ju", param.nJu, "局数(默认自动局数)");
-    CLI11_PARSE(app, argc, argv);
-    return true;
+
+    try {
+        CLI11_PARSE(app, argc, argv);
+        return true;
+    } catch (const CLI::ParseError& e) {
+        std::cerr << "Error parsing command line: " << e.what() << std::endl;
+        return false;
+    }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     CMDParam param;
     if (!cmd(argc, argv, param)) {
         return 0;
