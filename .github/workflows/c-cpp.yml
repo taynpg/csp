@@ -1,0 +1,37 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up CMake
+      uses: actions/setup-cmake@v3
+      with:
+        cmake-version: '3.21.0'
+
+    - name: Configure and Build
+      run: |
+        mkdir build
+        cd build
+        cmake .. -A win32
+        cmake --build . --config Release
+
+    - name: Create ZIP archive
+      run: |
+        cd csp/out
+        zip -r output.zip *
+
+    - name: Upload ZIP artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: csp_x86_Auto_$sha.zip
+        path: csp/out/output.zip
