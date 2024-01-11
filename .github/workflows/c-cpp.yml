@@ -29,9 +29,8 @@ jobs:
       
     - name: Create ZIP archive
       run: |
-        cd ${{ github.workspace }}/out
-        zip -r output.zip *
         $sourceDir = '${{ github.workspace }}/out/Release'
+        cd $sourceDir
         $destinationFile = 'output.zip'
         # Get only DLL and EXE files
         $filesToCompress = Get-ChildItem -Path . -Include *.dll,*.exe -Recurse
@@ -42,4 +41,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: csp_x86_Auto_$sha.zip
-        path: ${{ github.workspace }}/out/output.zip
+        path: ${{ github.workspace }}/out/Release/output.zip
