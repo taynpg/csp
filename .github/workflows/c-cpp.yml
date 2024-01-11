@@ -34,7 +34,7 @@ jobs:
         $sourceDir = '${{ github.workspace }}/out/Release'
         $destinationFile = 'output.zip'
         # Get only DLL and EXE files
-        $filesToCompress = Get-ChildItem -Path $sourceDir -Filter *.{dll,exe} -Recurse
+        $filesToCompress = Get-ChildItem -Path . -Include *.dll,*.exe -Recurse
         # Compress the selected files
         Compress-Archive -Path $filesToCompress.FullName -DestinationPath $destinationFile
 
