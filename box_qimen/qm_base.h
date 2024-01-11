@@ -81,6 +81,8 @@ public:
     // 进行计算
     virtual bool BaseRun(const QiParam& info, CalendarType type);
     virtual bool Run(const QiParam& info, CalendarType type) = 0;
+    //
+    virtual const char* getLastError() const;
 
     // 设置九宫的原始九星位置[位置-九星]
     virtual void setJiuXingPre();
@@ -191,6 +193,7 @@ protected:
     int            m_zhichong[12]{};        // 地支相冲
     int            m_dizhi[12]{};           // 十二地支的位置
     CalendarType   m_calType;               // 日历的类型
+    char           m_error_[512]{};
 };
 
 // 奇门工厂类

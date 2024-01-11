@@ -1,14 +1,18 @@
 #include "qm_use.h"
+#include <iostream>
+
 using namespace cppbox;
 
-bool CQimenUse::Run(const CMDParam& param) {
+bool CQimenUse::Run(const CMDParam& param) 
+{
     QiParam info;
-    info.datetime.m_date.m_nYear = param.year;
-    info.datetime.m_date.m_nMon = param.mon;
-    info.datetime.m_date.m_nDay = param.day;
-    info.datetime.m_time.m_nHour = param.hour;
-    info.datetime.m_time.m_nMin = param.min;
-    info.datetime.m_time.m_nSec = param.sec;
+
+    if (param.isAutoDate) {
+        CCalenderBase::getNowDateTime(info.datetime);
+    }
+    else {
+        info.datetime = param.datetime;
+    }
 
     info.nJu = param.nJu;
     CQimen* qm{};
@@ -32,7 +36,9 @@ bool CQimenUse::Run(const CMDParam& param) {
     }
 
     qm->BaseInit();
-    if (!qm->Run(info, cppbox::CALENDAR_V2)) {
+    CalendarType tyep = (CalendarType)param.calendar_type;
+    if (!qm->Run(info, tyep)) {
+        std::cout << qm->getLastError() << std::endl;
         return false;
     }
     m_print.Run(qm, param.nType);

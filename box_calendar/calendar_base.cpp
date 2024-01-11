@@ -134,6 +134,72 @@ void CCalenderBase::getNowDateTime(CDateTime& datetime) {
 }
 #endif
 
+// 仅检查日期格式上的合法性，并不考虑实现方是否支持这个日期范围
+bool CCalenderBase::checkFormatOnly(const CDateTime& datetime)
+{
+    if (datetime.m_date.m_nMon < 1 || datetime.m_date.m_nMon > 12) {
+        return false;
+    }
+
+    int y = datetime.m_date.m_nYear;
+    int m = datetime.m_date.m_nMon;
+    int d = datetime.m_date.m_nDay;
+
+    if (d < 1) {
+        return false;
+    }
+
+    if (CCalenderBase::isLeapYear(y)) {
+        if (m == 2) {
+            if (d > 29) {
+                return false;
+            }
+        }
+    } else {
+        if (m == 2) {
+            if (d > 28) {
+                return false;
+            }
+        }
+    }
+
+    if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
+        if (d > 31) {
+            return false;
+        }
+    }
+
+    if (m == 4 || m == 6 || m == 9 || m == 11) {
+        if (d > 30) {
+            return false;
+        }
+    }
+
+    int h = datetime.m_time.m_nHour;
+    int min = datetime.m_time.m_nMin;
+    int s = datetime.m_time.m_nSec;
+
+    if (h > 23 || h < 0) {
+        return false;
+    }
+    if (min > 59 || min < 0) {
+        return false;
+    }
+    if (s > 59 || s < 0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool CCalenderBase::isLeapYear(int year)
+{
+    if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+        return true;
+    }
+    return false;
+}
+
 // 求余数(结果大于0)
 int CCalenderBase::getRemainder(int nBase, int nValue) {
     int nRet = nValue % nBase;

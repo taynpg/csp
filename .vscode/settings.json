@@ -5,7 +5,7 @@
    "cmake.configureOnOpen": true,
    "cmake.debugConfig": {
        "console": "integratedTerminal",
-       "args": ["-t", "1"]
+       "args": ["-t", "3", "-d", "9999-1-1-1-1-1"]
    },
    "cmake.generator": "Ninja",
    "cmake.options.statusBarVisibility": "visible",

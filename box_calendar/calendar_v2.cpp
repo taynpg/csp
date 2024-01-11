@@ -77,7 +77,13 @@ void CCalenderV2::getNextDay(CDate& date) {
 }
 
 // 检查日期格式是否正确
-bool CCalenderV2::checkFormat(const CDateTime& datetime) { return true; }
+bool CCalenderV2::checkFormat(const CDateTime& datetime)
+{
+    if (datetime.m_date.m_nYear < -198 || datetime.m_date.m_nYear > 9999) {
+        return false;
+    }
+    return true;
+}
 
 // 返回两个日期之间的天数差
 int CCalenderV2::getDiffByTwoDate(const CDate& dateA, const CDate& dateB) {

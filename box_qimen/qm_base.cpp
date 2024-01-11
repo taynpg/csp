@@ -166,10 +166,16 @@ bool CQimen::BaseRun(const QiParam& info, CalendarType type) {
     CCalenderFactory::freeCalender(m_pCal);
     m_pCal = CCalenderFactory::creatInstance(m_calType);
     if (!m_pCal->checkFormat(info.datetime)) {
+        std::snprintf(m_error_, sizeof(m_error_), "%s", "日期不在支持的范围内。");
         return false;
     }
     m_datetime = info.datetime;
     return true;
+}
+
+const char* CQimen::getLastError() const
+{
+    return m_error_;
 }
 
 // 获取六十甲子下标

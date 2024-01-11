@@ -67,8 +67,6 @@ private:
     void getHourGanZhi();
 
 private:
-    // 是否是闰年
-    static bool isLeap(int nYear);
     // 返回公历日期的后一天日期
     static void getNextDay(const CDateTime& datetime, CDateTime& outtime);
 

@@ -82,6 +82,11 @@ public:
     virtual ~CCalenderBase() = default;
 
 public:
+    // 仅检查日期格式上的合法性，并不考虑实现方是否支持这个日期范围
+    static bool checkFormatOnly(const CDateTime& datetime);
+    static bool isLeapYear(int year);
+
+public:
     // 设置日期并计算，返回是否成功。
     virtual bool             setDateTime(const CDateTime& datetime) = 0;
     virtual CDateTime const& getDateTime() const;

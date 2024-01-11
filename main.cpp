@@ -11,37 +11,24 @@
 
 bool ParseDate(const std::string& str, CMDParam& param)
 {
-    std::regex dateRegex(R"(\d{4}-\d{1,2}-\d{1,2}-\d{1,2}-\d{1,2}-\d{1,2})");
+    std::regex dateRegex(
+        R"((-?\d{1,4})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2}))");
+    std::smatch match;
+    bool        is_valid = false;
     // 使用正则表达式进行匹配
-    if (std::regex_match(str, dateRegex)) {
-        // 正则表达式匹配成功，解析日期
-        std::istringstream dateStream(str);
-        int                year, month, day, hour, minute, second;
-        char               dash;
-
-        dateStream >> year >> dash >> month >> dash >> day >> dash >> hour >>
-            dash >> minute >> dash >> second;
-
-        // 检查日期的合法性
-        struct tm tm {};
-        tm.tm_year = year - 1900;  // 年份需要减去1900
-        tm.tm_mon = month - 1;     // 月份需要减去1
-        tm.tm_mday = day;
-        tm.tm_hour = hour;
-        tm.tm_min = minute;
-        tm.tm_sec = second;
-
-        if (mktime(&tm) != -1) {
-            param.year = year;
-            param.mon = month;
-            param.day = day;
-            param.hour = hour;
-            param.min = minute;
-            param.sec = second;
-        } else {
-            return false;
+    if (std::regex_search(str, match, dateRegex)) {
+        param.datetime.m_date.m_nYear = std::stoi(match[1].str());
+        param.datetime.m_date.m_nMon = std::stoi(match[2].str());
+        param.datetime.m_date.m_nDay = std::stoi(match[3].str());
+        param.datetime.m_time.m_nHour = std::stoi(match[4].str());
+        param.datetime.m_time.m_nMin = std::stoi(match[5].str());
+        param.datetime.m_time.m_nSec = std::stoi(match[6].str());
+        if (cppbox::CCalenderBase::checkFormatOnly(param.datetime)) {
+            is_valid = true;
         }
-    } else {
+    }
+
+    if (!is_valid) {
         std::cout << "日期格式不正确。" << std::endl;
         return false;
     }
@@ -56,14 +43,19 @@ bool cmd(int argc, char** argv, CMDParam& param)
     CLI::App app(intro);
 
     app.add_option("-t,--type", param.nType,
-                   "盘式类型(必填)\n"
+                   "@盘式类型(必填)\n"
                    "[1,时家转盘超接置润]\n"
                    "[2,时家转盘阴盘]\n"
                    "[3,时家转盘拆补]");
 
-    app.add_option("-d,--date", param.datetime_,
-                   "输入日期(默认当前时间)\n"
-                   "格式: 2000-2-3-15-32-11");
+    app.add_option("-d,--date", param.str_datetime,
+                   "@输入日期(默认当前时间)\n"
+                   "手动输入格式: 2000-2-3-15-32-11");
+
+    app.add_option("-c,--calendar", param.calendar_type,
+                   "@日历类型(默认寿星天文历)\n"
+                   "[0,查表法(1901-1-31~2099-12-31)]\n"
+                   "[1,天文历(-198-1-1~9999-12-31)]");
 
     app.add_option("-j,--ju", param.nJu, "局数(默认自动局数)");
 
@@ -89,7 +81,13 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    if (!param.datetime_.empty() && !ParseDate(param.datetime_, param)) {
+    if ((param.calendar_type != 0) && (param.calendar_type != 1)) {
+        std::cout << "日历类型不正确，可选项[0,1]，可使用--help查看帮助。"
+                  << std::endl;
+        return -1;
+    }
+
+    if (!param.str_datetime.empty() && !ParseDate(param.str_datetime, param)) {
         return -1;
     }
 
@@ -98,8 +96,8 @@ int main(int argc, char** argv)
         case 2:
         case 3: {
             CQimenUse qmuse;
-            if (param.year == 0) {
-                FillTime(param);
+            if (param.str_datetime.empty()) {
+                param.isAutoDate = true;
             }
             qmuse.Run(param);
             break;

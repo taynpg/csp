@@ -30,7 +30,8 @@ CCmdPrint::CCmdPrint() = default;
 
 CCmdPrint::~CCmdPrint() = default;
 
-void CCmdPrint::PrintOne(int nGong) {
+void CCmdPrint::PrintOne(int nGong)
+{
     if (nGong == 8) {
         std::cout << "              ";
         return;
@@ -54,7 +55,8 @@ void CCmdPrint::PrintOne(int nGong) {
     }
 }
 
-void CCmdPrint::PrintTwo(int nGong) {
+void CCmdPrint::PrintTwo(int nGong)
+{
     if (nGong == 8) {
         std::cout << "              ";
         return;
@@ -78,7 +80,8 @@ void CCmdPrint::PrintTwo(int nGong) {
     std::cout << COLOR_YELLOW << szprint << COLOR_RESET;
 }
 
-void CCmdPrint::PrintThree(int nGong) {
+void CCmdPrint::PrintThree(int nGong)
+{
     if (nGong == 8) {
         std::cout << "              ";
         return;
@@ -102,13 +105,14 @@ void CCmdPrint::PrintThree(int nGong) {
     std::cout << COLOR_YELLOW << szprint << COLOR_RESET;
 }
 
-void CCmdPrint::PrintBase() {
+void CCmdPrint::PrintBase()
+{
     const CDateTime& solar = m_qm->getCalendar()->getDateTime();
     const CDateTime& lunar = m_qm->getCalendar()->getLunarDateTime();
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
-    std::cout << "公元：" << COLOR_CYAN << solar.m_date.m_nYear << COLOR_RESET
-              << "年";
+    std::cout << "公元：" << COLOR_CYAN << std::setw(4) << std::setfill('0')
+              << solar.m_date.m_nYear << COLOR_RESET << "年";
     std::cout << COLOR_CYAN << std::setw(2) << std::setfill('0')
               << solar.m_date.m_nMon << COLOR_RESET << "月";
     std::cout << COLOR_CYAN << std::setw(2) << std::setfill('0')
@@ -123,10 +127,29 @@ void CCmdPrint::PrintBase() {
 
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
-    std::string yearStr = CZhData::ZhNumber(lunar.m_date.m_nYear / 1000) +
-                          CZhData::ZhNumber(lunar.m_date.m_nYear / 100 % 10) +
-                          CZhData::ZhNumber(lunar.m_date.m_nYear / 10 % 10) +
-                          CZhData::ZhNumber(lunar.m_date.m_nYear % 10);
+    std::string yearStr{};
+    int         lyear{};
+    if (lunar.m_date.m_nYear < 0) {
+        lyear = -lunar.m_date.m_nYear;
+        yearStr.append("前");
+    } else {
+        lyear = lunar.m_date.m_nYear;
+    }
+
+    bool add = false;
+    int  oya = lyear / 1000;
+    int  oyb = lyear / 100 % 10;
+    int  oyc = lyear / 10 % 10;
+    int  oyd = lyear % 10;
+
+    if (oya != 0) add = true;
+    if (add) yearStr.append(CZhData::ZhNumber(oya));
+    if (oyb != 0) add = true;
+    if (add) yearStr.append(CZhData::ZhNumber(oyb));
+    if (oyc != 0) add = true;
+    if (add) yearStr.append(CZhData::ZhNumber(oyc));
+    if (oyd != 0) add = true;
+    if (add) yearStr.append(CZhData::ZhNumber(oyd));
 
     const CGanZhi& gz = m_qm->getCalendar()->getSizhu();
     std::cout << "阴历：" << COLOR_CYAN << yearStr << COLOR_RESET << "年 ";
@@ -213,7 +236,8 @@ void CCmdPrint::PrintBase() {
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 }
 
-void CCmdPrint::PrintOther() {
+void CCmdPrint::PrintOther()
+{
     std::cout << "旬空：";
     std::string szXunkong;
     szXunkong += CZhData::ZhZhi(m_qm->getXunKong()[0]) +
@@ -255,7 +279,8 @@ void CCmdPrint::PrintOther() {
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 }
 
-void CCmdPrint::Run(cppbox::CQimen* qm, int nType) {
+void CCmdPrint::Run(cppbox::CQimen* qm, int nType)
+{
     m_type = nType;
 #ifdef _WIN32
     // 获取标准输出句柄
