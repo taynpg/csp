@@ -43,17 +43,17 @@ bool cmd(int argc, char** argv, CMDParam& param)
     CLI::App app(intro);
 
     app.add_option("-t,--type", param.nType,
-                   "@盘式类型(必填)\n"
+                   "==> 盘式类型(必填) <==\n"
                    "[1,时家转盘超接置润]\n"
                    "[2,时家转盘阴盘]\n"
                    "[3,时家转盘拆补]");
 
     app.add_option("-d,--date", param.str_datetime,
-                   "@输入日期(默认当前时间)\n"
+                   "==> 输入日期(默认当前时间) <==\n"
                    "手动输入格式: 2000-2-3-15-32-11");
 
     app.add_option("-c,--calendar", param.calendar_type,
-                   "@日历类型(默认寿星天文历)\n"
+                   "==> 日历类型(默认寿星天文历) <==\n"
                    "[0,查表法(1901-1-31~2099-12-31)]\n"
                    "[1,天文历(-198-1-1~9999-12-31)]");
 
