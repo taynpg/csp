@@ -10,10 +10,12 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
+    
     - name: checkoutCode
       uses: actions/checkout@v3
       with:
         submodules: 'recursive'
+        
     - name: Configure and Build
       run: |
         cd ${{ github.workspace }}
@@ -21,10 +23,20 @@ jobs:
         cd build
         cmake .. -A win32
         cmake --build . --config Release
+        
+    - name: Set SHA environment variable
+      run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      
     - name: Create ZIP archive
       run: |
         cd ${{ github.workspace }}/out
         zip -r output.zip *
+        $sourceDir = '${{ github.workspace }}/out/Release'
+        $destinationFile = 'output.zip'
+        # Get only DLL and EXE files
+        $filesToCompress = Get-ChildItem -Path $sourceDir -Filter *.{dll,exe} -Recurse
+        # Compress the selected files
+        Compress-Archive -Path $filesToCompress.FullName -DestinationPath $destinationFile
 
     - name: Upload ZIP artifact
       uses: actions/upload-artifact@v2
