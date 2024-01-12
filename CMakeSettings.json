@@ -1,7 +1,7 @@
 ﻿{
   "configurations": [
     {
-      "buildCommandArgs": "-v",
+      "buildCommandArgs": "",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "cmakeCommandArgs": "",
       "configurationType": "Debug",
@@ -12,7 +12,7 @@
       "name": "x64-Debug"
     },
     {
-      "buildCommandArgs": "-v",
+      "buildCommandArgs": "",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "cmakeCommandArgs": "",
       "configurationType": "Release",
