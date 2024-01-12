@@ -2,7 +2,7 @@
   "configurations": [
     {
       "buildCommandArgs": "",
-      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "buildRoot": "${projectDir}\\out\\${name}",
       "cmakeCommandArgs": "",
       "configurationType": "Debug",
       "ctestCommandArgs": "",
@@ -13,7 +13,7 @@
     },
     {
       "buildCommandArgs": "",
-      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "buildRoot": "${projectDir}\\out\\${name}",
       "cmakeCommandArgs": "",
       "configurationType": "Release",
       "ctestCommandArgs": "",
