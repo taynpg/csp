@@ -31,6 +31,12 @@ set(PROJECT_SOURCES
         main.cpp
 )
 
+set(TEST_SOURCES
+    test.cpp
+    common/cmd_show.h
+    common/cmd_show.cpp
+)
+
 include_directories(qm)
 include_directories(${CMAKE_SOURCE_DIR}/3rd/CLI11)
 add_subdirectory(box_calendar)
@@ -40,4 +46,5 @@ add_subdirectory(box_zhdata)
 add_subdirectory(3rd/sxtwl_cpp)
 
 add_executable(csp ${PROJECT_SOURCES})
+add_executable(csp_test ${TEST_SOURCES})
 target_link_libraries(csp box_qimen box_zhdata box_calendar)
