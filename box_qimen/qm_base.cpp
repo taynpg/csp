@@ -1,13 +1,17 @@
 #include "qm_base.h"
 
+#include <cstdio>
+
 #include "qm_v1.h"
 #include "qm_v2.h"
 #include "qm_v3.h"
 
+
 namespace cppbox {
 
 // 获取实例
-CQimen* CQimenFactory::createInstance(QIMEN_STYLE type) {
+CQimen* CQimenFactory::createInstance(QIMEN_STYLE type)
+{
     CQimen* pQimen = nullptr;
     switch (type) {
         case SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {  // 时家超接置润法
@@ -30,7 +34,8 @@ CQimen* CQimenFactory::createInstance(QIMEN_STYLE type) {
 // 释放实例
 void CQimenFactory::freeInstance(CQimen* pQimen) { delete pQimen; }
 
-CQimen::CQimen() : m_pCal(nullptr), m_calType(CALENDAR_V1) {
+CQimen::CQimen() : m_pCal(nullptr), m_calType(CALENDAR_V1)
+{
     m_sanhe[0] = 8;
     m_sanhe[1] = 5;
     m_sanhe[2] = 2;
@@ -54,7 +59,8 @@ CQimen::CQimen() : m_pCal(nullptr), m_calType(CALENDAR_V1) {
 CQimen::~CQimen() { CCalenderFactory::freeCalender(m_pCal); }
 
 // 设置十二地支位置对应
-void CQimen::setDizhi() {
+void CQimen::setDizhi()
+{
     m_dizhi[0] = 7;
     m_dizhi[1] = 6;
     m_dizhi[2] = 6;
@@ -69,7 +75,8 @@ void CQimen::setDizhi() {
     m_dizhi[11] = 0;
 }
 
-void CQimen::setJiuXingPre() {
+void CQimen::setJiuXingPre()
+{
     m_JiuXingPre[0] = 5;
     m_JiuXingPre[1] = 6;
     m_JiuXingPre[2] = 1;
@@ -82,7 +89,8 @@ void CQimen::setJiuXingPre() {
 }
 
 // 设置九星的旋转位置[相对顺序]
-void CQimen::setJiuXingTurn() {
+void CQimen::setJiuXingTurn()
+{
     m_JiuXingTurn[0] = 0;
     m_JiuXingTurn[1] = 7;
     m_JiuXingTurn[2] = 2;
@@ -94,7 +102,8 @@ void CQimen::setJiuXingTurn() {
 }
 
 // 设置八门的初始位置
-void CQimen::setBaMenPre() {
+void CQimen::setBaMenPre()
+{
     m_nBamenPre[0] = 5;
     m_nBamenPre[1] = 6;
     m_nBamenPre[2] = 1;
@@ -107,7 +116,8 @@ void CQimen::setBaMenPre() {
 }
 
 // 设置八门的旋转位置
-void CQimen::setBaMenTurn() {
+void CQimen::setBaMenTurn()
+{
     m_nBamenTurn[0] = 0;
     m_nBamenTurn[1] = 7;
     m_nBamenTurn[2] = 2;
@@ -119,7 +129,8 @@ void CQimen::setBaMenTurn() {
 }
 
 // 设置八神的初始位置
-void CQimen::setBaShenPre() {
+void CQimen::setBaShenPre()
+{
     m_nBaShenPre[0] = 5;
     m_nBaShenPre[1] = 6;
     m_nBaShenPre[2] = 1;
@@ -132,7 +143,8 @@ void CQimen::setBaShenPre() {
 }
 
 // 设置九宫的数字对应
-void CQimen::setGongBaseNum() {
+void CQimen::setGongBaseNum()
+{
     // 定义位置从 0 开始分别对应卦序
     m_nPos2GuaNum[0] = 5;
     m_nPos2GuaNum[1] = 6;
@@ -146,7 +158,8 @@ void CQimen::setGongBaseNum() {
 }
 
 // 设置初始内容之后，执行此函数，对初始内容整理并生成所需的信息。
-void CQimen::prepare() {
+void CQimen::prepare()
+{
     // m_nGuaNum2Pos 就是后天八卦的顺序数和定义位置的对照。
     for (int i = 0; i < 9; ++i) {
         m_nGuaNum2Pos[m_nPos2GuaNum[i]] = i;
@@ -154,32 +167,33 @@ void CQimen::prepare() {
 }
 
 // 设置寄宫
-void CQimen::setJiGong(int nGong) {
+void CQimen::setJiGong(int nGong)
+{
     // 这里减 1 是取索引
     int nIndex = nGong - 1;
     // 这里要把寄宫转成位置
     m_nJiGongPos = m_nGuaNum2Pos[nIndex];
 }
 
-bool CQimen::BaseRun(const QiParam& info, CalendarType type) {
+bool CQimen::BaseRun(const QiParam& info, CalendarType type)
+{
     m_calType = type;
     CCalenderFactory::freeCalender(m_pCal);
     m_pCal = CCalenderFactory::creatInstance(m_calType);
     if (!m_pCal->checkFormat(info.datetime)) {
-        std::snprintf(m_error_, sizeof(m_error_), "%s", "日期不在支持的范围内。");
+        std::snprintf(m_error_, sizeof(m_error_), "%s",
+                      "日期不在支持的范围内。");
         return false;
     }
     m_datetime = info.datetime;
     return true;
 }
 
-const char* CQimen::getLastError() const
-{
-    return m_error_;
-}
+const char* CQimen::getLastError() const { return m_error_; }
 
 // 获取六十甲子下标
-int CQimen::getJiaziIndex(int nTianIndex, int nDiIndex) {
+int CQimen::getJiaziIndex(int nTianIndex, int nDiIndex)
+{
     int nRet = nDiIndex;
     for (int i = 0; i < 5; ++i) {
         if ((nRet % 10) == nTianIndex) {
@@ -191,7 +205,8 @@ int CQimen::getJiaziIndex(int nTianIndex, int nDiIndex) {
 }
 
 // 查找内容所在的下标
-int CQimen::getIndex(const int* pData, int nSize, int nValue) {
+int CQimen::getIndex(const int* pData, int nSize, int nValue)
+{
     if (!pData) {
         return -1;
         ;
@@ -252,7 +267,8 @@ int CQimen::getJushu() const { return m_nJushu; }
 
 bool CQimen::getIsYinDun() const { return m_isYinDun; }
 
-void CQimen::BaseInit() {
+void CQimen::BaseInit()
+{
     setJiuXingPre();
     setJiuXingTurn();
     setGongBaseNum();
