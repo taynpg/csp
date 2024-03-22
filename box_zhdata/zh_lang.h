@@ -3,6 +3,7 @@
 
 #include <string>
 
+#if defined (DYNAMIC_DLL)
 #if defined(_MSC_VER)
 #  define CPP_ZHDATA_EXPORT __declspec(dllexport)
 #  define CPP_ZHDATA_IMPORT __declspec(dllimport)
@@ -15,6 +16,12 @@
 #define CPP_ZHDATA_API CPP_ZHDATA_EXPORT
 #else
 #define CPP_ZHDATA_API CPP_ZHDATA_IMPORT
+#endif
+#else
+    #define CPP_ZHDATA_API
+    #if defined(_MSC_VER)
+        #pragma warning(disable: 4251)
+    #endif
 #endif
 
 namespace cppbox {
@@ -52,6 +59,8 @@ namespace cppbox {
 		static std::string ZhKongWang();
 		// 获取马星
 		static std::string ZhMaXing();
+		// 获取卦名
+		static std::string ZhGua(int nIndex);
 	};
 }
 #endif

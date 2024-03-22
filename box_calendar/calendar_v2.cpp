@@ -5,10 +5,10 @@ namespace cppbox {
 CCalenderV2::CCalenderV2() {}
 CCalenderV2::~CCalenderV2() { delete day_; }
 
-bool CCalenderV2::setDateTime(const CDateTime& datetime) {
+bool CCalenderV2::setDateTime(const CDateTime& datetime)
+{
     m_datetime = datetime;
-    day_ = sxtwl::fromSolar(m_datetime.m_date.m_nYear, m_datetime.m_date.m_nMon,
-                            m_datetime.m_date.m_nDay);
+    day_ = sxtwl::fromSolar(m_datetime.m_date.m_nYear, m_datetime.m_date.m_nMon, m_datetime.m_date.m_nDay);
 
     m_ldatetime.m_time = m_datetime.m_time;
     sxday2DateTimeLunar(day_, m_ldatetime.m_date);
@@ -55,7 +55,8 @@ bool CCalenderV2::setDateTime(const CDateTime& datetime) {
 // 获取前一天
 void CCalenderV2::getPreDay(CDateTime& datetime) { getPreDay(datetime.m_date); }
 
-void CCalenderV2::getPreDay(CDate& date) {
+void CCalenderV2::getPreDay(CDate& date)
+{
     Day* d = sxtwl::fromSolar(date.m_nYear, date.m_nMon, date.m_nDay);
     Day* bd = d->before(1);
     sxday2DateTimeSolar(bd, date);
@@ -64,11 +65,10 @@ void CCalenderV2::getPreDay(CDate& date) {
 }
 
 // 获取后一天
-void CCalenderV2::getNextDay(CDateTime& datetime) {
-    getNextDay(datetime.m_date);
-}
+void CCalenderV2::getNextDay(CDateTime& datetime) { getNextDay(datetime.m_date); }
 
-void CCalenderV2::getNextDay(CDate& date) {
+void CCalenderV2::getNextDay(CDate& date)
+{
     Day* d = sxtwl::fromSolar(date.m_nYear, date.m_nMon, date.m_nDay);
     Day* bd = d->after(1);
     sxday2DateTimeSolar(bd, date);
@@ -86,7 +86,8 @@ bool CCalenderV2::checkFormat(const CDateTime& datetime)
 }
 
 // 返回两个日期之间的天数差
-int CCalenderV2::getDiffByTwoDate(const CDate& dateA, const CDate& dateB) {
+int CCalenderV2::getDiffByTwoDate(const CDate& dateA, const CDate& dateB)
+{
     Time   ta(dateA.m_nYear, dateA.m_nMon, dateA.m_nDay, 0, 0, 0);
     Time   tb(dateB.m_nYear, dateB.m_nMon, dateB.m_nDay, 0, 0, 0);
     double a = sxtwl::toJD(ta);
@@ -96,37 +97,34 @@ int CCalenderV2::getDiffByTwoDate(const CDate& dateA, const CDate& dateB) {
 }
 
 // 返回距离 00:00:00 的秒数
-int CCalenderV2::getSecondsFromBase(const CTime& time) {
-    return time.m_nHour * 3600 + time.m_nMin * 60 + time.m_nSec;
-}
+int CCalenderV2::getSecondsFromBase(const CTime& time) { return time.m_nHour * 3600 + time.m_nMin * 60 + time.m_nSec; }
 
 // 基于基础时间和差值计算新的日期
-void CCalenderV2::getDateTimeBySecond(const CDateTime& basetime,
-                                      CDateTime& outtime, long long nSecond) {}
+void CCalenderV2::getDateTimeBySecond(const CDateTime& basetime, CDateTime& outtime, long long nSecond) {}
 
 // 返回两个时间之间的秒数差
-int CCalenderV2::getDiffByTwoTime(const CTime& timeA, const CTime& timeB) {
+int CCalenderV2::getDiffByTwoTime(const CTime& timeA, const CTime& timeB)
+{
     int nBaseA = getSecondsFromBase(timeA);
     int nBaseB = getSecondsFromBase(timeB);
     return nBaseA - nBaseB;
 }
 
 // 返回两个日期时间的秒数差
-long long CCalenderV2::getSecondByTwoDateTime(const CDateTime& datetimeA,
-                                              const CDateTime& datetimeB) {
-    Time   ta(datetimeA.m_date.m_nYear, datetimeA.m_date.m_nMon,
-              datetimeA.m_date.m_nDay, datetimeA.m_time.m_nHour,
-              datetimeA.m_time.m_nMin, datetimeA.m_time.m_nSec);
-    Time   tb(datetimeB.m_date.m_nYear, datetimeB.m_date.m_nMon,
-              datetimeB.m_date.m_nDay, datetimeB.m_time.m_nHour,
-              datetimeB.m_time.m_nMin, datetimeB.m_time.m_nSec);
+long long CCalenderV2::getSecondByTwoDateTime(const CDateTime& datetimeA, const CDateTime& datetimeB)
+{
+    Time   ta(datetimeA.m_date.m_nYear, datetimeA.m_date.m_nMon, datetimeA.m_date.m_nDay, datetimeA.m_time.m_nHour, datetimeA.m_time.m_nMin,
+              datetimeA.m_time.m_nSec);
+    Time   tb(datetimeB.m_date.m_nYear, datetimeB.m_date.m_nMon, datetimeB.m_date.m_nDay, datetimeB.m_time.m_nHour, datetimeB.m_time.m_nMin,
+              datetimeB.m_time.m_nSec);
     double a = sxtwl::toJD(ta);
     double b = sxtwl::toJD(tb);
     double dd = a - b;
     return static_cast<int>(dd * 86400);
 }
 
-void CCalenderV2::sxtime2DateTime(Time& time, CDateTime& datetime) {
+void CCalenderV2::sxtime2DateTime(Time& time, CDateTime& datetime)
+{
     datetime.m_date.m_nYear = time.getYear();
     datetime.m_date.m_nMon = time.getMonth();
     datetime.m_date.m_nDay = time.getDay();
@@ -135,21 +133,24 @@ void CCalenderV2::sxtime2DateTime(Time& time, CDateTime& datetime) {
     datetime.m_time.m_nSec = roundDouble(time.getSec());
 }
 
-void CCalenderV2::sxday2DateTimeLunar(Day* day, CDate& date) {
+void CCalenderV2::sxday2DateTimeLunar(Day* day, CDate& date)
+{
     date.m_nYear = day->getLunarYear();
     date.m_nMon = static_cast<int>(day->getLunarMonth());
     date.m_nDay = day->getLunarDay();
 }
 
-void CCalenderV2::sxday2DateTimeSolar(Day* day, CDate& date) {
+void CCalenderV2::sxday2DateTimeSolar(Day* day, CDate& date)
+{
     date.m_nYear = day->getSolarYear();
     date.m_nMon = static_cast<int>(day->getSolarMonth());
     date.m_nDay = day->getSolarDay();
 }
 
-int CCalenderV2::roundDouble(double number) {
+int CCalenderV2::roundDouble(double number)
+{
     double ret = (number > 0.0) ? (number + 0.5) : (number - 0.5);
     return static_cast<int>(ret);
 }
 
-}  // namespace cppbox
+}   // namespace cppbox

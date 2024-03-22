@@ -4,7 +4,8 @@
 
 namespace cppbox {
 
-CQiMenV1::CQiMenV1() {
+CQiMenV1::CQiMenV1()
+{
     m_pCal = nullptr;
     m_nJushu = 0;
     m_calType = CALENDAR_V1;
@@ -34,9 +35,21 @@ CQiMenV1::CQiMenV1() {
     m_nJuQi[21] = 5820;
     m_nJuQi[22] = 4710;
     m_nJuQi[23] = 1741;
+
+    m_wuBuYu[0] = 6;
+    m_wuBuYu[1] = 17;
+    m_wuBuYu[2] = 28;
+    m_wuBuYu[3] = 39;
+    m_wuBuYu[4] = 50;
+    m_wuBuYu[5] = 1;
+    m_wuBuYu[6] = 12;
+    m_wuBuYu[7] = 33;
+    m_wuBuYu[8] = 44;
+    m_wuBuYu[9] = 55;
 }
 
-CQiMenV1::~CQiMenV1() {
+CQiMenV1::~CQiMenV1()
+{
     if (!m_pOneYear.empty()) {
         std::vector<OneDay*>::iterator it;
         for (it = m_pOneYear.begin(); it != m_pOneYear.end(); ++it) {
@@ -46,7 +59,8 @@ CQiMenV1::~CQiMenV1() {
 }
 
 // 传入日期数据
-bool CQiMenV1::Run(const QiParam& info, CalendarType type) {
+bool CQiMenV1::Run(const QiParam& info, CalendarType type)
+{
     if (!BaseRun(info, type)) {
         return false;
     }
@@ -108,14 +122,12 @@ bool CQiMenV1::Run(const QiParam& info, CalendarType type) {
     return true;
 }
 
-void CQiMenV1::getCurrentMonJie(const CDateTime& datetime,
-                                CDateTime& datetimeJie, int& nJiazi,
-                                int& nFutouDiff) {
+void CQiMenV1::getCurrentMonJie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff)
+{
     m_pCal->setDateTime(datetime);
     datetimeJie = m_pCal->getJieFirst().datetime;
     m_pCal->setDateTime(datetimeJie);
-    nJiazi =
-        getJiaziIndex(m_pCal->getSizhu().m_nDGan, m_pCal->getSizhu().m_nDZhi);
+    nJiazi = getJiaziIndex(m_pCal->getSizhu().m_nDGan, m_pCal->getSizhu().m_nDZhi);
     int nFutou = (nJiazi / 15) * 15;
     nFutouDiff = nJiazi - nFutou;
     if (nFutouDiff < 0) {
@@ -124,7 +136,8 @@ void CQiMenV1::getCurrentMonJie(const CDateTime& datetime,
 }
 
 // 推算一年的日历
-void CQiMenV1::inferenceDate() {
+void CQiMenV1::inferenceDate()
+{
     int nTem = 0;
     int nStartJie = 22;
     int nJiazi = 0;
@@ -175,8 +188,8 @@ void CQiMenV1::inferenceDate() {
     savePart(cycleDatetime.m_date, nStartJie, nJiazi, -1, 60);
 }
 
-void CQiMenV1::savePart(CDate& date, int& nUpper, int& nJiazi, int nPur,
-                        int nDays) {
+void CQiMenV1::savePart(CDate& date, int& nUpper, int& nJiazi, int nPur, int nDays)
+{
     int nCycle = 0;
     nUpper = cb::getRemainder(24, nUpper);
     for (int i = 0; i < nDays; ++i, ++nCycle) {
@@ -196,7 +209,8 @@ void CQiMenV1::savePart(CDate& date, int& nUpper, int& nJiazi, int nPur,
     }
 }
 
-void CQiMenV1::saveDay(const CDate& date, int nJie, int& nJiazi) {
+void CQiMenV1::saveDay(const CDate& date, int nJie, int& nJiazi)
+{
     auto* pDay = new OneDay();
     pDay->nGanZhiIndex = nJiazi;
     pDay->nJieIndex = nJie;
@@ -205,7 +219,8 @@ void CQiMenV1::saveDay(const CDate& date, int nJie, int& nJiazi) {
 }
 
 // 在一年的日历中查找当天的信息
-OneDay* CQiMenV1::searchDay(const CDateTime& datetime) {
+OneDay* CQiMenV1::searchDay(const CDateTime& datetime)
+{
     OneDay*                              p = nullptr;
     std::vector<OneDay*>::const_iterator it;
     for (it = m_pOneYear.begin(); it != m_pOneYear.end(); ++it) {
@@ -230,13 +245,15 @@ OneDay* CQiMenV1::searchDay(const CDateTime& datetime) {
 }*/
 
 // 获取给定甲子的两个寻空
-void CQiMenV1::getXunKong(int nJiazi, int& nKongA, int& nKongB) {
+void CQiMenV1::getXunKong(int nJiazi, int& nKongA, int& nKongB)
+{
     nKongA = ((nJiazi / 10) * 10 + 10) % 12;
     nKongB = ((nJiazi / 10) * 10 + 11) % 12;
 }
 
 // 排地盘
-void CQiMenV1::genDiPan() {
+void CQiMenV1::genDiPan()
+{
     // 所谓的几局，就是甲子戊居于第几宫
     int nStartIndex = cb::getRemainder(9, m_nJushu - 1);
     // 转成定义位置
@@ -255,12 +272,21 @@ void CQiMenV1::genDiPan() {
     for (int i = 0; i < 3; ++i) {
         m_nDiPan[m_nGuaNum2Pos[cb::getRemainder(9, nStartIndex += nk)]] = 3 - i;
     }
+
+    // 判断是否是 五不遇时
+    int hg = m_pCal->getSizhu().m_nHGan;
+    int hz = m_pCal->getSizhu().m_nHZhi;
+    if (m_wuBuYu[m_pCal->getSizhu().m_nDGan] == CQimen::getJiaziIndex(hg, hz)) {
+        m_isWuBuYu = true;
+    } else {
+        m_isWuBuYu = false;
+    }
 }
 // 查找值符，值使
-void CQiMenV1::genZhi() {
+void CQiMenV1::genZhi()
+{
     // 六十甲子
-    int hindex =
-        getJiaziIndex(m_pCal->getSizhu().m_nHGan, m_pCal->getSizhu().m_nHZhi);
+    int hindex = getJiaziIndex(m_pCal->getSizhu().m_nHGan, m_pCal->getSizhu().m_nHZhi);
     // 查看旬头遁甲位置
     int ganIndex = (hindex / 10) + 4;
     // 这里根据需要搜寻所在地盘的宫位在哪里
@@ -269,7 +295,8 @@ void CQiMenV1::genZhi() {
     m_nZhiShiPos = m_nZhiFuPos;
 }
 // 排九星
-void CQiMenV1::genJiuXing() {
+void CQiMenV1::genJiuXing()
+{
     // 先查验当前的局是否为伏吟
     if (m_pCal->getSizhu().m_nHGan == 0) {
         for (int i = 0; i < 9; ++i) {
@@ -293,15 +320,14 @@ void CQiMenV1::genJiuXing() {
     // 查找当前的九星的起始相对位置
     int nturn = getIndex(m_JiuXingTurn, 8, nxing);
     for (int i = 0; i < 8; ++i) {
-        m_JiuXingRe[cb::getRemainder(8, --nstart)] =
-            m_JiuXingTurn[cb::getRemainder(8, ++nturn)];
+        m_JiuXingRe[cb::getRemainder(8, --nstart)] = m_JiuXingTurn[cb::getRemainder(8, ++nturn)];
     }
 }
 // 排八门
-void CQiMenV1::genBaMen() {
+void CQiMenV1::genBaMen()
+{
     // 查看当前旬头六仪
-    int nJiazi =
-        getJiaziIndex(m_pCal->getSizhu().m_nHGan, m_pCal->getSizhu().m_nHZhi);
+    int nJiazi = getJiaziIndex(m_pCal->getSizhu().m_nHGan, m_pCal->getSizhu().m_nHZhi);
     // 查看当前时辰距离符头有几跳
     int ndiff = nJiazi - (nJiazi / 10) * 10;
 
@@ -332,12 +358,12 @@ void CQiMenV1::genBaMen() {
 
     int menIndex = getIndex(m_nBamenTurn, 8, m_nBamenPre[startPos]);
     for (int i = 0; i < 8; ++i, nPos--, ++menIndex) {
-        m_nBamenRe[cb::getRemainder(8, nPos)] =
-            m_nBamenTurn[cb::getRemainder(8, menIndex)];
+        m_nBamenRe[cb::getRemainder(8, nPos)] = m_nBamenTurn[cb::getRemainder(8, menIndex)];
     }
 }
 // 排八神
-void CQiMenV1::genBaShen() {
+void CQiMenV1::genBaShen()
+{
     int nxing = m_JiuXingPre[m_nZhiFuPos];
     if (nxing == 4) {
         nxing = m_JiuXingPre[m_nJiGongPos];
@@ -356,26 +382,20 @@ void CQiMenV1::genBaShen() {
     }
 }
 // 排天盘
-void CQiMenV1::genTianPan() {
+void CQiMenV1::genTianPan()
+{
     // 当前九星宫位的天盘就是：当前星原来宫位中的地盘
     for (int i = 0; i < 8; ++i) {
         m_nTianPan[i] = m_nDiPan[m_nGuaNum2Pos[m_JiuXingRe[i]]];
     }
 }
 // 排旬空马星
-void CQiMenV1::genOther() {
-    getXunKong(
-        getJiaziIndex(m_pCal->getSizhu().m_nYGan, m_pCal->getSizhu().m_nYZhi),
-        m_nXunKong[0], m_nXunKong[1]);
-    getXunKong(
-        getJiaziIndex(m_pCal->getSizhu().m_nMGan, m_pCal->getSizhu().m_nMZhi),
-        m_nXunKong[2], m_nXunKong[3]);
-    getXunKong(
-        getJiaziIndex(m_pCal->getSizhu().m_nDGan, m_pCal->getSizhu().m_nDZhi),
-        m_nXunKong[4], m_nXunKong[5]);
-    getXunKong(
-        getJiaziIndex(m_pCal->getSizhu().m_nHGan, m_pCal->getSizhu().m_nHZhi),
-        m_nXunKong[6], m_nXunKong[7]);
+void CQiMenV1::genOther()
+{
+    getXunKong(getJiaziIndex(m_pCal->getSizhu().m_nYGan, m_pCal->getSizhu().m_nYZhi), m_nXunKong[0], m_nXunKong[1]);
+    getXunKong(getJiaziIndex(m_pCal->getSizhu().m_nMGan, m_pCal->getSizhu().m_nMZhi), m_nXunKong[2], m_nXunKong[3]);
+    getXunKong(getJiaziIndex(m_pCal->getSizhu().m_nDGan, m_pCal->getSizhu().m_nDZhi), m_nXunKong[4], m_nXunKong[5]);
+    getXunKong(getJiaziIndex(m_pCal->getSizhu().m_nHGan, m_pCal->getSizhu().m_nHZhi), m_nXunKong[6], m_nXunKong[7]);
 
     m_nKongWang[0] = m_dizhi[m_nXunKong[6]];
     m_nKongWang[1] = m_dizhi[m_nXunKong[7]];
@@ -384,4 +404,4 @@ void CQiMenV1::genOther() {
     int nchongzhi = m_zhichong[m_sanhe[m_pCal->getSizhu().m_nHZhi]];
     m_nMaXing = m_dizhi[nchongzhi];
 }
-}  // namespace cppbox
+}   // namespace cppbox

@@ -1,18 +1,25 @@
 #ifndef BOX_CALENDAR_BASE_H
 #define BOX_CALENDAR_BASE_H
 
-#if defined(_MSC_VER)
-#define CPP_CALENDAR_EXPORT __declspec(dllexport)
-#define CPP_CALENDAR_IMPORT __declspec(dllimport)
-#else
-#define CPP_CALENDAR_EXPORT __attribute__((visibility("default")))
-#define CPP_CALENDAR_IMPORT __attribute__((visibility("default")))
-#endif
+#if defined (DYNAMIC_DLL)
+    #if defined(_MSC_VER)
+    #define CPP_CALENDAR_EXPORT __declspec(dllexport)
+    #define CPP_CALENDAR_IMPORT __declspec(dllimport)
+    #else
+    #define CPP_CALENDAR_EXPORT __attribute__((visibility("default")))
+    #define CPP_CALENDAR_IMPORT __attribute__((visibility("default")))
+    #endif
 
-#ifdef CPP_CALENDAR_LIB
-#define CPP_CALENDAR_API CPP_CALENDAR_EXPORT
+    #ifdef CPP_CALENDAR_LIB
+    #define CPP_CALENDAR_API CPP_CALENDAR_EXPORT
+    #else
+    #define CPP_CALENDAR_API CPP_CALENDAR_IMPORT
+    #endif
 #else
-#define CPP_CALENDAR_API CPP_CALENDAR_IMPORT
+    #define CPP_CALENDAR_API
+    #if defined(_MSC_VER)
+        #pragma warning(disable: 4251)
+    #endif
 #endif
 
 namespace cppbox {
@@ -21,12 +28,12 @@ namespace cppbox {
 enum CalendarType {
     // 日历实现类的第一个版本，基于查表实现的日历，有效范围(1901 ~ 2099)
     CALENDAR_V1 = 0,
-    CALENDAR_V2  // 日历实现类的第二个版本，基于天文历算法实现的日历，有效范围(公元前722年
-                 // ~ 9999)
+    CALENDAR_V2   // 日历实现类的第二个版本，基于天文历算法实现的日历，有效范围(公元前722年
+                  // ~ 9999)
 };
 
 // 四柱
-struct CPP_CALENDAR_API CGanZhi {
+struct CGanZhi {
     CGanZhi& operator=(const CGanZhi& ganzhi);
     int      m_nYGan = -1;
     int      m_nYZhi = -1;
@@ -76,7 +83,8 @@ struct CPP_CALENDAR_API CJieQi {
 };
 
 // 日历处理基类
-class CPP_CALENDAR_API CCalenderBase {
+class CPP_CALENDAR_API CCalenderBase
+{
 public:
     CCalenderBase();
     virtual ~CCalenderBase() = default;
@@ -106,8 +114,7 @@ public:
     // 返回两个日期之间的天数差
     virtual int getDiffByTwoDate(const CDate& dateA, const CDate& dateB) = 0;
     // 基于基础时间和差值计算新的日期
-    virtual void getDateTimeBySecond(const CDateTime& basetime,
-                                    CDateTime& outtime, long long nSecond) = 0;
+    virtual void getDateTimeBySecond(const CDateTime& basetime, CDateTime& outtime, long long nSecond) = 0;
     // 返回距离 00:00:00 的秒数
     virtual int getSecondsFromBase(const CTime& time) = 0;
 
@@ -117,8 +124,8 @@ public:
     virtual int getDiffByTwoTime(const CTime& timeA, const CTime& timeB) = 0;
 
     // 返回两个日期时间的秒数差
-    virtual long long getSecondByTwoDateTime(const CDateTime& datetimeA,
-                                     const CDateTime& datetimeB) = 0;
+    virtual long long getSecondByTwoDateTime(const CDateTime& datetimeA, const CDateTime& datetimeB) = 0;
+
 public:
     // 获取四柱
     CGanZhi const& getSizhu() const;
@@ -128,17 +135,18 @@ public:
     CJieQi const& getJieSecond() const;
 
 protected:
-    CDateTime m_datetime;   // 传入的时间日期
-    CDateTime m_ldatetime;  // 计算的农历日期
-    bool      m_isLeap{};   // 当月是否是闰月
-    bool      m_bigMon{};   // 当月是否是大月
-    CJieQi    m_first;      // 当月第一个节气
-    CJieQi    m_second;     // 当月第二个节气
-    CGanZhi   m_sizhu;      // 此时的四柱
+    CDateTime m_datetime;    // 传入的时间日期
+    CDateTime m_ldatetime;   // 计算的农历日期
+    bool      m_isLeap{};    // 当月是否是闰月
+    bool      m_bigMon{};    // 当月是否是大月
+    CJieQi    m_first;       // 当月第一个节气
+    CJieQi    m_second;      // 当月第二个节气
+    CGanZhi   m_sizhu;       // 此时的四柱
 };
 
 // 日历类实例生成工厂
-class CPP_CALENDAR_API CCalenderFactory {
+class CPP_CALENDAR_API CCalenderFactory
+{
 private:
     CCalenderFactory() = default;
     ~CCalenderFactory() = default;
@@ -149,5 +157,5 @@ public:
     // 释放内存
     static void freeCalender(CCalenderBase* pCalender);
 };
-}  // namespace cppbox
+}   // namespace cppbox
 #endif

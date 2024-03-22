@@ -4,7 +4,8 @@
 #include "qm_v3.h"
 #include <cmath>
 
-bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type) {
+bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type)
+{
     if (!BaseRun(info, type)) {
         return false;
     }
@@ -12,8 +13,7 @@ bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type) {
     m_pCal->setDateTime(m_datetime);
 
     if (info.nJu == 0) {
-        int jia = CQimen::getJiaziIndex(m_pCal->getSizhu().m_nDGan,
-                                        m_pCal->getSizhu().m_nDZhi);
+        int jia = CQimen::getJiaziIndex(m_pCal->getSizhu().m_nDGan, m_pCal->getSizhu().m_nDZhi);
         //  符头只有两个，甲 或者 己
         int futou = jia - jia % 5;
         // 看地支
@@ -30,16 +30,13 @@ bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type) {
         long long diffB = m_pCal->getSecondByTwoDateTime(m_datetime, JieB);
 
         int nResult = 0;
-        if (diffA >=0 && diffB < 0) {
+        if (diffA >= 0 && diffB < 0) {
             m_nJieQi = m_pCal->getJieFirst().index;
             nResult = m_nJuQi[m_nJieQi];
-        }
-        else if (diffA < 0) {
-            m_nJieQi = CCalenderBase::getRemainder(
-                24, m_pCal->getJieFirst().index - 1);
+        } else if (diffA < 0) {
+            m_nJieQi = CCalenderBase::getRemainder(24, m_pCal->getJieFirst().index - 1);
             nResult = m_nJuQi[m_nJieQi];
-        }
-        else {
+        } else {
             m_nJieQi = m_pCal->getJieSecond().index;
             nResult = m_nJuQi[m_pCal->getJieSecond().index];
         }

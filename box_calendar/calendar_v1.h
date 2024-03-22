@@ -7,7 +7,8 @@ namespace cppbox {
 constexpr int g_cnum = 10;
 using cb = CCalenderBase;
 // 日期处理类
-class CCalenderV1 : public CCalenderBase {
+class CCalenderV1 : public CCalenderBase
+{
 public:
     CCalenderV1();
     ~CCalenderV1() override;
@@ -27,8 +28,7 @@ public:
     int getDiffByTwoDate(const CDate& dateA, const CDate& dateB) override;
 
     // 基于基础时间和差值计算新的日期
-    void getDateTimeBySecond(const CDateTime& basetime, CDateTime& outtime,
-                             long long nSecond) override;
+    void getDateTimeBySecond(const CDateTime& basetime, CDateTime& outtime, long long nSecond) override;
 
     // 返回距离 00:00:00 的秒数
     int getSecondsFromBase(const CTime& time) override;
@@ -37,8 +37,7 @@ public:
     int getDiffByTwoTime(const CTime& timeA, const CTime& timeB) override;
 
     // 返回两个日期时间的秒数差
-    long long getSecondByTwoDateTime(const CDateTime& datetimeA,
-                                     const CDateTime& datetimeB) override;
+    long long getSecondByTwoDateTime(const CDateTime& datetimeA, const CDateTime& datetimeB) override;
 
 private:
     // 初始化数据
@@ -74,21 +73,19 @@ private:
     static int getDaysFromBase(const CDate& date);
 
     // 返回下一个月的年干支月干支信息
-    void getNextJie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi,
-                    int& nYearJiaZi);
+    void getNextJie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi, int& nYearJiaZi);
     // 获取上一个月的年月干支，最后一个参数为当月是否是 立春
-    void getPreMonYMGanZhi(int nJiaZiY, int nJiaZiM, int& nJiaZiYOut,
-                           int& nJiaZiMOut, bool isLiChun);
+    void getPreMonYMGanZhi(int nJiaZiY, int nJiaZiM, int& nJiaZiYOut, int& nJiaZiMOut, bool isLiChun);
     // 给定年干支，返回下一年的年干支和起始月干支
     void getNextYMGanZhi(int nJiaZiY, int& nJiaZiNextY, int& nJiaZiNextM);
 
 private:
-    int* m_pJieSum{};  // 计算节气的差值数组
-    int* m_pLunar{};   // 农历表数组
+    int* m_pJieSum{};   // 计算节气的差值数组
+    int* m_pLunar{};    // 农历表数组
 private:
     // 辅助表
-    int m_wuhu[g_cnum]{};   // 五虎遁年起月表
-    int m_qishi[g_cnum]{};  // 日上起时表
+    int m_wuhu[g_cnum]{};    // 五虎遁年起月表
+    int m_qishi[g_cnum]{};   // 日上起时表
 };
-}  // namespace cppbox
+}   // namespace cppbox
 #endif

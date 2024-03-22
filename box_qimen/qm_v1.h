@@ -1,6 +1,7 @@
 #ifndef QIMEN_HEADER_
 #define QIMEN_HEADER_
 
+#include <map>
 #include <vector>
 
 #include "qm_base.h"
@@ -26,7 +27,8 @@ struct OneDay {
 };
 
 // V1 : 转盘 时家 超接置润法
-class CQiMenV1 : public CQimen {
+class CQiMenV1 : public CQimen
+{
 public:
     CQiMenV1();
     ~CQiMenV1() override;
@@ -56,8 +58,7 @@ protected:
 private:
     void savePart(CDate& date, int& nUpper, int& nJiazi, int nPur, int nDays);
     void saveDay(const CDate& date, int nJie, int& nJiazi);
-    void getCurrentMonJie(const CDateTime& datetime, CDateTime& datetimeJie,
-                          int& nJiazi, int& nFutouDiff);
+    void getCurrentMonJie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff);
     // 在一年的日历中查找当天的信息
     OneDay* searchDay(const CDateTime& datetime);
     // 打印所推演的一年日历
@@ -66,10 +67,11 @@ private:
     static void getXunKong(int nJiazi, int& nKongA, int& nKongB);
 
 protected:
-    std::vector<OneDay*> m_pOneYear;  // 四柱节气的一年推算
+    std::vector<OneDay*> m_pOneYear;   // 四柱节气的一年推算
     bool                 m_zhirun{};
-    int                  m_nJuQi[24]{};  // 节气和局的关系对照表
+    int                  m_nJuQi[24]{};   // 节气和局的关系对照表
+    std::map<int, int>   m_wuBuYu{};
 };
 
-}  // namespace cppbox
+}   // namespace cppbox
 #endif

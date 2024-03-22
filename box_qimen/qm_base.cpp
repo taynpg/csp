@@ -6,7 +6,6 @@
 #include "qm_v2.h"
 #include "qm_v3.h"
 
-
 namespace cppbox {
 
 // 获取实例
@@ -14,20 +13,20 @@ CQimen* CQimenFactory::createInstance(QIMEN_STYLE type)
 {
     CQimen* pQimen = nullptr;
     switch (type) {
-        case SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {  // 时家超接置润法
-            pQimen = new CQiMenV1();
-            break;
-        }
-        case SHIJIA_ZHUANPAN_YINPAN: {
-            pQimen = new CQimenV2();
-            break;
-        }
-        case SHIJIA_ZHUANPAN_CHAIBU: {
-            pQimen = new CQimenV3();
-            break;
-        }
-        default:
-            break;
+    case SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {   // 时家超接置润法
+        pQimen = new CQiMenV1();
+        break;
+    }
+    case SHIJIA_ZHUANPAN_YINPAN: {
+        pQimen = new CQimenV2();
+        break;
+    }
+    case SHIJIA_ZHUANPAN_CHAIBU: {
+        pQimen = new CQimenV3();
+        break;
+    }
+    default:
+        break;
     }
     return pQimen;
 }
@@ -86,6 +85,20 @@ void CQimen::setJiuXingPre()
     m_JiuXingPre[6] = 7;
     m_JiuXingPre[7] = 0;
     m_JiuXingPre[8] = 4;
+}
+
+// 设置各位置的五行(金水木火土 数字代表 12345)
+void CQimen::setWuxing()
+{
+    m_nWuXing[0] = 1;
+    m_nWuXing[1] = 1;
+    m_nWuXing[2] = 5;
+    m_nWuXing[3] = 4;
+    m_nWuXing[4] = 3;
+    m_nWuXing[5] = 3;
+    m_nWuXing[6] = 5;
+    m_nWuXing[7] = 2;
+    m_nWuXing[8] = 5;
 }
 
 // 设置九星的旋转位置[相对顺序]
@@ -181,8 +194,7 @@ bool CQimen::BaseRun(const QiParam& info, CalendarType type)
     CCalenderFactory::freeCalender(m_pCal);
     m_pCal = CCalenderFactory::creatInstance(m_calType);
     if (!m_pCal->checkFormat(info.datetime)) {
-        std::snprintf(m_error_, sizeof(m_error_), "%s",
-                      "日期不在支持的范围内。");
+        std::snprintf(m_error_, sizeof(m_error_), "%s", "日期不在支持的范围内。");
         return false;
     }
     m_datetime = info.datetime;
@@ -267,8 +279,12 @@ int CQimen::getJushu() const { return m_nJushu; }
 
 bool CQimen::getIsYinDun() const { return m_isYinDun; }
 
+// 获取五行
+const int* CQimen::getWuXing() const { return m_nWuXing; }
+
 void CQimen::BaseInit()
 {
+    setWuxing();
     setJiuXingPre();
     setJiuXingTurn();
     setGongBaseNum();
@@ -282,4 +298,12 @@ void CQimen::BaseInit()
     setJiGong(2);
 }
 
-}  // namespace cppbox
+// 获取卦序号
+const int* CQimen::getGuaXu() const { return m_nPos2GuaNum; }
+
+// 获取地支与位置的对应关系
+const int* CQimen::getDiZhiPos() const { return m_dizhi; }
+
+bool CQimen::isWuBuYu() const { return m_isWuBuYu; }
+
+}   // namespace cppbox

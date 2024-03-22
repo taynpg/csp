@@ -15,9 +15,10 @@ class CQimenV3 : public CQiMenV1
 public:
     CQimenV3() = default;
     ~CQimenV3() override = default;
+
 public:
     // 传入日期数据
     bool Run(const QiParam& info, CalendarType type) override;
 };
-}
-#endif  // CSP_QM_V3_H
+}   // namespace cppbox
+#endif   // CSP_QM_V3_H
