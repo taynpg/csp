@@ -50,8 +50,27 @@ bool CCalenderV2::setDateTime(const CDateTime& datetime)
             break;
         }
     }
+    checkMonthGZ();
     return true;
 }
+
+// 根据节气时间修正月干支
+void CCalenderV2::checkMonthGZ()
+{
+    auto ck = [&](const CDateTime& datetime) {
+        if (m_datetime.m_date != datetime.m_date) {
+            return ;
+        }
+        int df = getDiffByTwoTime(m_datetime.m_time, datetime.m_time);
+        if (df < 0) {
+            m_sizhu.m_nMGan = CCalenderBase::getRemainder(10, m_sizhu.m_nMGan - 1);
+            m_sizhu.m_nMZhi = CCalenderBase::getRemainder(12, m_sizhu.m_nMZhi - 1);
+        }
+    };
+    ck(m_first.datetime);
+    ck(m_second.datetime);
+}
+
 // 获取前一天
 void CCalenderV2::getPreDay(CDateTime& datetime) { getPreDay(datetime.m_date); }
 

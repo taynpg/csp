@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
     add_compile_options(/source-charset:utf-8)
-    add_compile_options(/wd4018) #有符号与无符号的比较 （主要作用与三方库）
+    # 以下抑制，主要作用与三方库。
+    add_compile_options(/wd4018) #有符号与无符号的比较
+    add_compile_options(/wd4800) #将值强制为布尔值“true”或“false”(性能警告)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_SYSTEM_NAME MATCHES "Windows")

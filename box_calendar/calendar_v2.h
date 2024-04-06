@@ -40,6 +40,8 @@ private:
     void sxday2DateTimeLunar(Day* day, CDate& date);
     void sxday2DateTimeSolar(Day* day, CDate& date);
     int  roundDouble(double number);
+    // 根据节气时间修正月干支
+    void checkMonthGZ();
 
 private:
     Day* day_{};

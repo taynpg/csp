@@ -52,6 +52,7 @@ struct CPP_CALENDAR_API CDate {
     CDate(int y, int m, int d);
     CDate(const CDate& date);
     CDate& operator=(const CDate& date);
+    bool operator!=(const CDate& date);
     int    m_nYear = 0;
     int    m_nMon = 0;
     int    m_nDay = 0;

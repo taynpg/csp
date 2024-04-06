@@ -1,11 +1,11 @@
 {
    "files.autoSave": "onFocusChange",
-   "editor.fontSize": 14,
-   "editor.fontFamily": "'FiraCode Nerd Font Mono', 'FiraCode Nerd Font Mono', 'FiraCode Nerd Font Mono'",
+   "editor.fontSize": 16,
+   "editor.fontFamily": "'Operator Mono Lig', 'Operator Mono Lig', 'Operator Mono Lig'",
    "cmake.configureOnOpen": true,
    "cmake.debugConfig": {
        "console": "integratedTerminal",
-       "args": ["-t", "3", "-d", "9999-1-1-1-1-1"]
+       "args": ["-t", "1", "-d", "1994-6-6-3-5-0"]
    },
    "cmake.generator": "Ninja",
    "cmake.options.statusBarVisibility": "visible",

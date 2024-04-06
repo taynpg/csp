@@ -43,6 +43,20 @@ CDate& CDate::operator=(const CDate& date)
     return *this;
 }
 
+bool CDate::operator!=(const CDate& date)
+{
+    if (this->m_nYear != date.m_nYear) {
+        return true;
+    }
+    if (this->m_nMon != date.m_nMon) {
+        return true;
+    }
+    if (this->m_nDay != date.m_nDay) {
+        return true;
+    }
+    return false;
+}
+
 CDateTime::CDateTime(const CDate& rh)
 {
     m_date.m_nYear = rh.m_nYear;
@@ -90,22 +104,25 @@ CCalenderBase* CCalenderFactory::creatInstance(CalendarType etype)
     CCalenderBase* pResult = nullptr;
 
     switch (etype) {
-    case CALENDAR_V1: {
-        pResult = new CCalenderV1();
-        break;
-    }
-    case CALENDAR_V2: {
-        pResult = new CCalenderV2();
-        break;
-    }
-    default:
-        break;
+        case CALENDAR_V1: {
+            pResult = new CCalenderV1();
+            break;
+        }
+        case CALENDAR_V2: {
+            pResult = new CCalenderV2();
+            break;
+        }
+        default:
+            break;
     }
     return pResult;
 }
 
 // 释放内存
-void CCalenderFactory::freeCalender(CCalenderBase* pCalender) { delete pCalender; }
+void CCalenderFactory::freeCalender(CCalenderBase* pCalender)
+{
+    delete pCalender;
+}
 
 CCalenderBase::CCalenderBase() = default;
 
@@ -252,4 +269,4 @@ CGanZhi& CGanZhi::operator=(const CGanZhi& ganzhi)
     this->m_nYZhi = ganzhi.m_nYZhi;
     return *this;
 }
-}   // namespace cppbox
+}  // namespace cppbox
