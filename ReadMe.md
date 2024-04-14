@@ -77,18 +77,19 @@ v1.3.1 版本及以后已加入寿星万年历，可以支持年跨度`-198~9999
 
 ## 4.2 通用构建方法（跨平台）：
 
-拉取项目请保证网络畅通（可访问`github`），下面的`-b vx.x.x`填写你想编译的版本。
+拉取项目请保证网络畅通（可访问`github`）。
 
 ```shell
-git clone -b v1.3.1 --recursive https://github.com/taynpg/csp
+git clone --recursive https://github.com/taynpg/csp
 cd csp
 mkdir build
 cd build
-cmake ..
+(1.非MSCV编译器)cmake ..
+(2.如果是MSCV编译器) cmake .. -DGBK=True
 cmake --build . --config release
 ```
 
-构建的结果在：`[csp代码目录]/out`
+构建的结果在：`build/bin`下。
 
 ## 4.3 手机端构建
 
