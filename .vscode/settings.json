@@ -1,12 +1,15 @@
 {
    "files.autoSave": "onFocusChange",
-   "editor.fontSize": 16,
+   "editor.fontSize": 15,
    "editor.fontFamily": "'Operator Mono Lig', 'Operator Mono Lig', 'Operator Mono Lig'",
    "cmake.configureOnOpen": true,
    "cmake.debugConfig": {
        "console": "integratedTerminal",
        "args": ["-t", "1", "-d", "1994-6-6-3-5-0"]
    },
+   "cmake.configureArgs": [
+        "-DGBK=True"
+   ],
    "cmake.generator": "Ninja",
    "cmake.options.statusBarVisibility": "visible",
    "C_Cpp.intelliSenseEngine": "disabled",
