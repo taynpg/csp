@@ -1,7 +1,7 @@
 {
    "files.autoSave": "onFocusChange",
    "editor.fontSize": 15,
-   "editor.fontFamily": "'Operator Mono Lig', 'Operator Mono Lig', 'Operator Mono Lig'",
+   "editor.fontFamily": "'Mononoki Nerd Font Mono', 'Mononoki Nerd Font Mono', 'Mononoki Nerd Font Mono'",
    "cmake.configureOnOpen": true,
    "cmake.debugConfig": {
        "console": "integratedTerminal",
@@ -24,7 +24,7 @@
         "--background-index",
         "--ranking-model=heuristics",
         "--function-arg-placeholders=false",
-        "--query-driver=D:/program/mingw64/bin/g++.exe"
+        "--query-driver=/usr/bin/g++"
    ],
    "editor.inlayHints.enabled": "off",
    "editor.unicodeHighlight.allowedLocales": {
