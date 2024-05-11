@@ -1,19 +1,26 @@
 {
-   "files.autoSave": "onFocusChange",
-   "editor.fontSize": 15,
-   "editor.fontFamily": "'Mononoki Nerd Font Mono', 'Mononoki Nerd Font Mono', 'Mononoki Nerd Font Mono'",
-   "cmake.configureOnOpen": true,
-   "cmake.debugConfig": {
-       "console": "integratedTerminal",
-       "args": ["-t", "1", "-d", "1994-6-6-3-5-0"]
-   },
-   "cmake.configureArgs": [
-        "-DGBK=True"
-   ],
-   "cmake.generator": "Ninja",
-   "cmake.options.statusBarVisibility": "visible",
-   "C_Cpp.intelliSenseEngine": "disabled",
-   "clangd.arguments": [
+    "files.autoSave": "onFocusChange",
+    "editor.fontSize": 14,
+    "editor.fontFamily": "'Mononoki Nerd Font Mono', 'Mononoki Nerd Font Mono', 'Mononoki Nerd Font Mono'",
+    "cmake.configureOnOpen": true,
+    "cmake.debugConfig": {
+        "console": "integratedTerminal",
+        "setupCommands": [
+            {
+                "description": "-gdb-set charset utf-8",
+                "text": "-gdb-set charset UTF-8"
+            },
+            {
+                "description": "Enable gdb pretty-printing",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ]
+    },
+    "cmake.options.statusBarVisibility": "visible",
+    "cmake.generator": "Ninja",
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "clangd.arguments": [
         "--header-insertion=never",
         "--all-scopes-completion",
         "--completion-style=detailed",
@@ -24,18 +31,12 @@
         "--background-index",
         "--ranking-model=heuristics",
         "--function-arg-placeholders=false",
-        "--query-driver=/usr/bin/g++"
-   ],
-   "editor.inlayHints.enabled": "off",
-   "editor.unicodeHighlight.allowedLocales": {
+        "--query-driver=D:/program/ucrt64/bin/g++.exe"
+    ],
+    "editor.inlayHints.enabled": "off",
+    "editor.unicodeHighlight.allowedLocales": {
         "ja": true,
         "zh-hant": true,
         "zh-hans": true
-    },
-    "files.associations": {
-        "iostream": "cpp"
-    },
-    "workbench.colorCustomizations": {
-        //"editor.background": "#C0C0C0"
     }
 }
