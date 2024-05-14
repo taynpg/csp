@@ -19,20 +19,8 @@
     },
     "cmake.options.statusBarVisibility": "visible",
     "cmake.generator": "Ninja",
-    "C_Cpp.intelliSenseEngine": "disabled",
-    "clangd.arguments": [
-        "--header-insertion=never",
-        "--all-scopes-completion",
-        "--completion-style=detailed",
-        "--clang-tidy",
-        "-j=4",
-        "--pch-storage=memory",
-        "--compile-commands-dir=build",
-        "--background-index",
-        "--ranking-model=heuristics",
-        "--function-arg-placeholders=false",
-        "--query-driver=D:/program/ucrt64/bin/g++.exe"
-    ],
+    "C_Cpp.default.compileCommands": "${workspaceRoot}/build/compile_commands.json",
+    "C_Cpp.default.cppStandard": "c++11",
     "editor.inlayHints.enabled": "off",
     "editor.unicodeHighlight.allowedLocales": {
         "ja": true,
