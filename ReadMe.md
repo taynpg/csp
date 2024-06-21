@@ -101,7 +101,7 @@ cmake --build . --config release
 
 - iPhone端可以使用iSh（亲测可用）
 
-![iSh](https://github.com/taynpg/csp/raw/main/images/ish.jpg)
+![iSh](https://github.com/taynpg/csp/raw/main/images/ish.png)
 
 # 五、最后
 
