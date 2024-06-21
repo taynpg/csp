@@ -96,9 +96,12 @@ cmake --build . --config release
 环境：
 
 - 安卓端可以使用termux（亲测可用）
-- iPhone端可以使用iSh（暂未测试）
 
 ![termux](https://github.com/taynpg/csp/raw/main/images/csp_qm_sjzpcjzr_android.jpg)
+
+- iPhone端可以使用iSh（亲测可用）
+
+![iSh](https://github.com/taynpg/csp/raw/main/images/ish.jpg)
 
 # 五、最后
 
