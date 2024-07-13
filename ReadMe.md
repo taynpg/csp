@@ -84,8 +84,8 @@ git clone --recursive https://github.com/taynpg/csp
 cd csp
 mkdir build
 cd build
-(1.非MSCV编译器)cmake ..
-(2.如果是MSCV编译器) cmake .. -DGBK=True
+(1.非MSVC编译器)cmake ..
+(2.如果是MSVC编译器) cmake .. -DGBK=True
 cmake --build . --config release
 ```
 
