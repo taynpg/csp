@@ -1,7 +1,7 @@
 {
     "files.autoSave": "onFocusChange",
     "editor.fontSize": 14,
-    "editor.fontFamily": "'Mononoki Nerd Font Mono', 'Mononoki Nerd Font Mono', 'Mononoki Nerd Font Mono'",
+    "editor.fontFamily": "'Cousine Nerd Font Mono', 'Cousine Nerd Font Mono', 'Cousine Nerd Font Mono'",
     "cmake.configureOnOpen": true,
     "cmake.debugConfig": {
         "console": "integratedTerminal",
@@ -15,6 +15,12 @@
                 "text": "-enable-pretty-printing",
                 "ignoreFailures": true
             }
+        ],
+        "args": [
+            "-d",
+            "2024-7-9-9-10-0",
+            "-t",
+            "3"
         ]
     },
     "cmake.options.statusBarVisibility": "visible",

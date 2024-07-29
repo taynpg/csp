@@ -337,13 +337,14 @@ void CQiMenV1::genBaMen()
     }
 
     // m_nBamenPre 中仅有 8 个数据，当值符值使位置在中宫8的时候，转成寄宫
+    // 但是转的时候不从寄宫开始转
     int startPos = m_nZhiShiPos;
     if (startPos == 8) {
         startPos = m_nJiGongPos;
     }
 
     // m_nPos2GuaNum 用于位置转卦序
-    int guaIndex = m_nPos2GuaNum[startPos];
+    int guaIndex = m_nPos2GuaNum[m_nZhiShiPos];
 
     for (int i = 0; i < ndiff; ++i) {
         guaIndex = cb::getRemainder(9, guaIndex += nk);
