@@ -1,25 +1,25 @@
 #ifndef BOX_CALENDAR_BASE_H
 #define BOX_CALENDAR_BASE_H
 
-#if defined (DYNAMIC_DLL)
-    #if defined(_MSC_VER)
-    #define CPP_CALENDAR_EXPORT __declspec(dllexport)
-    #define CPP_CALENDAR_IMPORT __declspec(dllimport)
-    #else
-    #define CPP_CALENDAR_EXPORT __attribute__((visibility("default")))
-    #define CPP_CALENDAR_IMPORT __attribute__((visibility("default")))
-    #endif
-
-    #ifdef CPP_CALENDAR_LIB
-    #define CPP_CALENDAR_API CPP_CALENDAR_EXPORT
-    #else
-    #define CPP_CALENDAR_API CPP_CALENDAR_IMPORT
-    #endif
+#if defined(DYNAMIC_DLL)
+#if defined(_MSC_VER)
+#define CPP_CALENDAR_EXPORT __declspec(dllexport)
+#define CPP_CALENDAR_IMPORT __declspec(dllimport)
 #else
-    #define CPP_CALENDAR_API
-    #if defined(_MSC_VER)
-        #pragma warning(disable: 4251)
-    #endif
+#define CPP_CALENDAR_EXPORT __attribute__((visibility("default")))
+#define CPP_CALENDAR_IMPORT __attribute__((visibility("default")))
+#endif
+
+#ifdef CPP_CALENDAR_LIB
+#define CPP_CALENDAR_API CPP_CALENDAR_EXPORT
+#else
+#define CPP_CALENDAR_API CPP_CALENDAR_IMPORT
+#endif
+#else
+#define CPP_CALENDAR_API
+#if defined(_MSC_VER)
+#pragma warning(disable : 4251)
+#endif
 #endif
 
 namespace cppbox {
@@ -35,14 +35,14 @@ enum CalendarType {
 // 四柱
 struct CGanZhi {
     CGanZhi& operator=(const CGanZhi& ganzhi);
-    int      m_nYGan = -1;
-    int      m_nYZhi = -1;
-    int      m_nMGan = -1;
-    int      m_nMZhi = -1;
-    int      m_nDGan = -1;
-    int      m_nDZhi = -1;
-    int      m_nHGan = -1;
-    int      m_nHZhi = -1;
+    int yg_ = -1;
+    int yz_ = -1;
+    int mg_ = -1;
+    int mz_ = -1;
+    int dg_ = -1;
+    int dz_ = -1;
+    int hg_ = -1;
+    int hz_ = -1;
 };
 
 // 日期
@@ -53,34 +53,34 @@ struct CPP_CALENDAR_API CDate {
     CDate(const CDate& date);
     CDate& operator=(const CDate& date);
     bool operator!=(const CDate& date);
-    int    m_nYear = 0;
-    int    m_nMon = 0;
-    int    m_nDay = 0;
+    int year_ = 0;
+    int mon_ = 0;
+    int day_ = 0;
 };
 
 // 时间
 struct CPP_CALENDAR_API CTime {
-    int m_nHour = 0;
-    int m_nMin = 0;
-    int m_nSec = 0;
+    int h_ = 0;
+    int m_ = 0;
+    int s_ = 0;
 };
 
 // 日期和时间
 struct CPP_CALENDAR_API CDateTime {
     CDateTime(int y, int m, int d, int h, int min, int sec);
-    CDateTime& operator=(const CDateTime& datetime);
+    CDateTime& operator=(const CDateTime& datetime_);
     CDateTime& operator=(const CDate& date);
     CDateTime() = default;
     ~CDateTime() = default;
-    CDate m_date;
-    CTime m_time;
+    CDate date_;
+    CTime time_;
     explicit CDateTime(const CDate& rh);
 };
 
 struct CPP_CALENDAR_API CJieQi {
-    CDateTime datetime{};
+    CDateTime dt_{};
     // 二十四节气索引，以 0 为小寒
-    int index{};
+    int index_{};
 };
 
 // 日历处理基类
@@ -92,57 +92,57 @@ public:
 
 public:
     // 仅检查日期格式上的合法性，并不考虑实现方是否支持这个日期范围
-    static bool checkFormatOnly(const CDateTime& datetime);
-    static bool isLeapYear(int year);
+    static bool check_format_only(const CDateTime& datetime_);
+    static bool is_leap(int year);
 
 public:
     // 设置日期并计算，返回是否成功。
-    virtual bool             setDateTime(const CDateTime& datetime) = 0;
-    virtual CDateTime const& getDateTime() const;
-    virtual CDateTime const& getLunarDateTime() const;
+    virtual bool set_datetime(const CDateTime& datetime_) = 0;
+    virtual CDateTime const& get_solar() const;
+    virtual CDateTime const& get_lunnar() const;
     // 获取系统时间
-    static void getNowDateTime(CDateTime& datetime);
+    static void now(CDateTime& datetime_);
     // 求余数(结果大于0)
-    static int getRemainder(int nBase, int nValue);
+    static int remain(int nBase, int nValue);
     // 获取前一天
-    virtual void getPreDay(CDateTime& datetime) = 0;
-    virtual void getPreDay(CDate& date) = 0;
+    virtual void pre(CDateTime& datetime_) = 0;
+    virtual void pre(CDate& date) = 0;
     // 获取后一天
-    virtual void getNextDay(CDateTime& datetime) = 0;
-    virtual void getNextDay(CDate& date) = 0;
+    virtual void next(CDateTime& datetime_) = 0;
+    virtual void next(CDate& date) = 0;
     // 检查日期格式是否正确
-    virtual bool checkFormat(const CDateTime& datetime) = 0;
+    virtual bool check_format(const CDateTime& datetime_) = 0;
     // 返回两个日期之间的天数差
-    virtual int getDiffByTwoDate(const CDate& dateA, const CDate& dateB) = 0;
+    virtual int get_diff_day(const CDate& dateA, const CDate& dateB) = 0;
     // 基于基础时间和差值计算新的日期
-    virtual void getDateTimeBySecond(const CDateTime& basetime, CDateTime& outtime, long long nSecond) = 0;
+    virtual void get_diff_sec(const CDateTime& basetime, CDateTime& outtime, long long nSecond) = 0;
     // 返回距离 00:00:00 的秒数
-    virtual int getSecondsFromBase(const CTime& time) = 0;
+    virtual int get_sec_by_base(const CTime& time) = 0;
 
     // 复制日期
-    static void copyDateTime(const CDateTime& datetime, CDateTime& outtime);
+    static void copy(const CDateTime& datetime_, CDateTime& outtime);
     // 返回两个时间之间的秒数差
-    virtual int getDiffByTwoTime(const CTime& timeA, const CTime& timeB) = 0;
+    virtual int get_diff_by_time(const CTime& timeA, const CTime& timeB) = 0;
 
     // 返回两个日期时间的秒数差
-    virtual long long getSecondByTwoDateTime(const CDateTime& datetimeA, const CDateTime& datetimeB) = 0;
+    virtual long long get_sec_by_date(const CDateTime& datetimeA, const CDateTime& datetimeB) = 0;
 
 public:
     // 获取四柱
-    CGanZhi const& getSizhu() const;
+    CGanZhi const& get_sz() const;
     // 获取第一个节气
-    CJieQi const& getJieFirst() const;
+    CJieQi const& first_jie() const;
     // 获取第二个节气
-    CJieQi const& getJieSecond() const;
+    CJieQi const& second_jie() const;
 
 protected:
-    CDateTime m_datetime;    // 传入的时间日期
-    CDateTime m_ldatetime;   // 计算的农历日期
-    bool      m_isLeap{};    // 当月是否是闰月
-    bool      m_bigMon{};    // 当月是否是大月
-    CJieQi    m_first;       // 当月第一个节气
-    CJieQi    m_second;      // 当月第二个节气
-    CGanZhi   m_sizhu;       // 此时的四柱
+    CDateTime dt_;        // 传入的时间日期
+    CDateTime lunar_;     // 计算的农历日期
+    bool leap_{};         // 当月是否是闰月
+    bool big_mon_{};      // 当月是否是大月
+    CJieQi first_jie_;    // 当月第一个节气
+    CJieQi second_jie_;   // 当月第二个节气
+    CGanZhi sz_;          // 此时的四柱
 };
 
 // 日历类实例生成工厂
@@ -154,9 +154,9 @@ private:
 
 public:
     // 获取日历类指针
-    static CCalenderBase* creatInstance(CalendarType etype);
+    static CCalenderBase* creat_instance(CalendarType etype);
     // 释放内存
-    static void freeCalender(CCalenderBase* pCalender);
+    static void free(CCalenderBase* pCalender);
 };
 }   // namespace cppbox
 #endif

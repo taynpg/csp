@@ -3,25 +3,25 @@
 
 #include "calendar_base.h"
 
-#if defined (DYNAMIC_DLL)
-    #if defined(_MSC_VER)
-    #define CPP_QIMEN_EXPORT __declspec(dllexport)
-    #define CPP_QIMEN_IMPORT __declspec(dllimport)
-    #else
-    #define CPP_QIMEN_EXPORT __attribute__((visibility("default")))
-    #define CPP_QIMEN_IMPORT __attribute__((visibility("default")))
-    #endif
-
-    #ifdef CPP_QIMEN_LIB
-    #define CPP_QIMEN_API CPP_QIMEN_EXPORT
-    #else
-    #define CPP_QIMEN_API CPP_QIMEN_IMPORT
-    #endif
+#if defined(DYNAMIC_DLL)
+#if defined(_MSC_VER)
+#define CPP_QIMEN_EXPORT __declspec(dllexport)
+#define CPP_QIMEN_IMPORT __declspec(dllimport)
 #else
-    #define CPP_QIMEN_API
-    #if defined(_MSC_VER)
-        #pragma warning(disable: 4251)
-    #endif
+#define CPP_QIMEN_EXPORT __attribute__((visibility("default")))
+#define CPP_QIMEN_IMPORT __attribute__((visibility("default")))
+#endif
+
+#ifdef CPP_QIMEN_LIB
+#define CPP_QIMEN_API CPP_QIMEN_EXPORT
+#else
+#define CPP_QIMEN_API CPP_QIMEN_IMPORT
+#endif
+#else
+#define CPP_QIMEN_API
+#if defined(_MSC_VER)
+#pragma warning(disable : 4251)
+#endif
 #endif
 
 namespace cppbox {
@@ -73,8 +73,8 @@ enum QIMEN_STYLE {
 
 // 排盘的参数信息
 struct CPP_QIMEN_API QiParam {
-    int       nJu{};        // 局数，默认: 0 为程序自动选择，其他指定。
-    CDateTime datetime{};   // 时间日期
+    int ju_{};               // 局数，默认: 0 为程序自动选择，其他指定。
+    CDateTime datetime_{};   // 时间日期
 };
 
 class CPP_QIMEN_API CQimen
@@ -85,34 +85,34 @@ public:
 
 public:
     // 初始化
-    virtual void BaseInit();
+    virtual void base_init();
     // 进行计算
-    virtual bool BaseRun(const QiParam& info, CalendarType type);
-    virtual bool Run(const QiParam& info, CalendarType type) = 0;
+    virtual bool base_run(const QiParam& info, CalendarType type);
+    virtual bool run(const QiParam& info, CalendarType type) = 0;
     //
     virtual const char* getLastError() const;
     // 设置各位置的五行(金水木火土 数字代表 12345)
-    virtual void setWuxing();
+    virtual void set_wx();
     // 设置九宫的原始九星位置[位置-九星]
-    virtual void setJiuXingPre();
+    virtual void set_jx_pre();
     // 设置九星的旋转位置[相对顺序]
-    virtual void setJiuXingTurn();
+    virtual void set_jx_turn();
     // 设置九宫的数字对应[位置-数字(数字从0开始)]
-    virtual void setGongBaseNum();
+    virtual void set_gong_base();
     // 设置八门的初始位置[位置-八门]
-    virtual void setBaMenPre();
+    virtual void set_bm_pre();
     // 设置八门的旋转位置
-    virtual void setBaMenTurn();
+    virtual void set_bm_turn();
     // 设置八神的初始位置[位置-八神]
-    virtual void setBaShenPre();
+    virtual void set_bs_pre();
     // 设置寄宫[固定位置](这里的寄宫是各家自家的卦数)
-    virtual void setJiGong(int nGong);
+    virtual void set_jg(int nGong);
     // 设置十二地支位置对应
     virtual void setDizhi();
     // 获取六十甲子下标
-    static int getJiaziIndex(int nTianIndex, int nDiIndex);
+    static int get_jz(int nTianIndex, int nDiIndex);
     // 查找内容所在的下标
-    static int getIndex(const int* pData, int nSize, int nValue);
+    static int get_index(const int* pData, int nSize, int nValue);
     // 获取下 n 个值所在的原始位置(正值代表向下数，负值代表向上数)
     // static int getNextPosition(int* pData, int nSize, int nCur, int nValue);
 protected:
@@ -121,98 +121,97 @@ protected:
 
 public:
     // 排地盘
-    virtual void genDiPan() = 0;
+    virtual void gen_dipan() = 0;
     // 查找值符，值使
-    virtual void genZhi() = 0;
+    virtual void gen_zhi() = 0;
     // 排九星
-    virtual void genJiuXing() = 0;
+    virtual void gen_jx() = 0;
     // 排八门
-    virtual void genBaMen() = 0;
+    virtual void gen_bm() = 0;
     // 排八神
-    virtual void genBaShen() = 0;
+    virtual void gen_bs() = 0;
     // 排天盘
-    virtual void genTianPan() = 0;
+    virtual void gen_tp() = 0;
     // 排旬空马星
-    virtual void genOther() = 0;
+    virtual void gen_other() = 0;
 
 public:
     // 获取天盘 (size = 9)
-    const int* getTianPan() const;
+    const int* get_tp() const;
     // 获取地盘 (size = 9)
-    const int* getDiPan() const;
+    const int* get_dp() const;
     // 获取九星 (size = 9)
-    const int* getJiuXing() const;
-    const int* getJiuXingPre() const;
+    const int* get_jx() const;
+    const int* get_jx_pre() const;
     // 获取八门 (size = 9)
-    const int* getBaMen() const;
-    const int* getBaMenPre() const;
+    const int* get_bm() const;
+    const int* get_bm_pre() const;
     // 获取八神 (size = 9)
-    const int* getBaShen() const;
+    const int* get_bs() const;
     // 获取马星
-    int getMaXing() const;
+    int get_mx() const;
     // 获取空亡 (size = 2)
-    const int* getKong() const;
+    const int* get_kw() const;
     // 获取旬空信息
-    const int* getXunKong() const;
+    const int* get_xk() const;
     // 获取日历
-    const CCalenderBase* getCalendar() const;
+    const CCalenderBase* get_cal() const;
     // 获取值班人员
-    int getDuty() const;
+    int get_duty() const;
     // 获取寄宫
-    int getJiGong() const;
+    int get_jg() const;
     // 获取三元
-    int getYuan() const;
+    int get_yuan() const;
     // 获取当日节气
-    int getJieQi() const;
+    int get_jq() const;
     // 获取局数
-    int getJushu() const;
+    int get_js() const;
     // 获取是否是阴遁
-    bool getIsYinDun() const;
+    bool is_yin() const;
     // 获取五行(金水木火土 数字代表 12345)
-    const int* getWuXing() const;
+    const int* get_wx() const;
     // 获取卦序号
-    const int* getGuaXu() const;
+    const int* get_guaxu() const;
     // 获取地支与位置的对应关系
-    const int* getDiZhiPos() const;
+    const int* get_zhi_pos() const;
     // 是否是五不遇时
-    bool isWuBuYu() const;
+    bool is_wby() const;
 
 protected:
-    int  m_nJushu{};               // 局数
-    int  m_JiuXingRe[g_num]{};     // 九星的计算结果
-    int  m_JiuXingPre[g_num]{};    // 九星的原始位置
-    int  m_JiuXingTurn[g_num]{};   // 九星的旋转位置，不足9个的从后向前留空
-    int  m_nPos2GuaNum[g_num]{};   // 位置转卦数
-    int  m_nBamenPre[g_num]{};     // 八门的原始位置
-    int  m_nBamenRe[g_num]{};      // 八门的计算结果
-    int  m_nBamenTurn[g_num]{};    // 八门的旋转位置
-    int  m_nBaShenPre[g_num]{};    // 八神的原始位置
-    int  m_nBaShenRe[g_num]{};     // 八神的计算结果
-    int  m_nTianPan[g_num]{};      // 天盘
-    int  m_nDiPan[g_num]{};        // 地盘 [定义位置：10天干]
-    int  m_nWuXing[g_num]{};       // 五行
-    int  m_nJiGongPos{};           // 天禽星寄宫
-    int  m_nMaXing{};              // 马星位置
-    int  m_nKongWang[2]{};         // 空亡位置
-    int  m_nXunKong[8]{};          // 寻空位置
-    bool m_isYinDun{};             // 是否是阴遁
-    int  m_nYuan{};                // 三元 0 手动, 1下，2中，3上
-    bool m_auto{};                 // 是否是自动排局
-    bool m_isWuBuYu{ false };      // 是否是五不遇时
-    int  m_nZhiFuPos{};            // 值符
-    int  m_nZhiShiPos{};           // 值使
-    int  m_nmaxing{};              // 马星
-    int  m_nJieQi{};               // 当日节气
-    int  m_nJiaZi{};               // 当日六十甲子
+    int jushu_{};            // 局数
+    int jx_re_[g_num]{};     // 九星的计算结果
+    int jx_pre_[g_num]{};    // 九星的原始位置
+    int jx_turn_[g_num]{};   // 九星的旋转位置，不足9个的从后向前留空
+    int pos2gua_[g_num]{};   // 位置转卦数
+    int bm_pre_[g_num]{};    // 八门的原始位置
+    int bm_re_[g_num]{};     // 八门的计算结果
+    int bm_turn_[g_num]{};   // 八门的旋转位置
+    int bs_pre_[g_num]{};    // 八神的原始位置
+    int bs_re_[g_num]{};     // 八神的计算结果
+    int t_[g_num]{};         // 天盘
+    int d_[g_num]{};         // 地盘 [定义位置：10天干]
+    int wx_[g_num]{};        // 五行
+    int jg_{};               // 天禽星寄宫
+    int mx_{};               // 马星位置
+    int kw_[2]{};            // 空亡位置
+    int xk_[8]{};            // 寻空位置
+    bool is_yin_{};          // 是否是阴遁
+    int yuan_{};             // 三元 0 手动, 1下，2中，3上
+    bool auto_{};            // 是否是自动排局
+    bool wbys_{false};       // 是否是五不遇时
+    int zf_{};               // 值符
+    int zs_{};               // 值使
+    int jq_{};               // 当日节气
+    int jz_{};               // 当日六十甲子
 protected:
-    CDateTime      m_datetime;
-    CCalenderBase* m_pCal{};                 // 日历实例
-    int            m_nGuaNum2Pos[g_num]{};   // 卦数转位置
-    int            m_sanhe[12]{};            // 地支三和
-    int            m_zhichong[12]{};         // 地支相冲
-    int            m_dizhi[12]{};            // 十二地支的位置
-    CalendarType   m_calType;                // 日历的类型
-    char           m_error_[512]{};
+    CDateTime datetime_;
+    CCalenderBase* pcal_{};   // 日历实例
+    int gua2pos_[g_num]{};    // 卦数转位置
+    int sanhe_[12]{};         // 地支三和
+    int dzc_[12]{};           // 地支相冲
+    int zhi_[12]{};           // 十二地支的位置
+    CalendarType cal_type_;   // 日历的类型
+    char err_[512]{};
 };
 
 // 奇门工厂类

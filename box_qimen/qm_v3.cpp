@@ -4,16 +4,16 @@
 #include "qm_v3.h"
 #include <cmath>
 
-bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type)
+bool cppbox::CQimenV3::run(const QiParam& info, CalendarType type)
 {
-    if (!BaseRun(info, type)) {
+    if (!base_run(info, type)) {
         return false;
     }
 
-    m_pCal->setDateTime(m_datetime);
+    pcal_->set_datetime(datetime_);
 
-    if (info.nJu == 0) {
-        int jia = CQimen::getJiaziIndex(m_pCal->getSizhu().m_nDGan, m_pCal->getSizhu().m_nDZhi);
+    if (info.ju_ == 0) {
+        int jia = CQimen::get_jz(pcal_->get_sz().dg_, pcal_->get_sz().dz_);
         //  符头只有两个，甲 或者 己
         int futou = jia - jia % 5;
         // 看地支
@@ -22,61 +22,61 @@ bool cppbox::CQimenV3::Run(const QiParam& info, CalendarType type)
         // 1 4 7 10 下元
         int zhiIndex = futou % 12;
         //  直接找出当月的节气信息，看在哪个节气的后面
-        const CDateTime& JieA = m_pCal->getJieFirst().datetime;
-        const CDateTime& JieB = m_pCal->getJieSecond().datetime;
+        const CDateTime& JieA = pcal_->first_jie().dt_;
+        const CDateTime& JieB = pcal_->second_jie().dt_;
 
         // --- 节气1 --- 时间 --- 节气2 ----
-        long long diffA = m_pCal->getSecondByTwoDateTime(m_datetime, JieA);
-        long long diffB = m_pCal->getSecondByTwoDateTime(m_datetime, JieB);
+        long long diffA = pcal_->get_sec_by_date(datetime_, JieA);
+        long long diffB = pcal_->get_sec_by_date(datetime_, JieB);
 
         int nResult = 0;
         if (diffA >= 0 && diffB < 0) {
-            m_nJieQi = m_pCal->getJieFirst().index;
-            nResult = m_nJuQi[m_nJieQi];
+            jq_ = pcal_->first_jie().index_;
+            nResult = ju_qi_[jq_];
         } else if (diffA < 0) {
-            m_nJieQi = CCalenderBase::getRemainder(24, m_pCal->getJieFirst().index - 1);
-            nResult = m_nJuQi[m_nJieQi];
+            jq_ = CCalenderBase::remain(24, pcal_->first_jie().index_ - 1);
+            nResult = ju_qi_[jq_];
         } else {
-            m_nJieQi = m_pCal->getJieSecond().index;
-            nResult = m_nJuQi[m_pCal->getJieSecond().index];
+            jq_ = pcal_->second_jie().index_;
+            nResult = ju_qi_[pcal_->second_jie().index_];
         }
         if ((nResult % 10) == 1) {
-            m_isYinDun = false;
+            is_yin_ = false;
         } else {
-            m_isYinDun = true;
+            is_yin_ = true;
         }
         if (zhiIndex % 3 == 0) {
-            m_nYuan = 3;
-            m_nJushu = nResult / 1000;
+            yuan_ = 3;
+            jushu_ = nResult / 1000;
         }
         if (zhiIndex % 3 == 1) {
-            m_nYuan = 1;
-            m_nJushu = (nResult / 10) % 10;
+            yuan_ = 1;
+            jushu_ = (nResult / 10) % 10;
         }
         if (zhiIndex % 3 == 2) {
-            m_nYuan = 2;
-            m_nJushu = (nResult / 100) % 10;
+            yuan_ = 2;
+            jushu_ = (nResult / 100) % 10;
         }
     } else {
-        m_nJushu = abs(info.nJu);
-        if ((m_nJushu - 9) > 0) {
+        jushu_ = abs(info.ju_);
+        if ((jushu_ - 9) > 0) {
             return false;
         }
-        if (info.nJu < 0) {
-            m_isYinDun = true;
+        if (info.ju_ < 0) {
+            is_yin_ = true;
         } else {
-            m_isYinDun = false;
+            is_yin_ = false;
         }
-        m_nYuan = 0;
+        yuan_ = 0;
     }
 
-    genDiPan();
-    genZhi();
-    genJiuXing();
-    genBaMen();
-    genBaShen();
-    genTianPan();
-    genOther();
+    gen_dipan();
+    gen_zhi();
+    gen_jx();
+    gen_bm();
+    gen_bs();
+    gen_tp();
+    gen_other();
 
     return true;
 }

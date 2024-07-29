@@ -22,8 +22,8 @@ namespace cppbox {
 // 一天的信息
 struct OneDay {
     CDate date;
-    int   nJieIndex;
-    int   nGanZhiIndex;
+    int jie_index_;
+    int gz_index_;
 };
 
 // V1 : 转盘 时家 超接置润法
@@ -35,42 +35,44 @@ public:
 
 public:
     // 传入日期数据
-    bool Run(const QiParam& info, CalendarType type) override;
+    bool run(const QiParam& info, CalendarType type) override;
 
 protected:
     // 推算一年的日历
-    void inferenceDate();
+    void inference();
     // 排地盘
-    void genDiPan() override;
+    void gen_dipan() override;
     // 查找值符，值使
-    void genZhi() override;
+    void gen_zhi() override;
     // 排九星
-    void genJiuXing() override;
+    void gen_jx() override;
     // 排八门
-    void genBaMen() override;
+    void gen_bm() override;
     // 排八神
-    void genBaShen() override;
+    void gen_bs() override;
     // 排天盘
-    void genTianPan() override;
+    void gen_tp() override;
     // 排旬空马星
-    void genOther() override;
+    void gen_other() override;
 
 private:
-    void savePart(CDate& date, int& nUpper, int& nJiazi, int nPur, int nDays);
-    void saveDay(const CDate& date, int nJie, int& nJiazi);
-    void getCurrentMonJie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff);
+    void save_part(CDate& date, int& nUpper, int& nJiazi, int nPur, int nDays);
+    void save_day(const CDate& date, int nJie, int& nJiazi);
+    void get_cur_jie(const CDateTime& datetime_, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff);
     // 在一年的日历中查找当天的信息
-    OneDay* searchDay(const CDateTime& datetime);
+    OneDay* search_day(const CDateTime& datetime_);
     // 打印所推演的一年日历
     // void printYearDay();
     // 获取给定甲子的两个寻空
-    static void getXunKong(int nJiazi, int& nKongA, int& nKongB);
+    static void get_xk(int nJiazi, int& nKongA, int& nKongB);
+
+    using OneDay_t = std::vector<OneDay*>;
 
 protected:
-    std::vector<OneDay*> m_pOneYear;   // 四柱节气的一年推算
-    bool                 m_zhirun{};
-    int                  m_nJuQi[24]{};   // 节气和局的关系对照表
-    std::map<int, int>   m_wuBuYu{};
+    OneDay_t one_year_;   // 四柱节气的一年推算
+    bool zr_{};
+    int ju_qi_[24]{};   // 节气和局的关系对照表
+    std::map<int, int> wby_{};
 };
 
 }   // namespace cppbox

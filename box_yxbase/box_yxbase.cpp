@@ -49,10 +49,13 @@ CYXBase::CYXBase()
 
 CYXBase::~CYXBase() = default;
 
-const int* CYXBase::ZhangShengJue() { return gInt_ZhangSheng; }
+const int* CYXBase::zsj()
+{
+    return gInt_ZhangSheng;
+}
 
 // 金水木火土 数字代表 12345
-WUXING_STATE CYXBase::JudgeState(int me, int other)
+WUXING_STATE CYXBase::judge(int me, int other)
 {
     if (me < 0 || me > 5) {
         return WUXING_STATE::NUM_ERROR;

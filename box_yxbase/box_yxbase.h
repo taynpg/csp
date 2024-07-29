@@ -1,7 +1,7 @@
 #ifndef YX_BASE_HEADER
 #define YX_BASE_HEADER
 
-#if defined (DYNAMIC_DLL)
+#if defined(DYNAMIC_DLL)
 #if defined(_MSC_VER)
 #define CPP_YX_BASE_EXPORT __declspec(dllexport)
 #define CPP_YX_BASE_IMPORT __declspec(dllimport)
@@ -16,10 +16,10 @@
 #define CPP_YX_BASE_API CPP_YX_BASE_IMPORT
 #endif
 #else
-    #define CPP_YX_BASE_API
-    #if defined(_MSC_VER)
-        #pragma warning(disable: 4251)
-    #endif
+#define CPP_YX_BASE_API
+#if defined(_MSC_VER)
+#pragma warning(disable : 4251)
+#endif
 #endif
 
 namespace cppbox {
@@ -41,9 +41,9 @@ public:
     ~CYXBase();
 
 public:
-    static const int* ZhangShengJue();
+    static const int* zsj();
     // 金水木火土 数字代表 12345
-    WUXING_STATE JudgeState(int me, int other);
+    WUXING_STATE judge(int me, int other);
 };
 }   // namespace cppbox
 

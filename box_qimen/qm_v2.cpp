@@ -4,87 +4,87 @@ namespace cppbox {
 
 CQimenV2::CQimenV2()
 {
-    m_pCal = nullptr;
-    m_nJushu = 0;
-    m_calType = CALENDAR_V1;
+    pcal_ = nullptr;
+    jushu_ = 0;
+    cal_type_ = CALENDAR_V1;
 }
 
 CQimenV2::~CQimenV2() = default;
 
-bool CQimenV2::Run(const QiParam& info, CalendarType type)
+bool CQimenV2::run(const QiParam& info, CalendarType type)
 {
-    if (!BaseRun(info, type)) {
+    if (!base_run(info, type)) {
         return false;
     }
-    if (info.nJu == 0) {
-        getJushu(info.datetime);
+    if (info.ju_ == 0) {
+        get_ju(info.datetime_);
     }
 
     // 这里跑一下今天的日期以供后续使用
-    m_pCal->setDateTime(m_datetime);
+    pcal_->set_datetime(datetime_);
 
-    genDiPan();
-    genZhi();
-    genJiuXing();
-    genBaMen();
-    genBaShen();
-    genTianPan();
-    genOther();
+    gen_dipan();
+    gen_zhi();
+    gen_jx();
+    gen_bm();
+    gen_bs();
+    gen_tp();
+    gen_other();
 
     return true;
 }
 
-void CQimenV2::getJushu(const CDateTime& datetime)
+void CQimenV2::get_ju(const CDateTime& datetime)
 {
-    CCalenderBase* pCalendar = CCalenderFactory::creatInstance(m_calType);
-    pCalendar->setDateTime(datetime);
+    CCalenderBase* pCalendar = CCalenderFactory::creat_instance(cal_type_);
+    pCalendar->set_datetime(datetime);
     // 年支数
-    int zhinum = pCalendar->getSizhu().m_nYZhi + 1;
+    int zhinum = pCalendar->get_sz().yz_ + 1;
     // 阴历月日
-    int lunarMon = pCalendar->getLunarDateTime().m_date.m_nMon;
-    int lunarDay = pCalendar->getLunarDateTime().m_date.m_nDay;
+    int lunarMon = pCalendar->get_lunnar().date_.mon_;
+    int lunarDay = pCalendar->get_lunnar().date_.day_;
     // 时辰数
-    int hournum = pCalendar->getSizhu().m_nHZhi + 1;
+    int hournum = pCalendar->get_sz().hz_ + 1;
 
     int sum = zhinum + lunarDay + lunarMon + hournum;
-    m_nJushu = sum % 9;
-    if (m_nJushu == 0) {
-        m_nJushu = 9;
+    jushu_ = sum % 9;
+    if (jushu_ == 0) {
+        jushu_ = 9;
     }
 
     // 判断阴阳遁
     // 1.冬至时间
     CDateTime dz;
-    dz.m_date.m_nYear = datetime.m_date.m_nYear;
-    dz.m_date.m_nMon = 12;
-    dz.m_date.m_nDay = 12;
-    dz.m_time.m_nHour = 12;
-    pCalendar->setDateTime(dz);
-    dz.m_date.m_nDay = pCalendar->getJieSecond().datetime.m_date.m_nDay;
-    dz.m_time.m_nHour = pCalendar->getJieSecond().datetime.m_time.m_nHour;
-    dz.m_time.m_nMin = pCalendar->getJieSecond().datetime.m_time.m_nMin;
-    dz.m_time.m_nSec = pCalendar->getJieSecond().datetime.m_time.m_nSec;
+    dz.date_.year_ = datetime.date_.year_;
+    dz.date_.mon_ = 12;
+    dz.date_.day_ = 12;
+    dz.time_.h_ = 12;
+    pCalendar->set_datetime(dz);
+    dz.date_.day_ = pCalendar->second_jie().dt_.date_.day_;
+    dz.time_.h_ = pCalendar->second_jie().dt_.time_.h_;
+    dz.time_.m_ = pCalendar->second_jie().dt_.time_.m_;
+    dz.time_.s_ = pCalendar->second_jie().dt_.time_.s_;
 
     // 2.夏至时间
     CDateTime xz;
-    xz.m_date.m_nYear = datetime.m_date.m_nYear;
-    xz.m_date.m_nMon = 6;
-    xz.m_date.m_nDay = 15;
-    xz.m_time.m_nHour = 12;
-    pCalendar->setDateTime(xz);
-    xz.m_date.m_nDay = pCalendar->getJieSecond().datetime.m_date.m_nDay;
-    xz.m_time.m_nHour = pCalendar->getJieSecond().datetime.m_time.m_nHour;
-    xz.m_time.m_nMin = pCalendar->getJieSecond().datetime.m_time.m_nMin;
-    xz.m_time.m_nSec = pCalendar->getJieSecond().datetime.m_time.m_nSec;
+    xz.date_.year_ = datetime.date_.year_;
+    xz.date_.mon_ = 6;
+    xz.date_.day_ = 15;
+    xz.time_.h_ = 12;
+    pCalendar->set_datetime(xz);
+    xz.date_.day_ = pCalendar->second_jie().dt_.date_.day_;
+    xz.time_.h_ = pCalendar->second_jie().dt_.time_.h_;
+    xz.time_.m_ = pCalendar->second_jie().dt_.time_.m_;
+    xz.time_.s_ = pCalendar->second_jie().dt_.time_.s_;
 
     // ------- 阳遁 ------- 夏至 ------- 阴遁 ------- 冬至 ------- 阳遁
-    if (pCalendar->getSecondByTwoDateTime(datetime, xz) > 0 && pCalendar->getSecondByTwoDateTime(datetime, dz) <= 0) {
+    if (pCalendar->get_sec_by_date(datetime, xz) > 0 && pCalendar->get_sec_by_date(datetime, dz) <= 0) {
         // 夏至后，冬至前为阴遁
-        m_isYinDun = true;
+        is_yin_ = true;
     } else {
-        m_isYinDun = false;
+        is_yin_ = false;
     }
-    CCalenderFactory::freeCalender(pCalendar);
+    CCalenderFactory::free(pCalendar);
 }
 
 }   // namespace cppbox

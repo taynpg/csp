@@ -13,7 +13,7 @@ namespace cppbox {
 
 bool CDate::operator==(const CDate& rh) const
 {
-    if (m_nYear == rh.m_nYear && m_nMon == rh.m_nMon && m_nDay == rh.m_nDay) {
+    if (year_ == rh.year_ && mon_ == rh.mon_ && day_ == rh.day_) {
         return true;
     }
     return false;
@@ -22,36 +22,36 @@ bool CDate::operator==(const CDate& rh) const
 CDate::CDate() = default;
 CDate::CDate(const CDate& date)
 {
-    m_nYear = date.m_nYear;
-    m_nMon = date.m_nMon;
-    m_nDay = date.m_nDay;
+    year_ = date.year_;
+    mon_ = date.mon_;
+    day_ = date.day_;
 }
 CDate::CDate(int y, int m, int d)
 {
-    m_nYear = y;
-    m_nMon = m;
-    m_nDay = d;
+    year_ = y;
+    mon_ = m;
+    day_ = d;
 }
 CDate& CDate::operator=(const CDate& date)
 {
     if (this == &date) {
         return *this;
     }
-    this->m_nDay = date.m_nDay;
-    this->m_nMon = date.m_nMon;
-    this->m_nYear = date.m_nYear;
+    this->day_ = date.day_;
+    this->mon_ = date.mon_;
+    this->year_ = date.year_;
     return *this;
 }
 
 bool CDate::operator!=(const CDate& date)
 {
-    if (this->m_nYear != date.m_nYear) {
+    if (this->year_ != date.year_) {
         return true;
     }
-    if (this->m_nMon != date.m_nMon) {
+    if (this->mon_ != date.mon_) {
         return true;
     }
-    if (this->m_nDay != date.m_nDay) {
+    if (this->day_ != date.day_) {
         return true;
     }
     return false;
@@ -59,47 +59,47 @@ bool CDate::operator!=(const CDate& date)
 
 CDateTime::CDateTime(const CDate& rh)
 {
-    m_date.m_nYear = rh.m_nYear;
-    m_date.m_nMon = rh.m_nMon;
-    m_date.m_nDay = rh.m_nDay;
-    m_time.m_nHour = 12;
-    m_time.m_nMin = 0;
-    m_time.m_nSec = 0;
+    date_.year_ = rh.year_;
+    date_.mon_ = rh.mon_;
+    date_.day_ = rh.day_;
+    time_.h_ = 12;
+    time_.m_ = 0;
+    time_.s_ = 0;
 }
 
 CDateTime::CDateTime(int y, int m, int d, int h, int min, int sec)
 {
-    m_date.m_nYear = y;
-    m_date.m_nMon = m;
-    m_date.m_nDay = d;
-    m_time.m_nHour = h;
-    m_time.m_nMin = min;
-    m_time.m_nSec = sec;
+    date_.year_ = y;
+    date_.mon_ = m;
+    date_.day_ = d;
+    time_.h_ = h;
+    time_.m_ = min;
+    time_.s_ = sec;
 }
 
-CDateTime& CDateTime::operator=(const CDateTime& datetime)
+CDateTime& CDateTime::operator=(const CDateTime& datetime_)
 {
-    if (this == &datetime) {
+    if (this == &datetime_) {
         return *this;
     }
-    this->m_date.m_nYear = datetime.m_date.m_nYear;
-    this->m_date.m_nMon = datetime.m_date.m_nMon;
-    this->m_date.m_nDay = datetime.m_date.m_nDay;
-    this->m_time.m_nHour = datetime.m_time.m_nHour;
-    this->m_time.m_nMin = datetime.m_time.m_nMin;
-    this->m_time.m_nSec = datetime.m_time.m_nSec;
+    this->date_.year_ = datetime_.date_.year_;
+    this->date_.mon_ = datetime_.date_.mon_;
+    this->date_.day_ = datetime_.date_.day_;
+    this->time_.h_ = datetime_.time_.h_;
+    this->time_.m_ = datetime_.time_.m_;
+    this->time_.s_ = datetime_.time_.s_;
     return *this;
 }
 
 CDateTime& CDateTime::operator=(const CDate& date)
 {
-    this->m_date.m_nYear = date.m_nYear;
-    this->m_date.m_nMon = date.m_nMon;
-    this->m_date.m_nDay = date.m_nDay;
+    this->date_.year_ = date.year_;
+    this->date_.mon_ = date.mon_;
+    this->date_.day_ = date.day_;
     return *this;
 }
 
-CCalenderBase* CCalenderFactory::creatInstance(CalendarType etype)
+CCalenderBase* CCalenderFactory::creat_instance(CalendarType etype)
 {
     CCalenderBase* pResult = nullptr;
 
@@ -119,62 +119,62 @@ CCalenderBase* CCalenderFactory::creatInstance(CalendarType etype)
 }
 
 // 释放内存
-void CCalenderFactory::freeCalender(CCalenderBase* pCalender)
+void CCalenderFactory::free(CCalenderBase* pCalender)
 {
     delete pCalender;
 }
 
 CCalenderBase::CCalenderBase() = default;
 
-CDateTime const& CCalenderBase::getDateTime() const { return m_datetime; }
+CDateTime const& CCalenderBase::get_solar() const { return dt_; }
 
-CDateTime const& CCalenderBase::getLunarDateTime() const { return m_ldatetime; }
+CDateTime const& CCalenderBase::get_lunnar() const { return lunar_; }
 #ifdef _WIN32
 // 获取系统时间
-void CCalenderBase::getNowDateTime(CDateTime& datetime)
+void CCalenderBase::now(CDateTime& datetime_)
 {
     SYSTEMTIME nowTime;
     GetLocalTime(&nowTime);
-    datetime.m_date.m_nYear = nowTime.wYear;
-    datetime.m_date.m_nMon = nowTime.wMonth;
-    datetime.m_date.m_nDay = nowTime.wDay;
-    datetime.m_time.m_nHour = nowTime.wHour;
-    datetime.m_time.m_nMin = nowTime.wMinute;
-    datetime.m_time.m_nSec = nowTime.wSecond;
+    datetime_.date_.year_ = nowTime.wYear;
+    datetime_.date_.mon_ = nowTime.wMonth;
+    datetime_.date_.day_ = nowTime.wDay;
+    datetime_.time_.h_ = nowTime.wHour;
+    datetime_.time_.m_ = nowTime.wMinute;
+    datetime_.time_.s_ = nowTime.wSecond;
 }
 #else
 // 获取系统时间
-void CCalenderBase::getNowDateTime(CDateTime& datetime)
+void CCalenderBase::getNowDateTime(CDateTime& datetime_)
 {
     struct std::tm* nowTime = nullptr;
     std::time_t     _otime_t;
     std::time(&_otime_t);
     nowTime = std::localtime(&_otime_t);
-    datetime.m_date.m_nYear = nowTime->tm_year + 1900;
-    datetime.m_date.m_nMon = nowTime->tm_mon + 1;
-    datetime.m_date.m_nDay = nowTime->tm_mday;
-    datetime.m_time.m_nHour = nowTime->tm_hour;
-    datetime.m_time.m_nMin = nowTime->tm_min;
-    datetime.m_time.m_nSec = nowTime->tm_sec;
+    datetime_.m_date.year_ = nowTime->tm_year + 1900;
+    datetime_.m_date.mon_ = nowTime->tm_mon + 1;
+    datetime_.m_date.day_ = nowTime->tm_mday;
+    datetime_.m_time.m_nHour = nowTime->tm_hour;
+    datetime_.m_time.m_nMin = nowTime->tm_min;
+    datetime_.m_time.m_nSec = nowTime->tm_sec;
 }
 #endif
 
 // 仅检查日期格式上的合法性，并不考虑实现方是否支持这个日期范围
-bool CCalenderBase::checkFormatOnly(const CDateTime& datetime)
+bool CCalenderBase::check_format_only(const CDateTime& datetime_)
 {
-    if (datetime.m_date.m_nMon < 1 || datetime.m_date.m_nMon > 12) {
+    if (datetime_.date_.mon_ < 1 || datetime_.date_.mon_ > 12) {
         return false;
     }
 
-    int y = datetime.m_date.m_nYear;
-    int m = datetime.m_date.m_nMon;
-    int d = datetime.m_date.m_nDay;
+    int y = datetime_.date_.year_;
+    int m = datetime_.date_.mon_;
+    int d = datetime_.date_.day_;
 
     if (d < 1) {
         return false;
     }
 
-    if (CCalenderBase::isLeapYear(y)) {
+    if (CCalenderBase::is_leap(y)) {
         if (m == 2) {
             if (d > 29) {
                 return false;
@@ -200,9 +200,9 @@ bool CCalenderBase::checkFormatOnly(const CDateTime& datetime)
         }
     }
 
-    int h = datetime.m_time.m_nHour;
-    int min = datetime.m_time.m_nMin;
-    int s = datetime.m_time.m_nSec;
+    int h = datetime_.time_.h_;
+    int min = datetime_.time_.m_;
+    int s = datetime_.time_.s_;
 
     if (h > 23 || h < 0) {
         return false;
@@ -217,7 +217,7 @@ bool CCalenderBase::checkFormatOnly(const CDateTime& datetime)
     return true;
 }
 
-bool CCalenderBase::isLeapYear(int year)
+bool CCalenderBase::is_leap(int year)
 {
     if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
         return true;
@@ -226,7 +226,7 @@ bool CCalenderBase::isLeapYear(int year)
 }
 
 // 求余数(结果大于0)
-int CCalenderBase::getRemainder(int nBase, int nValue)
+int CCalenderBase::remain(int nBase, int nValue)
 {
     int nRet = nValue % nBase;
     if (nRet < 0) {
@@ -236,37 +236,37 @@ int CCalenderBase::getRemainder(int nBase, int nValue)
 }
 
 // 复制日期
-void CCalenderBase::copyDateTime(const CDateTime& datetime, CDateTime& outtime)
+void CCalenderBase::copy(const CDateTime& datetime_, CDateTime& outtime)
 {
-    outtime.m_date.m_nYear = datetime.m_date.m_nYear;
-    outtime.m_date.m_nMon = datetime.m_date.m_nMon;
-    outtime.m_date.m_nDay = datetime.m_date.m_nDay;
-    outtime.m_time.m_nHour = datetime.m_time.m_nHour;
-    outtime.m_time.m_nMin = datetime.m_time.m_nMin;
-    outtime.m_time.m_nSec = datetime.m_time.m_nSec;
+    outtime.date_.year_ = datetime_.date_.year_;
+    outtime.date_.mon_ = datetime_.date_.mon_;
+    outtime.date_.day_ = datetime_.date_.day_;
+    outtime.time_.h_ = datetime_.time_.h_;
+    outtime.time_.m_ = datetime_.time_.m_;
+    outtime.time_.s_ = datetime_.time_.s_;
 }
 
 // 获取四柱
-CGanZhi const& CCalenderBase::getSizhu() const { return m_sizhu; }
+CGanZhi const& CCalenderBase::get_sz() const { return sz_; }
 
 // 获取第一个节气
-CJieQi const& CCalenderBase::getJieFirst() const { return m_first; }
+CJieQi const& CCalenderBase::first_jie() const { return first_jie_; }
 // 获取第二个节气
-CJieQi const& CCalenderBase::getJieSecond() const { return m_second; }
+CJieQi const& CCalenderBase::second_jie() const { return second_jie_; }
 
 CGanZhi& CGanZhi::operator=(const CGanZhi& ganzhi)
 {
     if (this == &ganzhi) {
         return *this;
     }
-    this->m_nDGan = ganzhi.m_nDGan;
-    this->m_nDZhi = ganzhi.m_nDZhi;
-    this->m_nHGan = ganzhi.m_nHGan;
-    this->m_nHZhi = ganzhi.m_nHZhi;
-    this->m_nMGan = ganzhi.m_nMGan;
-    this->m_nMZhi = ganzhi.m_nMZhi;
-    this->m_nYGan = ganzhi.m_nYGan;
-    this->m_nYZhi = ganzhi.m_nYZhi;
+    this->dg_ = ganzhi.dg_;
+    this->dz_ = ganzhi.dz_;
+    this->hg_ = ganzhi.hg_;
+    this->hz_ = ganzhi.hz_;
+    this->mg_ = ganzhi.mg_;
+    this->mz_ = ganzhi.mz_;
+    this->yg_ = ganzhi.yg_;
+    this->yz_ = ganzhi.yz_;
     return *this;
 }
 }  // namespace cppbox

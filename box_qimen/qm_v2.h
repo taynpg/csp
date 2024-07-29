@@ -12,10 +12,10 @@ public:
 
 public:
     // 传入日期数据
-    bool Run(const QiParam& info, CalendarType type) override;
+    bool run(const QiParam& info, CalendarType type) override;
 
 private:
-    void getJushu(const CDateTime& datetime);
+    void get_ju(const CDateTime& datetime_);
 };
 
 }   // namespace cppbox

@@ -3,46 +3,43 @@
 
 using namespace cppbox;
 
-bool CQimenUse::Run(const CMDParam& param) 
+bool CQimenUse::run(const CMDParam& param)
 {
     QiParam info;
 
-    if (param.isAutoDate) {
-        CCalenderBase::getNowDateTime(info.datetime);
-    }
-    else {
-        info.datetime = param.datetime;
+    if (param.is_auto_date_) {
+        CCalenderBase::now(info.datetime_);
+    } else {
+        info.datetime_ = param.dt_;
     }
 
-    info.nJu = param.nJu;
+    info.ju_ = param.ju_;
     CQimen* qm{};
 
-    switch (param.nType) {
-        case 1: {
-            qm = CQimenFactory::createInstance(
-                cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
-            break;
-        }
-        case 2: {
-            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
-            break;
-        }
-        case 3: {
-            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAIBU);
-            break;
-        }
-        default:
-            return false;
+    switch (param.type_) {
+    case 1: {
+        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
+        break;
+    }
+    case 2: {
+        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
+        break;
+    }
+    case 3: {
+        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAIBU);
+        break;
+    }
+    default:
+        return false;
     }
 
-    qm->BaseInit();
-    CalendarType tyep = (CalendarType)param.calendar_type;
-    if (!qm->Run(info, tyep)) {
+    qm->base_init();
+    CalendarType tyep = (CalendarType)param.cal_type_;
+    if (!qm->run(info, tyep)) {
         std::cout << qm->getLastError() << std::endl;
         return false;
     }
-    m_print.Run(qm, param.nType);
-
+    print_.run(qm, param.type_);
     CQimenFactory::freeInstance(qm);
     return true;
 }

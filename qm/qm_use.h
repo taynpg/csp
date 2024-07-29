@@ -4,16 +4,17 @@
 #include "../csp_base.hpp"
 #include "print_base.h"
 
-class CQimenUse {
+class CQimenUse
+{
 public:
     CQimenUse() = default;
     ~CQimenUse() = default;
 
 public:
-    bool Run(const CMDParam& param);
+    bool run(const CMDParam& param);
 
 private:
-    CCmdPrint m_print;
+    CCmdPrint print_;
 };
 
 #endif

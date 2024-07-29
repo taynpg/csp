@@ -18,7 +18,7 @@ public:
 
 public:
     // 传入日期数据
-    bool Run(const QiParam& info, CalendarType type) override;
+    bool run(const QiParam& info, CalendarType type) override;
 };
 }   // namespace cppbox
 #endif   // CSP_QM_V3_H

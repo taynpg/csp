@@ -7,13 +7,15 @@
 
 #include <string>
 
+using namespace cppbox;
+
 struct CMDParam {
-    cppbox::CDateTime datetime{};
-    int               nJu{};
-    int               nType = -1;
-    bool              isAutoDate{false};
-    std::string       str_datetime{};
-    int               calendar_type{1};
+    CDateTime dt_{};
+    int ju_{};
+    int type_ = -1;
+    bool is_auto_date_{false};
+    std::string str_dt_{};
+    int cal_type_{1};
 };
 
 #endif

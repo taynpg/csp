@@ -31,180 +31,189 @@ CQimen* CQimenFactory::createInstance(QIMEN_STYLE type)
     return pQimen;
 }
 // 释放实例
-void CQimenFactory::freeInstance(CQimen* pQimen) { delete pQimen; }
-
-CQimen::CQimen() : m_pCal(nullptr), m_calType(CALENDAR_V1)
+void CQimenFactory::freeInstance(CQimen* pQimen)
 {
-    m_sanhe[0] = 8;
-    m_sanhe[1] = 5;
-    m_sanhe[2] = 2;
-    m_sanhe[3] = 2;
-    m_sanhe[4] = 8;
-    m_sanhe[5] = 5;
-    m_sanhe[6] = 2;
-    m_sanhe[7] = 11;
-    m_sanhe[8] = 8;
-    m_sanhe[9] = 5;
-    m_sanhe[10] = 2;
-    m_sanhe[11] = 11;
-
-    m_zhichong[8] = 2;
-    m_zhichong[5] = 11;
-    m_zhichong[2] = 8;
-    m_zhichong[2] = 8;
-    m_zhichong[11] = 5;
+    delete pQimen;
 }
 
-CQimen::~CQimen() { CCalenderFactory::freeCalender(m_pCal); }
+CQimen::CQimen() : pcal_(nullptr), cal_type_(CALENDAR_V1)
+{
+    sanhe_[0] = 8;
+    sanhe_[1] = 5;
+    sanhe_[2] = 2;
+    sanhe_[3] = 2;
+    sanhe_[4] = 8;
+    sanhe_[5] = 5;
+    sanhe_[6] = 2;
+    sanhe_[7] = 11;
+    sanhe_[8] = 8;
+    sanhe_[9] = 5;
+    sanhe_[10] = 2;
+    sanhe_[11] = 11;
+
+    dzc_[8] = 2;
+    dzc_[5] = 11;
+    dzc_[2] = 8;
+    dzc_[2] = 8;
+    dzc_[11] = 5;
+}
+
+CQimen::~CQimen()
+{
+    CCalenderFactory::free(pcal_);
+}
 
 // 设置十二地支位置对应
 void CQimen::setDizhi()
 {
-    m_dizhi[0] = 7;
-    m_dizhi[1] = 6;
-    m_dizhi[2] = 6;
-    m_dizhi[3] = 5;
-    m_dizhi[4] = 4;
-    m_dizhi[5] = 4;
-    m_dizhi[6] = 3;
-    m_dizhi[7] = 2;
-    m_dizhi[8] = 2;
-    m_dizhi[9] = 1;
-    m_dizhi[10] = 0;
-    m_dizhi[11] = 0;
+    zhi_[0] = 7;
+    zhi_[1] = 6;
+    zhi_[2] = 6;
+    zhi_[3] = 5;
+    zhi_[4] = 4;
+    zhi_[5] = 4;
+    zhi_[6] = 3;
+    zhi_[7] = 2;
+    zhi_[8] = 2;
+    zhi_[9] = 1;
+    zhi_[10] = 0;
+    zhi_[11] = 0;
 }
 
-void CQimen::setJiuXingPre()
+void CQimen::set_jx_pre()
 {
-    m_JiuXingPre[0] = 5;
-    m_JiuXingPre[1] = 6;
-    m_JiuXingPre[2] = 1;
-    m_JiuXingPre[3] = 8;
-    m_JiuXingPre[4] = 3;
-    m_JiuXingPre[5] = 2;
-    m_JiuXingPre[6] = 7;
-    m_JiuXingPre[7] = 0;
-    m_JiuXingPre[8] = 4;
+    jx_pre_[0] = 5;
+    jx_pre_[1] = 6;
+    jx_pre_[2] = 1;
+    jx_pre_[3] = 8;
+    jx_pre_[4] = 3;
+    jx_pre_[5] = 2;
+    jx_pre_[6] = 7;
+    jx_pre_[7] = 0;
+    jx_pre_[8] = 4;
 }
 
 // 设置各位置的五行(金水木火土 数字代表 12345)
-void CQimen::setWuxing()
+void CQimen::set_wx()
 {
-    m_nWuXing[0] = 1;
-    m_nWuXing[1] = 1;
-    m_nWuXing[2] = 5;
-    m_nWuXing[3] = 4;
-    m_nWuXing[4] = 3;
-    m_nWuXing[5] = 3;
-    m_nWuXing[6] = 5;
-    m_nWuXing[7] = 2;
-    m_nWuXing[8] = 5;
+    wx_[0] = 1;
+    wx_[1] = 1;
+    wx_[2] = 5;
+    wx_[3] = 4;
+    wx_[4] = 3;
+    wx_[5] = 3;
+    wx_[6] = 5;
+    wx_[7] = 2;
+    wx_[8] = 5;
 }
 
 // 设置九星的旋转位置[相对顺序]
-void CQimen::setJiuXingTurn()
+void CQimen::set_jx_turn()
 {
-    m_JiuXingTurn[0] = 0;
-    m_JiuXingTurn[1] = 7;
-    m_JiuXingTurn[2] = 2;
-    m_JiuXingTurn[3] = 3;
-    m_JiuXingTurn[4] = 8;
-    m_JiuXingTurn[5] = 1;
-    m_JiuXingTurn[6] = 6;
-    m_JiuXingTurn[7] = 5;
+    jx_turn_[0] = 0;
+    jx_turn_[1] = 7;
+    jx_turn_[2] = 2;
+    jx_turn_[3] = 3;
+    jx_turn_[4] = 8;
+    jx_turn_[5] = 1;
+    jx_turn_[6] = 6;
+    jx_turn_[7] = 5;
 }
 
 // 设置八门的初始位置
-void CQimen::setBaMenPre()
+void CQimen::set_bm_pre()
 {
-    m_nBamenPre[0] = 5;
-    m_nBamenPre[1] = 6;
-    m_nBamenPre[2] = 1;
-    m_nBamenPre[3] = 8;
-    m_nBamenPre[4] = 3;
-    m_nBamenPre[5] = 2;
-    m_nBamenPre[6] = 7;
-    m_nBamenPre[7] = 0;
-    m_nBamenPre[8] = 4;
+    bm_pre_[0] = 5;
+    bm_pre_[1] = 6;
+    bm_pre_[2] = 1;
+    bm_pre_[3] = 8;
+    bm_pre_[4] = 3;
+    bm_pre_[5] = 2;
+    bm_pre_[6] = 7;
+    bm_pre_[7] = 0;
+    bm_pre_[8] = 4;
 }
 
 // 设置八门的旋转位置
-void CQimen::setBaMenTurn()
+void CQimen::set_bm_turn()
 {
-    m_nBamenTurn[0] = 0;
-    m_nBamenTurn[1] = 7;
-    m_nBamenTurn[2] = 2;
-    m_nBamenTurn[3] = 3;
-    m_nBamenTurn[4] = 8;
-    m_nBamenTurn[5] = 1;
-    m_nBamenTurn[6] = 6;
-    m_nBamenTurn[7] = 5;
+    bm_turn_[0] = 0;
+    bm_turn_[1] = 7;
+    bm_turn_[2] = 2;
+    bm_turn_[3] = 3;
+    bm_turn_[4] = 8;
+    bm_turn_[5] = 1;
+    bm_turn_[6] = 6;
+    bm_turn_[7] = 5;
 }
 
 // 设置八神的初始位置
-void CQimen::setBaShenPre()
+void CQimen::set_bs_pre()
 {
-    m_nBaShenPre[0] = 5;
-    m_nBaShenPre[1] = 6;
-    m_nBaShenPre[2] = 1;
-    m_nBaShenPre[3] = 8;
-    m_nBaShenPre[4] = 3;
-    m_nBaShenPre[5] = 2;
-    m_nBaShenPre[6] = 7;
-    m_nBaShenPre[7] = 0;
-    m_nBaShenPre[8] = 4;
+    bs_pre_[0] = 5;
+    bs_pre_[1] = 6;
+    bs_pre_[2] = 1;
+    bs_pre_[3] = 8;
+    bs_pre_[4] = 3;
+    bs_pre_[5] = 2;
+    bs_pre_[6] = 7;
+    bs_pre_[7] = 0;
+    bs_pre_[8] = 4;
 }
 
 // 设置九宫的数字对应
-void CQimen::setGongBaseNum()
+void CQimen::set_gong_base()
 {
     // 定义位置从 0 开始分别对应卦序
-    m_nPos2GuaNum[0] = 5;
-    m_nPos2GuaNum[1] = 6;
-    m_nPos2GuaNum[2] = 1;
-    m_nPos2GuaNum[3] = 8;
-    m_nPos2GuaNum[4] = 3;
-    m_nPos2GuaNum[5] = 2;
-    m_nPos2GuaNum[6] = 7;
-    m_nPos2GuaNum[7] = 0;
-    m_nPos2GuaNum[8] = 4;
+    pos2gua_[0] = 5;
+    pos2gua_[1] = 6;
+    pos2gua_[2] = 1;
+    pos2gua_[3] = 8;
+    pos2gua_[4] = 3;
+    pos2gua_[5] = 2;
+    pos2gua_[6] = 7;
+    pos2gua_[7] = 0;
+    pos2gua_[8] = 4;
 }
 
 // 设置初始内容之后，执行此函数，对初始内容整理并生成所需的信息。
 void CQimen::prepare()
 {
-    // m_nGuaNum2Pos 就是后天八卦的顺序数和定义位置的对照。
+    // gua2pos_ 就是后天八卦的顺序数和定义位置的对照。
     for (int i = 0; i < 9; ++i) {
-        m_nGuaNum2Pos[m_nPos2GuaNum[i]] = i;
+        gua2pos_[pos2gua_[i]] = i;
     }
 }
 
 // 设置寄宫
-void CQimen::setJiGong(int nGong)
+void CQimen::set_jg(int nGong)
 {
     // 这里减 1 是取索引
     int nIndex = nGong - 1;
     // 这里要把寄宫转成位置
-    m_nJiGongPos = m_nGuaNum2Pos[nIndex];
+    jg_ = gua2pos_[nIndex];
 }
 
-bool CQimen::BaseRun(const QiParam& info, CalendarType type)
+bool CQimen::base_run(const QiParam& info, CalendarType type)
 {
-    m_calType = type;
-    CCalenderFactory::freeCalender(m_pCal);
-    m_pCal = CCalenderFactory::creatInstance(m_calType);
-    if (!m_pCal->checkFormat(info.datetime)) {
-        std::snprintf(m_error_, sizeof(m_error_), "%s", "日期不在支持的范围内。");
+    cal_type_ = type;
+    CCalenderFactory::free(pcal_);
+    pcal_ = CCalenderFactory::creat_instance(cal_type_);
+    if (!pcal_->check_format(info.datetime_)) {
+        std::snprintf(err_, sizeof(err_), "%s", "日期不在支持的范围内。");
         return false;
     }
-    m_datetime = info.datetime;
+    datetime_ = info.datetime_;
     return true;
 }
 
-const char* CQimen::getLastError() const { return m_error_; }
+const char* CQimen::getLastError() const
+{
+    return err_;
+}
 
 // 获取六十甲子下标
-int CQimen::getJiaziIndex(int nTianIndex, int nDiIndex)
+int CQimen::get_jz(int nTianIndex, int nDiIndex)
 {
     int nRet = nDiIndex;
     for (int i = 0; i < 5; ++i) {
@@ -217,7 +226,7 @@ int CQimen::getJiaziIndex(int nTianIndex, int nDiIndex)
 }
 
 // 查找内容所在的下标
-int CQimen::getIndex(const int* pData, int nSize, int nValue)
+int CQimen::get_index(const int* pData, int nSize, int nValue)
 {
     if (!pData) {
         return -1;
@@ -235,75 +244,138 @@ int CQimen::getIndex(const int* pData, int nSize, int nValue)
 }
 
 // 获取天盘
-const int* CQimen::getTianPan() const { return m_nTianPan; }
+const int* CQimen::get_tp() const
+{
+    return t_;
+}
 
 // 获取地盘
-const int* CQimen::getDiPan() const { return m_nDiPan; }
+const int* CQimen::get_dp() const
+{
+    return d_;
+}
 
 // 获取九星
-const int* CQimen::getJiuXing() const { return m_JiuXingRe; }
+const int* CQimen::get_jx() const
+{
+    return jx_re_;
+}
 
 // 获取九星
-const int* CQimen::getJiuXingPre() const { return m_JiuXingPre; }
+const int* CQimen::get_jx_pre() const
+{
+    return jx_pre_;
+}
 
 // 获取八门
-const int* CQimen::getBaMen() const { return m_nBamenRe; }
+const int* CQimen::get_bm() const
+{
+    return bm_re_;
+}
 
-const int* CQimen::getBaMenPre() const { return m_nBamenPre; }
+const int* CQimen::get_bm_pre() const
+{
+    return bm_pre_;
+}
 
 // 获取八神
-const int* CQimen::getBaShen() const { return m_nBaShenRe; }
+const int* CQimen::get_bs() const
+{
+    return bs_re_;
+}
 
 // 获取马星
-int CQimen::getMaXing() const { return m_nMaXing; }
+int CQimen::get_mx() const
+{
+    return mx_;
+}
 // 获取空亡 (size 需要>= 2)
-const int* CQimen::getKong() const { return m_nKongWang; }
+const int* CQimen::get_kw() const
+{
+    return kw_;
+}
 // 获取日历
-const CCalenderBase* CQimen::getCalendar() const { return m_pCal; }
+const CCalenderBase* CQimen::get_cal() const
+{
+    return pcal_;
+}
 
 // 获取旬空信息
-const int* CQimen::getXunKong() const { return m_nXunKong; }
+const int* CQimen::get_xk() const
+{
+    return xk_;
+}
 
 // 获取值班人员
-int CQimen::getDuty() const { return m_nZhiFuPos; }
+int CQimen::get_duty() const
+{
+    return zf_;
+}
 
 // 获取寄宫
-int CQimen::getJiGong() const { return m_nJiGongPos; }
+int CQimen::get_jg() const
+{
+    return jg_;
+}
 
 // 获取三元
-int CQimen::getYuan() const { return m_nYuan; }
+int CQimen::get_yuan() const
+{
+    return yuan_;
+}
 // 获取当日节气
-int CQimen::getJieQi() const { return m_nJieQi; }
+int CQimen::get_jq() const
+{
+    return jq_;
+}
 // 获取局数
-int CQimen::getJushu() const { return m_nJushu; }
+int CQimen::get_js() const
+{
+    return jushu_;
+}
 
-bool CQimen::getIsYinDun() const { return m_isYinDun; }
+bool CQimen::is_yin() const
+{
+    return is_yin_;
+}
 
 // 获取五行
-const int* CQimen::getWuXing() const { return m_nWuXing; }
-
-void CQimen::BaseInit()
+const int* CQimen::get_wx() const
 {
-    setWuxing();
-    setJiuXingPre();
-    setJiuXingTurn();
-    setGongBaseNum();
-    setBaMenPre();
-    setBaMenTurn();
-    setBaShenPre();
+    return wx_;
+}
+
+void CQimen::base_init()
+{
+    set_wx();
+    set_jx_pre();
+    set_jx_turn();
+    set_gong_base();
+    set_bm_pre();
+    set_bm_turn();
+    set_bs_pre();
     setDizhi();
 
     prepare();
     // 默认寄宫寄 坤二宫
-    setJiGong(2);
+    set_jg(2);
 }
 
 // 获取卦序号
-const int* CQimen::getGuaXu() const { return m_nPos2GuaNum; }
+const int* CQimen::get_guaxu() const
+{
+    return pos2gua_;
+}
 
 // 获取地支与位置的对应关系
-const int* CQimen::getDiZhiPos() const { return m_dizhi; }
+const int* CQimen::get_zhi_pos() const
+{
+    return zhi_;
+}
 
-bool CQimen::isWuBuYu() const { return m_isWuBuYu; }
+bool CQimen::is_wby() const
+{
+    return wbys_;
+}
 
 }   // namespace cppbox

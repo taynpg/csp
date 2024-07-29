@@ -21,128 +21,128 @@ const char* gStr_Gua[] = {"坎", "坤", "震", "巽", "中", "乾", "兑", "艮"
 namespace cppbox {
 
 // 获取卦名
-std::string CZhData::ZhGua(int nIndex)
+std::string CZhData::gua(int index)
 {
-    if (nIndex < 0 || nIndex > 8) {
+    if (index < 0 || index > 8) {
         return "";
     }
-    std::string result = std::string(gStr_Gua[nIndex]);
+    std::string result = std::string(gStr_Gua[index]);
     return result;
 }
 
-std::string CZhData::ZhZhangSheng(int nIndex)
+std::string CZhData::zs(int index)
 {
-    if (nIndex < 0 || nIndex > 11) {
+    if (index < 0 || index > 11) {
         return "";
     }
-    std::string result = std::string(gStr_ZhangSheng[nIndex]);
+    std::string result = std::string(gStr_ZhangSheng[index]);
     return result;
 }
 
-std::string CZhData::ZhNumber(int nIndex)
+std::string CZhData::num(int index)
 {
-    if (nIndex < 0 || nIndex > 10) {
+    if (index < 0 || index > 10) {
         return "";
     }
-    std::string result = std::string(gStr_num[nIndex]);
+    std::string result = std::string(gStr_num[index]);
     return result;
 }
-std::string CZhData::ZhMon(int nIndex)
+std::string CZhData::mon(int index)
 {
-    if (nIndex < 0 || nIndex > 11) {
+    if (index < 0 || index > 11) {
         return "";
     }
-    std::string result = std::string(gStr_ymc[nIndex]);
+    std::string result = std::string(gStr_ymc[index]);
     return result;
 }
-std::string CZhData::ZhMonS(int nIndex)
+std::string CZhData::mon2(int index)
 {
-    if (nIndex < 0 || nIndex > 11) {
+    if (index < 0 || index > 11) {
         return "";
     }
-    std::string result = std::string(gStr_ymc[nIndex]) + "月";
+    std::string result = std::string(gStr_ymc[index]) + "月";
     return result;
 }
-std::string CZhData::ZhJieQi(int nIndex)
+std::string CZhData::jq(int index)
 {   // 获取二十四节气名称，下标从公历 1 月的小寒开始
-    if (nIndex < 0 || nIndex > 23) {
+    if (index < 0 || index > 23) {
         return "";
     }
-    std::string result = std::string(gStr_jq[nIndex]);
+    std::string result = std::string(gStr_jq[index]);
     return result;
 }
 
-std::string CZhData::ZhLunarDay(int nIndex)
+std::string CZhData::lunar_day(int index)
 {   // 获取农历日名称
-    if (nIndex < 0 || nIndex > 29) {
+    if (index < 0 || index > 29) {
         return "";
     }
-    std::string result = std::string(gStr_lua[nIndex]);
+    std::string result = std::string(gStr_lua[index]);
     return result;
 }
 // 获取天干
-std::string CZhData::ZhGan(int nIndex)
+std::string CZhData::gan(int index)
 {
-    if (nIndex < 0 || nIndex > 9) {
+    if (index < 0 || index > 9) {
         return "";
     }
-    std::string result = std::string(gStr_gan[nIndex]);
+    std::string result = std::string(gStr_gan[index]);
     return result;
 }
 // 获取地支
-std::string CZhData::ZhZhi(int nIndex)
+std::string CZhData::zhi(int index)
 {
-    if (nIndex < 0 || nIndex > 11) {
+    if (index < 0 || index > 11) {
         return "";
     }
-    std::string result = std::string(gStr_zhi[nIndex]);
+    std::string result = std::string(gStr_zhi[index]);
     return result;
 }
 // 获取六十甲子
-std::string CZhData::ZhJiaZi(int nIndex)
+std::string CZhData::jz(int index)
 {
-    if (nIndex < 0 || nIndex > 59) {
+    if (index < 0 || index > 59) {
         return "";
     }
-    std::string result = std::string(gStr_Jiazi[nIndex]);
+    std::string result = std::string(gStr_Jiazi[index]);
     return result;
 }
 
 // 获取九星
-std::string CZhData::ZhJiuXing(int nIndex)
+std::string CZhData::jx(int index)
 {
-    if (nIndex < 0 || nIndex > 8) {
+    if (index < 0 || index > 8) {
         return "";
     }
-    std::string result = std::string(gStr_Jiuxing[nIndex]);
+    std::string result = std::string(gStr_Jiuxing[index]);
     return result;
 }
 // 获取八门
-std::string CZhData::ZhBaMen(int nIndex)
+std::string CZhData::bm(int index)
 {
-    if (nIndex < 0 || nIndex > 8) {
+    if (index < 0 || index > 8) {
         return "";
     }
-    std::string result = std::string(gStr_Bamen[nIndex]);
+    std::string result = std::string(gStr_Bamen[index]);
     return result;
 }
 // 获取八神
-std::string CZhData::ZhBaShen(int nIndex)
+std::string CZhData::bs(int index)
 {
-    if (nIndex < 0 || nIndex > 8) {
+    if (index < 0 || index > 8) {
         return "";
     }
-    std::string result = std::string(gStr_Bashen[nIndex]);
+    std::string result = std::string(gStr_Bashen[index]);
     return result;
 }
 // 获取空亡
-std::string CZhData::ZhKongWang()
+std::string CZhData::kw()
 {
     std::string result("空");
     return result;
 }
 // 获取马星
-std::string CZhData::ZhMaXing()
+std::string CZhData::mx()
 {
     std::string result("马");
     return result;

@@ -15,29 +15,29 @@ public:
 
 public:
     // 设置日期并计算，返回是否成功。
-    bool setDateTime(const CDateTime& datetime) override;
+    bool set_datetime(const CDateTime& datetime) override;
     // 检查日期格式是否正确
-    bool checkFormat(const CDateTime& datetime) override;
+    bool check_format(const CDateTime& datetime) override;
     // 获取前一天
-    void getPreDay(CDateTime& datetime) override;
-    void getPreDay(CDate& date) override;
+    void pre(CDateTime& datetime) override;
+    void pre(CDate& date) override;
     // 获取后一天
-    void getNextDay(CDateTime& datetime) override;
-    void getNextDay(CDate& date) override;
+    void next(CDateTime& datetime) override;
+    void next(CDate& date) override;
     // 返回两个日期之间的天数差
-    int getDiffByTwoDate(const CDate& dateA, const CDate& dateB) override;
+    int get_diff_day(const CDate& dateA, const CDate& dateB) override;
 
     // 基于基础时间和差值计算新的日期
-    void getDateTimeBySecond(const CDateTime& basetime, CDateTime& outtime, long long nSecond) override;
+    void get_diff_sec(const CDateTime& basetime, CDateTime& outtime, long long nSecond) override;
 
     // 返回距离 00:00:00 的秒数
-    int getSecondsFromBase(const CTime& time) override;
+    int get_sec_by_base(const CTime& time) override;
 
     // 返回两个时间之间的秒数差
-    int getDiffByTwoTime(const CTime& timeA, const CTime& timeB) override;
+    int get_diff_by_time(const CTime& timeA, const CTime& timeB) override;
 
     // 返回两个日期时间的秒数差
-    long long getSecondByTwoDateTime(const CDateTime& datetimeA, const CDateTime& datetimeB) override;
+    long long get_sec_by_date(const CDateTime& datetimeA, const CDateTime& datetimeB) override;
 
 private:
     // 初始化数据
@@ -55,10 +55,10 @@ private:
 
 private:
     // 返回公历日期的前一天日期
-    static void getPreDay(const CDateTime& datetime, CDateTime& outtime);
+    static void getPreDay(const CDateTime& datetime_, CDateTime& outtime);
 
     // 获取某年第 x 个节气为几号(从 0 小寒算起)
-    int getLunarSterm(int nYear, int nth, CDateTime& datetime);
+    int getLunarSterm(int nYear, int nth, CDateTime& datetime_);
 
     // 计算农历的年干支，月干支 (立春为新年)
     void getYMGanZhi();
@@ -67,7 +67,7 @@ private:
 
 private:
     // 返回公历日期的后一天日期
-    static void getNextDay(const CDateTime& datetime, CDateTime& outtime);
+    static void getNextDay(const CDateTime& datetime_, CDateTime& outtime);
 
     // 返回距离 1900.1.1 的天数
     static int getDaysFromBase(const CDate& date);
