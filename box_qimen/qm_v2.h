@@ -15,7 +15,7 @@ public:
     bool run(const QiParam& info, CalendarType type) override;
 
 private:
-    void get_ju(const CDateTime& datetime_);
+    void get_ju(const CDateTime& datetime);
 };
 
 }   // namespace cppbox

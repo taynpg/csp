@@ -68,7 +68,7 @@ struct CPP_CALENDAR_API CTime {
 // 日期和时间
 struct CPP_CALENDAR_API CDateTime {
     CDateTime(int y, int m, int d, int h, int min, int sec);
-    CDateTime& operator=(const CDateTime& datetime_);
+    CDateTime& operator=(const CDateTime& datetime);
     CDateTime& operator=(const CDate& date);
     CDateTime() = default;
     ~CDateTime() = default;
@@ -92,26 +92,26 @@ public:
 
 public:
     // 仅检查日期格式上的合法性，并不考虑实现方是否支持这个日期范围
-    static bool check_format_only(const CDateTime& datetime_);
+    static bool check_format_only(const CDateTime& datetime);
     static bool is_leap(int year);
 
 public:
     // 设置日期并计算，返回是否成功。
-    virtual bool set_datetime(const CDateTime& datetime_) = 0;
+    virtual bool set_datetime(const CDateTime& datetime) = 0;
     virtual CDateTime const& get_solar() const;
     virtual CDateTime const& get_lunnar() const;
     // 获取系统时间
-    static void now(CDateTime& datetime_);
+    static void now(CDateTime& datetime);
     // 求余数(结果大于0)
     static int remain(int nBase, int nValue);
     // 获取前一天
-    virtual void pre(CDateTime& datetime_) = 0;
+    virtual void pre(CDateTime& datetime) = 0;
     virtual void pre(CDate& date) = 0;
     // 获取后一天
-    virtual void next(CDateTime& datetime_) = 0;
+    virtual void next(CDateTime& datetime) = 0;
     virtual void next(CDate& date) = 0;
     // 检查日期格式是否正确
-    virtual bool check_format(const CDateTime& datetime_) = 0;
+    virtual bool check_format(const CDateTime& datetime) = 0;
     // 返回两个日期之间的天数差
     virtual int get_diff_day(const CDate& dateA, const CDate& dateB) = 0;
     // 基于基础时间和差值计算新的日期
@@ -120,7 +120,7 @@ public:
     virtual int get_sec_by_base(const CTime& time) = 0;
 
     // 复制日期
-    static void copy(const CDateTime& datetime_, CDateTime& outtime);
+    static void mcopy(const CDateTime& datetime, CDateTime& outtime);
     // 返回两个时间之间的秒数差
     virtual int get_diff_by_time(const CTime& timeA, const CTime& timeB) = 0;
 

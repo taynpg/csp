@@ -3,10 +3,10 @@
 
 int main()
 {
-    std::array<int, 6> array{ 1, 0, 1, 0, 1, 0 };
+    std::array<int, 6> array{1, 0, 1, 0, 1, 0};
 
     CGuaPrint print;
     print.show_six(array);
 
-	return 0; 
+    return 0;
 }

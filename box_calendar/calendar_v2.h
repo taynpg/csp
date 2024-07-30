@@ -20,7 +20,7 @@ public:
     void pre(CDateTime& datetime) override;
     void pre(CDate& date) override;
     // 获取后一天
-    void next(CDateTime& datetime_) override;
+    void next(CDateTime& datetime) override;
     void next(CDate& date) override;
     // 检查日期格式是否正确
     bool check_format(const CDateTime& datetime) override;

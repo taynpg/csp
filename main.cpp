@@ -11,10 +11,9 @@
 
 bool parse(const std::string& str, CMDParam& param)
 {
-    std::regex dateRegex(
-        R"((-?\d{1,4})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2}))");
+    std::regex dateRegex(R"((-?\d{1,4})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2}))");
     std::smatch match;
-    bool        is_valid = false;
+    bool is_valid = false;
     // 使用正则表达式进行匹配
     if (std::regex_search(str, match, dateRegex)) {
         param.dt_.date_.year_ = std::stoi(match[1].str());
@@ -76,14 +75,12 @@ int main(int argc, char** argv)
     }
 
     if (param.type_ == -1) {
-        std::cout << "盘式类型为必填项，-t，可使用--help查看帮助。"
-                  << std::endl;
+        std::cout << "盘式类型为必填项，-t，可使用--help查看帮助。" << std::endl;
         return -1;
     }
 
     if ((param.cal_type_ != 0) && (param.cal_type_ != 1)) {
-        std::cout << "日历类型不正确，可选项[0,1]，可使用--help查看帮助。"
-                  << std::endl;
+        std::cout << "日历类型不正确，可选项[0,1]，可使用--help查看帮助。" << std::endl;
         return -1;
     }
 

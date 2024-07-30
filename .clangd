@@ -9,6 +9,7 @@ Diagnostics:
         unused-variable,        # 禁用未使用变量提示
         unused-function,        # 禁用未使用函数提示
         unused-includes,        # 禁用未使用的头文件提示
+        unused-parameter,
         builtin_definition      # clang 显示 mingw windows.h 中 definition of builtin function '__rdtsc
     ]
     ClangTidy:

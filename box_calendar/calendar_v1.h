@@ -55,10 +55,10 @@ private:
 
 private:
     // 返回公历日期的前一天日期
-    static void getPreDay(const CDateTime& datetime_, CDateTime& outtime);
+    static void getPreDay(const CDateTime& datetime, CDateTime& outtime);
 
     // 获取某年第 x 个节气为几号(从 0 小寒算起)
-    int getLunarSterm(int nYear, int nth, CDateTime& datetime_);
+    int getLunarSterm(int nYear, int nth, CDateTime& datetime);
 
     // 计算农历的年干支，月干支 (立春为新年)
     void getYMGanZhi();
@@ -67,7 +67,7 @@ private:
 
 private:
     // 返回公历日期的后一天日期
-    static void getNextDay(const CDateTime& datetime_, CDateTime& outtime);
+    static void getNextDay(const CDateTime& datetime, CDateTime& outtime);
 
     // 返回距离 1900.1.1 的天数
     static int getDaysFromBase(const CDate& date);

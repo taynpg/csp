@@ -122,9 +122,9 @@ bool CQiMenV1::run(const QiParam& info, CalendarType type)
     return true;
 }
 
-void CQiMenV1::get_cur_jie(const CDateTime& datetime_, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff)
+void CQiMenV1::get_cur_jie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff)
 {
-    pcal_->set_datetime(datetime_);
+    pcal_->set_datetime(datetime);
     datetimeJie = pcal_->first_jie().dt_;
     pcal_->set_datetime(datetimeJie);
     nJiazi = get_jz(pcal_->get_sz().dg_, pcal_->get_sz().dz_);
@@ -219,12 +219,12 @@ void CQiMenV1::save_day(const CDate& date, int nJie, int& nJiazi)
 }
 
 // 在一年的日历中查找当天的信息
-OneDay* CQiMenV1::search_day(const CDateTime& datetime_)
+OneDay* CQiMenV1::search_day(const CDateTime& datetime)
 {
     OneDay* p = nullptr;
     std::vector<OneDay*>::const_iterator it;
     for (it = one_year_.begin(); it != one_year_.end(); ++it) {
-        if ((*it)->date == datetime_.date_) {
+        if ((*it)->date == datetime.date_) {
             p = *it;
             break;
         }

@@ -1,37 +1,18 @@
-# .clang-format
-# 风格格式化
-BasedOnStyle: LLVM 
-# 4 空格缩进
-IndentWidth: 4 
-# 连续对齐变量的声明
-AlignConsecutiveDeclarations: false
-# 指针左侧对齐
-PointerAlignment: Left 
-# 访问说明符(public、private等)的偏移
+BasedOnStyle: Google
+IndentWidth: 4
+PointerAlignment: Left
 AccessModifierOffset: -4
-# 大括号
 BreakBeforeBraces: Custom
 BraceWrapping:
-    # 函数定义后面大括号在新行
     AfterFunction: true
-    # class定义后面
     AfterClass: true
-    
-# 去除C++11的列表初始化的大括号{后和}前的空格
 Cpp11BracedListStyle: true
-# 允许重新排版注释
 ReflowComments: true
-# 允许排序#include
-SortIncludes: true
-# 在尾随的评论前添加的空格数(只适用于//)
+SortIncludes: false
 SpacesBeforeTrailingComments: 3
-# tab宽度
 TabWidth: 4
-# 构造函数的初始化列表要么都在同一行，要么都各自一行
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
-# 每行字符的限制，0表示没有限制
 ColumnLimit: 150
-# 允许短的块放在同一行
 AllowShortBlocksOnASingleLine: false
-# 是否允许短函数在一行
-AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortFunctionsOnASingleLine: None
+AllowShortEnumsOnASingleLine: false

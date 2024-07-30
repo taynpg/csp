@@ -58,9 +58,9 @@ protected:
 private:
     void save_part(CDate& date, int& nUpper, int& nJiazi, int nPur, int nDays);
     void save_day(const CDate& date, int nJie, int& nJiazi);
-    void get_cur_jie(const CDateTime& datetime_, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff);
+    void get_cur_jie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff);
     // 在一年的日历中查找当天的信息
-    OneDay* search_day(const CDateTime& datetime_);
+    OneDay* search_day(const CDateTime& datetime);
     // 打印所推演的一年日历
     // void printYearDay();
     // 获取给定甲子的两个寻空

@@ -2,8 +2,13 @@
 
 namespace cppbox {
 
-CCalenderV2::CCalenderV2() {}
-CCalenderV2::~CCalenderV2() { delete day_; }
+CCalenderV2::CCalenderV2()
+{
+}
+CCalenderV2::~CCalenderV2()
+{
+    delete day_;
+}
 
 bool CCalenderV2::set_datetime(const CDateTime& datetime)
 {
@@ -59,7 +64,7 @@ void CCalenderV2::check_mon_gz()
 {
     auto ck = [&](const CDateTime& datetime) {
         if (dt_.date_ != datetime.date_) {
-            return ;
+            return;
         }
         int df = get_diff_by_time(datetime.time_, datetime.time_);
         if (df < 0) {
@@ -72,7 +77,10 @@ void CCalenderV2::check_mon_gz()
 }
 
 // 获取前一天
-void CCalenderV2::pre(CDateTime& datetime) { pre(datetime.date_); }
+void CCalenderV2::pre(CDateTime& datetime)
+{
+    pre(datetime.date_);
+}
 
 void CCalenderV2::pre(CDate& date)
 {
@@ -84,7 +92,10 @@ void CCalenderV2::pre(CDate& date)
 }
 
 // 获取后一天
-void CCalenderV2::next(CDateTime& datetime) { next(datetime.date_); }
+void CCalenderV2::next(CDateTime& datetime)
+{
+    next(datetime.date_);
+}
 
 void CCalenderV2::next(CDate& date)
 {
@@ -107,8 +118,8 @@ bool CCalenderV2::check_format(const CDateTime& datetime)
 // 返回两个日期之间的天数差
 int CCalenderV2::get_diff_day(const CDate& dateA, const CDate& dateB)
 {
-    Time   ta(dateA.year_, dateA.mon_, dateA.day_, 0, 0, 0);
-    Time   tb(dateB.year_, dateB.mon_, dateB.day_, 0, 0, 0);
+    Time ta(dateA.year_, dateA.mon_, dateA.day_, 0, 0, 0);
+    Time tb(dateB.year_, dateB.mon_, dateB.day_, 0, 0, 0);
     double a = sxtwl::toJD(ta);
     double b = sxtwl::toJD(tb);
     double dd = a - b;
@@ -116,10 +127,15 @@ int CCalenderV2::get_diff_day(const CDate& dateA, const CDate& dateB)
 }
 
 // 返回距离 00:00:00 的秒数
-int CCalenderV2::get_sec_by_base(const CTime& time) { return time.h_ * 3600 + time.m_ * 60 + time.s_; }
+int CCalenderV2::get_sec_by_base(const CTime& time)
+{
+    return time.h_ * 3600 + time.m_ * 60 + time.s_;
+}
 
 // 基于基础时间和差值计算新的日期
-void CCalenderV2::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, long long nSecond) {}
+void CCalenderV2::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, long long nSecond)
+{
+}
 
 // 返回两个时间之间的秒数差
 int CCalenderV2::get_diff_by_time(const CTime& timeA, const CTime& timeB)
@@ -132,10 +148,8 @@ int CCalenderV2::get_diff_by_time(const CTime& timeA, const CTime& timeB)
 // 返回两个日期时间的秒数差
 long long CCalenderV2::get_sec_by_date(const CDateTime& datetimeA, const CDateTime& datetimeB)
 {
-    Time   ta(datetimeA.date_.year_, datetimeA.date_.mon_, datetimeA.date_.day_, datetimeA.time_.h_, datetimeA.time_.m_,
-              datetimeA.time_.s_);
-    Time   tb(datetimeB.date_.year_, datetimeB.date_.mon_, datetimeB.date_.day_, datetimeB.time_.h_, datetimeB.time_.m_,
-              datetimeB.time_.s_);
+    Time ta(datetimeA.date_.year_, datetimeA.date_.mon_, datetimeA.date_.day_, datetimeA.time_.h_, datetimeA.time_.m_, datetimeA.time_.s_);
+    Time tb(datetimeB.date_.year_, datetimeB.date_.mon_, datetimeB.date_.day_, datetimeB.time_.h_, datetimeB.time_.m_, datetimeB.time_.s_);
     double a = sxtwl::toJD(ta);
     double b = sxtwl::toJD(tb);
     double dd = a - b;

@@ -17,25 +17,25 @@ bool CQimenUse::run(const CMDParam& param)
     CQimen* qm{};
 
     switch (param.type_) {
-    case 1: {
-        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
-        break;
-    }
-    case 2: {
-        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
-        break;
-    }
-    case 3: {
-        qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAIBU);
-        break;
-    }
-    default:
-        return false;
+        case 1: {
+            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
+            break;
+        }
+        case 2: {
+            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
+            break;
+        }
+        case 3: {
+            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAIBU);
+            break;
+        }
+        default:
+            return false;
     }
 
     qm->base_init();
-    CalendarType tyep = (CalendarType)param.cal_type_;
-    if (!qm->run(info, tyep)) {
+    CalendarType type = (CalendarType)param.cal_type_;
+    if (!qm->run(info, type)) {
         std::cout << qm->getLastError() << std::endl;
         return false;
     }

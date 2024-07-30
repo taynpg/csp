@@ -13,20 +13,20 @@ CQimen* CQimenFactory::createInstance(QIMEN_STYLE type)
 {
     CQimen* pQimen = nullptr;
     switch (type) {
-    case SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {   // 时家超接置润法
-        pQimen = new CQiMenV1();
-        break;
-    }
-    case SHIJIA_ZHUANPAN_YINPAN: {
-        pQimen = new CQimenV2();
-        break;
-    }
-    case SHIJIA_ZHUANPAN_CHAIBU: {
-        pQimen = new CQimenV3();
-        break;
-    }
-    default:
-        break;
+        case SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {   // 时家超接置润法
+            pQimen = new CQiMenV1();
+            break;
+        }
+        case SHIJIA_ZHUANPAN_YINPAN: {
+            pQimen = new CQimenV2();
+            break;
+        }
+        case SHIJIA_ZHUANPAN_CHAIBU: {
+            pQimen = new CQimenV3();
+            break;
+        }
+        default:
+            break;
     }
     return pQimen;
 }
