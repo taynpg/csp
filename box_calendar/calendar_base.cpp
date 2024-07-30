@@ -156,12 +156,12 @@ void CCalenderBase::now(CDateTime& datetime)
     std::time_t _otime_t;
     std::time(&_otime_t);
     nowTime = std::localtime(&_otime_t);
-    datetime.m_date.year_ = nowTime->tm_year + 1900;
-    datetime.m_date.mon_ = nowTime->tm_mon + 1;
-    datetime.m_date.day_ = nowTime->tm_mday;
-    datetime.m_time.m_nHour = nowTime->tm_hour;
-    datetime.m_time.m_nMin = nowTime->tm_min;
-    datetime.m_time.m_nSec = nowTime->tm_sec;
+    datetime.date_.year_ = nowTime->tm_year + 1900;
+    datetime.date_.mon_ = nowTime->tm_mon + 1;
+    datetime.date_.day_ = nowTime->tm_mday;
+    datetime.time_.h_ = nowTime->tm_hour;
+    datetime.time_.m_ = nowTime->tm_min;
+    datetime.time_.s_ = nowTime->tm_sec;
 }
 #endif
 
