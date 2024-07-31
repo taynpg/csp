@@ -30,6 +30,11 @@ bool CCalenderV2::set_datetime(const CDateTime& datetime)
     sz_.hg_ = gz.tg;
     sz_.hz_ = gz.dz;
 
+    if (dt_.time_.h_ == 23) {
+        sz_.dg_ = CCalenderBase::remain(10, sz_.dg_ + 1);
+        sz_.dz_ = CCalenderBase::remain(12, sz_.dz_ + 1);
+    }
+
     leap_ = day_->isLunarLeap();
     std::vector<sxtwl::JieQiInfo> jq_vec{};
     if (dt_.date_.mon_ == 1) {
