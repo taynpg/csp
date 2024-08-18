@@ -6,7 +6,7 @@ CQimenV2::CQimenV2()
 {
     pcal_ = nullptr;
     jushu_ = 0;
-    cal_type_ = CALENDAR_V1;
+    cal_type_ = CalendarType::CALENDAR_V1;
 }
 
 CQimenV2::~CQimenV2() = default;

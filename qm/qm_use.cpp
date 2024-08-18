@@ -18,15 +18,19 @@ bool CQimenUse::run(const CMDParam& param)
 
     switch (param.type_) {
         case 1: {
-            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
+            qm = CQimenFactory::createInstance(cppbox::QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
             break;
         }
         case 2: {
-            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_YINPAN);
+            qm = CQimenFactory::createInstance(cppbox::QIMEN_STYLE::SHIJIA_ZHUANPAN_YINPAN);
             break;
         }
         case 3: {
-            qm = CQimenFactory::createInstance(cppbox::SHIJIA_ZHUANPAN_CHAIBU);
+            qm = CQimenFactory::createInstance(cppbox::QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAIBU);
+            break;
+        }
+        case 4: {
+            qm = CQimenFactory::createInstance(cppbox::QIMEN_STYLE::SHIJIA_ZHUANPAN_MAOSHAN);
             break;
         }
         default:

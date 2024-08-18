@@ -5,6 +5,7 @@
 #include "qm_v1.h"
 #include "qm_v2.h"
 #include "qm_v3.h"
+#include "qm_v4.h"
 
 namespace cppbox {
 
@@ -13,17 +14,20 @@ CQimen* CQimenFactory::createInstance(QIMEN_STYLE type)
 {
     CQimen* pQimen = nullptr;
     switch (type) {
-        case SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {   // 时家超接置润法
+        case QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN : {   // 时家超接置润法
             pQimen = new CQiMenV1();
             break;
         }
-        case SHIJIA_ZHUANPAN_YINPAN: {
+        case QIMEN_STYLE::SHIJIA_ZHUANPAN_YINPAN: {
             pQimen = new CQimenV2();
             break;
         }
-        case SHIJIA_ZHUANPAN_CHAIBU: {
+        case QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAIBU: {
             pQimen = new CQimenV3();
             break;
+        }
+        case QIMEN_STYLE::SHIJIA_ZHUANPAN_MAOSHAN: {
+            pQimen = new CQimenV4();
         }
         default:
             break;
@@ -36,7 +40,7 @@ void CQimenFactory::freeInstance(CQimen* pQimen)
     delete pQimen;
 }
 
-CQimen::CQimen() : pcal_(nullptr), cal_type_(CALENDAR_V1)
+CQimen::CQimen() : pcal_(nullptr), cal_type_(CalendarType::CALENDAR_V1)
 {
     sanhe_[0] = 8;
     sanhe_[1] = 5;

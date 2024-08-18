@@ -37,15 +37,17 @@ bool parse(const std::string& str, CMDParam& param)
 
 bool cmd(int argc, char** argv, CMDParam& param)
 {
-    std::string intro("命令行排盘工具 csp  ");
+    std::string intro("命令行排盘工具 csp");
     intro.append(CSP_VERSION);
+    intro.append(" => https://github.com/taynpg/csp");
     CLI::App app(intro);
 
     app.add_option("-t,--type", param.type_,
                    "==> 盘式类型(必填) <==\n"
                    "[1,时家转盘超接置润]\n"
                    "[2,时家转盘阴盘]\n"
-                   "[3,时家转盘拆补]");
+                   "[3,时家转盘拆补]\n"
+                   "[4,时家茅山]");
 
     app.add_option("-d,--date", param.str_dt_,
                    "==> 输入日期(默认当前时间) <==\n"
@@ -91,7 +93,8 @@ int main(int argc, char** argv)
     switch (param.type_) {
         case 1:
         case 2:
-        case 3: {
+        case 3:
+        case 4: {
             CQimenUse qmuse;
             if (param.str_dt_.empty()) {
                 param.is_auto_date_ = true;

@@ -104,11 +104,11 @@ CCalenderBase* CCalenderFactory::creat_instance(CalendarType etype)
     CCalenderBase* pResult = nullptr;
 
     switch (etype) {
-        case CALENDAR_V1: {
+        case CalendarType::CALENDAR_V1: {
             pResult = new CCalenderV1();
             break;
         }
-        case CALENDAR_V2: {
+        case CalendarType::CALENDAR_V2: {
             pResult = new CCalenderV2();
             break;
         }

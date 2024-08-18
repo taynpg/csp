@@ -242,6 +242,8 @@ void CCmdPrint::print_other()
                   qm_->get_cal()->second_jie().dt_.time_.s_);
     std::cout << COLOR_YELLOW << std::string(szTem) << COLOR_RESET << std::endl;
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_YELLOW << "https://github.com/taynpg/csp" << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 }
 
 void CCmdPrint::run(cppbox::CQimen* qm, int nType)

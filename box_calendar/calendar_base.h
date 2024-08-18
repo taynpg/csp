@@ -25,7 +25,7 @@
 namespace cppbox {
 
 // 日历的不同实现版本
-enum CalendarType {
+enum class CalendarType {
     // 日历实现类的第一个版本，基于查表实现的日历，有效范围(1901 ~ 2099)
     CALENDAR_V1 = 0,
     CALENDAR_V2   // 日历实现类的第二个版本，基于天文历算法实现的日历，有效范围(公元前722年

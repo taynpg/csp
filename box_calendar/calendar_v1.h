@@ -45,47 +45,47 @@ private:
 
 private:
     // 农历指定年所闰的月数，没有返回0
-    int getLeapMon(int nYear);
+    int get_leap_mon(int nYear);
     // 返回农历 xx 年闰月的天数
-    int getLeapDays(int nYear);
+    int get_leap_days(int nYear);
     // 返回农历 xx 年的总的天数
-    int getLunarDays(int nYear);
+    int get_lunar_days(int nYear);
     // 返回农历 xx 年 xx 月的天数
-    int getLunarDay(int nYear, int nMon);
+    int get_lunar_day(int nYear, int nMon);
 
 private:
     // 返回公历日期的前一天日期
-    static void getPreDay(const CDateTime& datetime, CDateTime& outtime);
+    static void pre_day(const CDateTime& datetime, CDateTime& outtime);
 
     // 获取某年第 x 个节气为几号(从 0 小寒算起)
-    int getLunarSterm(int nYear, int nth, CDateTime& datetime);
+    int get_lunar_sterm(int nYear, int nth, CDateTime& datetime);
 
     // 计算农历的年干支，月干支 (立春为新年)
-    void getYMGanZhi();
+    void get_ym_gz();
     // 计算时辰的干支(在计算完年月干支后进行)
-    void getHourGanZhi();
+    void get_hour_gz();
 
 private:
     // 返回公历日期的后一天日期
-    static void getNextDay(const CDateTime& datetime, CDateTime& outtime);
+    static void next_day(const CDateTime& datetime, CDateTime& outtime);
 
     // 返回距离 1900.1.1 的天数
-    static int getDaysFromBase(const CDate& date);
+    static int get_days_from_base(const CDate& date);
 
     // 返回下一个月的年干支月干支信息
-    void getNextJie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi, int& nYearJiaZi);
+    void get_next_jie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi, int& nYearJiaZi);
     // 获取上一个月的年月干支，最后一个参数为当月是否是 立春
-    void getPreMonYMGanZhi(int nJiaZiY, int nJiaZiM, int& nJiaZiYOut, int& nJiaZiMOut, bool isLiChun);
+    void get_prem_ymgz(int nJiaZiY, int nJiaZiM, int& nJiaZiYOut, int& nJiaZiMOut, bool isLiChun);
     // 给定年干支，返回下一年的年干支和起始月干支
-    void getNextYMGanZhi(int nJiaZiY, int& nJiaZiNextY, int& nJiaZiNextM);
+    void get_nextm_ymgz(int nJiaZiY, int& nJiaZiNextY, int& nJiaZiNextM);
 
 private:
-    int* m_pJieSum{};   // 计算节气的差值数组
-    int* m_pLunar{};    // 农历表数组
+    int* jie_sum_{};         // 计算节气的差值数组
+    int* lunar_table_{};     // 农历表数组
 private:
     // 辅助表
-    int m_wuhu[g_cnum]{};    // 五虎遁年起月表
-    int m_qishi[g_cnum]{};   // 日上起时表
+    int wuhu_[g_cnum]{};     // 五虎遁年起月表
+    int qishi_[g_cnum]{};    // 日上起时表
 };
 }   // namespace cppbox
 #endif

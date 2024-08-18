@@ -8,42 +8,42 @@ CCalenderV1::CCalenderV1() { initSelf(); }
 
 CCalenderV1::~CCalenderV1()
 {
-    FreeIntList(m_pJieSum);
-    FreeIntList(m_pLunar);
+    FreeIntList(jie_sum_);
+    FreeIntList(lunar_table_);
 }
 
 void CCalenderV1::initSelf()
 {
-    if (!AllocJieQi(&m_pJieSum)) {
+    if (!AllocJieQi(&jie_sum_)) {
         return;
     }
-    if (!AllocLunar(&m_pLunar)) {
+    if (!AllocLunar(&lunar_table_)) {
         return;
     }
     leap_ = false;
     big_mon_ = false;
 
-    m_wuhu[0] = 2;
-    m_wuhu[1] = 4;
-    m_wuhu[2] = 6;
-    m_wuhu[3] = 8;
-    m_wuhu[4] = 0;
-    m_wuhu[5] = 2;
-    m_wuhu[6] = 4;
-    m_wuhu[7] = 6;
-    m_wuhu[8] = 8;
-    m_wuhu[9] = 0;
+    wuhu_[0] = 2;
+    wuhu_[1] = 4;
+    wuhu_[2] = 6;
+    wuhu_[3] = 8;
+    wuhu_[4] = 0;
+    wuhu_[5] = 2;
+    wuhu_[6] = 4;
+    wuhu_[7] = 6;
+    wuhu_[8] = 8;
+    wuhu_[9] = 0;
 
-    m_qishi[0] = 0;
-    m_qishi[1] = 2;
-    m_qishi[2] = 4;
-    m_qishi[3] = 6;
-    m_qishi[4] = 8;
-    m_qishi[5] = 0;
-    m_qishi[6] = 2;
-    m_qishi[7] = 4;
-    m_qishi[8] = 6;
-    m_qishi[9] = 8;
+    qishi_[0] = 0;
+    qishi_[1] = 2;
+    qishi_[2] = 4;
+    qishi_[3] = 6;
+    qishi_[4] = 8;
+    qishi_[5] = 0;
+    qishi_[6] = 2;
+    qishi_[7] = 4;
+    qishi_[8] = 6;
+    qishi_[9] = 8;
 }
 
 bool CCalenderV1::set_datetime(const CDateTime& datetime)
@@ -61,7 +61,7 @@ bool CCalenderV1::set_datetime(const CDateTime& datetime)
     int offset = get_diff_day(dt_.date_, sdate);
     int i = 0, nleap = 0, ntem = 0;
     for (i = 1900; i < 2100 && offset > 0; ++i) {
-        ntem = getLunarDays(i);
+        ntem = get_lunar_days(i);
         offset -= ntem;
     }
     if (offset < 0) {
@@ -70,7 +70,7 @@ bool CCalenderV1::set_datetime(const CDateTime& datetime)
     }
 
     lunar_.date_.year_ = i;
-    nleap = getLeapMon(i);
+    nleap = get_leap_mon(i);
     leap_ = false;
 
     for (i = 1; i < 13 && offset > 0; ++i) {
@@ -78,9 +78,9 @@ bool CCalenderV1::set_datetime(const CDateTime& datetime)
         if (nleap > 0 && i == (nleap + 1) && (!leap_)) {
             --i;
             leap_ = true;
-            ntem = getLeapDays(lunar_.date_.year_);
+            ntem = get_leap_days(lunar_.date_.year_);
         } else {
-            ntem = getLunarDay(lunar_.date_.year_, i);
+            ntem = get_lunar_day(lunar_.date_.year_, i);
         }
         // 解除闰月
         if (leap_ && i == (nleap + 1)) {
@@ -105,25 +105,25 @@ bool CCalenderV1::set_datetime(const CDateTime& datetime)
 
     lunar_.date_.mon_ = i;
     lunar_.date_.day_ = offset + 1;
-    big_mon_ = leap_ ? getLeapDays(lunar_.date_.year_) != 0 : getLunarDay(lunar_.date_.year_, lunar_.date_.mon_) > 29;
+    big_mon_ = leap_ ? get_leap_days(lunar_.date_.year_) != 0 : get_lunar_day(lunar_.date_.year_, lunar_.date_.mon_) > 29;
 
     // 计算节气相关
-    getLunarSterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2, first_jie_.dt_);
+    get_lunar_sterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2, first_jie_.dt_);
     first_jie_.index_ = (first_jie_.dt_.date_.mon_ - 1) * 2;
 
-    getLunarSterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2 + 1, second_jie_.dt_);
+    get_lunar_sterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2 + 1, second_jie_.dt_);
     second_jie_.index_ = (second_jie_.dt_.date_.mon_ - 1) * 2 + 1;
 
     // 计算日柱
-    int nDayCnt = getDaysFromBase(dt_.date_);
+    int day_cnt = get_days_from_base(dt_.date_);
     if (dt_.time_.h_ == 23) {
-        ++nDayCnt;
+        ++day_cnt;
     }
-    sz_.dg_ = nDayCnt % 10;
-    sz_.dz_ = (nDayCnt + 10) % 12;
+    sz_.dg_ = day_cnt % 10;
+    sz_.dz_ = (day_cnt + 10) % 12;
 
-    getYMGanZhi();
-    getHourGanZhi();
+    get_ym_gz();
+    get_hour_gz();
 
     return true;
 }
@@ -189,9 +189,9 @@ bool CCalenderV1::check_format(const CDateTime& datetime)
 }
 
 // 农历指定年所闰的月数，没有返回0
-int CCalenderV1::getLeapMon(int nYear)
+int CCalenderV1::get_leap_mon(int nYear)
 {
-    int nRet = m_pLunar[nYear - 1900] & 0xf;
+    int nRet = lunar_table_[nYear - 1900] & 0xf;
     if (nRet == 0xf) {
         return 0;
     }
@@ -199,10 +199,10 @@ int CCalenderV1::getLeapMon(int nYear)
 }
 
 // 返回农历 xx 年闰月的天数
-int CCalenderV1::getLeapDays(int nYear)
+int CCalenderV1::get_leap_days(int nYear)
 {
-    if (getLeapMon(nYear)) {
-        int nRet = m_pLunar[nYear - 1899] & 0xf;
+    if (get_leap_mon(nYear)) {
+        int nRet = lunar_table_[nYear - 1899] & 0xf;
         if (nRet == 0xf) {
             return 30;
         }
@@ -212,20 +212,20 @@ int CCalenderV1::getLeapDays(int nYear)
 }
 
 // 返回农历 xx 年的总的天数
-int CCalenderV1::getLunarDays(int nYear)
+int CCalenderV1::get_lunar_days(int nYear)
 {
     int i = 0, nsum = 348, ntem = 0;
     for (i = 0x8000; i > 0x8; i >>= 1) {
-        ntem = m_pLunar[nYear - 1900];
+        ntem = lunar_table_[nYear - 1900];
         nsum += (ntem & i) ? 1 : 0;
     }
-    return nsum + getLeapDays(nYear);
+    return nsum + get_leap_days(nYear);
 }
 
 // 返回农历 xx 年 xx 月的天数
-int CCalenderV1::getLunarDay(int nYear, int nMon)
+int CCalenderV1::get_lunar_day(int nYear, int nMon)
 {
-    int nRe = m_pLunar[nYear - 1900] & (0x10000 >> nMon);
+    int nRe = lunar_table_[nYear - 1900] & (0x10000 >> nMon);
     if (nRe) {
         return 30;
     }
@@ -233,9 +233,9 @@ int CCalenderV1::getLunarDay(int nYear, int nMon)
 }
 
 // 计算时辰的干支(在计算完年月干支后进行)
-void CCalenderV1::getHourGanZhi()
+void CCalenderV1::get_hour_gz()
 {
-    int nStart = m_qishi[sz_.dg_];
+    int nStart = qishi_[sz_.dg_];
     int nStartGan = cb::remain(10, nStart) * 6;
     int nhour = dt_.time_.h_ + 1;
     if (nhour == 24) {
@@ -246,7 +246,7 @@ void CCalenderV1::getHourGanZhi()
 }
 
 // 计算农历的年干支，月干支 (立春为新年)
-void CCalenderV1::getYMGanZhi()
+void CCalenderV1::get_ym_gz()
 {
     // 以公历 1900 年 01 月 6 日时为起始日期(小寒）对应农历日期为 1900 年
     // 己亥年，丁丑月 (以立春为新年)
@@ -258,7 +258,7 @@ void CCalenderV1::getYMGanZhi()
 
     int nJieQiCnt = (dt_.date_.year_ - 1900) * 24 + first_jie_.index_;
     for (int i = 0; i < nJieQiCnt; ++i) {
-        getNextJie(nStartYear, nStartMon, nJieQiIndex, nStartMGanZhi, nStartYGanZhi);
+        get_next_jie(nStartYear, nStartMon, nJieQiIndex, nStartMGanZhi, nStartYGanZhi);
     }
     long long nChange = get_sec_by_date(first_jie_.dt_, dt_);
     int       nTemA = 0, nTemB = 0;
@@ -267,9 +267,9 @@ void CCalenderV1::getYMGanZhi()
         nTemB = nStartMGanZhi;
     } else {
         if (first_jie_.index_ == 2) {
-            getPreMonYMGanZhi(nStartYGanZhi, nStartMGanZhi, nTemA, nTemB, true);
+            get_prem_ymgz(nStartYGanZhi, nStartMGanZhi, nTemA, nTemB, true);
         } else {
-            getPreMonYMGanZhi(nStartYGanZhi, nStartMGanZhi, nTemA, nTemB, false);
+            get_prem_ymgz(nStartYGanZhi, nStartMGanZhi, nTemA, nTemB, false);
         }
     }
     sz_.yg_ = nTemA % 10;
@@ -278,7 +278,7 @@ void CCalenderV1::getYMGanZhi()
     sz_.mz_ = nTemB % 12;
 }
 // 返回下一个月的年干支月干支信息
-void CCalenderV1::getNextJie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi, int& nYearJiaZi)
+void CCalenderV1::get_next_jie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi, int& nYearJiaZi)
 {
     int nStart = nJie;
     if ((nStart % 2) == 0) {
@@ -294,7 +294,7 @@ void CCalenderV1::getNextJie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi, i
         nJie = cb::remain(24, ++nStart);
         if (nJie == 2) {   // 立春
             int nTem = 0;
-            getNextYMGanZhi(nYearJiaZi, nTem, nMonJiaZi);
+            get_nextm_ymgz(nYearJiaZi, nTem, nMonJiaZi);
             nYearJiaZi = nTem;
         } else {
             nMonJiaZi = cb::remain(60, nMonJiaZi + 1);
@@ -303,21 +303,21 @@ void CCalenderV1::getNextJie(int& nYear, int& nMon, int& nJie, int& nMonJiaZi, i
 }
 
 // 给定年干支，返回下一年的年干支和起始月干支
-void CCalenderV1::getNextYMGanZhi(const int nJiaZiY, int& nJiaZiNextY, int& nJiaZiNextM)
+void CCalenderV1::get_nextm_ymgz(const int nJiaZiY, int& nJiaZiNextY, int& nJiaZiNextM)
 {
     nJiaZiNextY = cb::remain(60, nJiaZiY + 1);
     int nTian = nJiaZiNextY % 10;
-    int nMonStart = m_wuhu[nTian];
+    int nMonStart = wuhu_[nTian];
     nJiaZiNextM = cb::remain(10, (nMonStart - 2)) * 6 + 2;
 }
 
 // 获取上一个月的年月干支，最后一个参数为当月是否是 立春
-void CCalenderV1::getPreMonYMGanZhi(const int nJiaZiY, const int nJiaZiM, int& nJiaZiYOut, int& nJiaZiMOut, bool isLiChun)
+void CCalenderV1::get_prem_ymgz(const int nJiaZiY, const int nJiaZiM, int& nJiaZiYOut, int& nJiaZiMOut, bool isLiChun)
 {
     if (isLiChun) {
         nJiaZiYOut = cb::remain(60, nJiaZiY - 1);
         int nTianGan = nJiaZiYOut % 10;
-        int nMonStart = m_wuhu[nTianGan];
+        int nMonStart = wuhu_[nTianGan];
         nJiaZiMOut = cb::remain(10, (nMonStart - 2)) * 6 + 2;
     } else {
         nJiaZiYOut = nJiaZiY;
@@ -326,14 +326,14 @@ void CCalenderV1::getPreMonYMGanZhi(const int nJiaZiY, const int nJiaZiM, int& n
 }
 
 // 获取某年第 x 个节气为几号(从 0 小寒算起)
-int CCalenderV1::getLunarSterm(int nYear, int nth, CDateTime& datetime)
+int CCalenderV1::get_lunar_sterm(int nYear, int nth, CDateTime& datetime)
 {
     int nYeard = nYear - 1900;
     int nUp = nYeard * 24 + nth;
 
     long long nRec = 0;
     for (int i = 0; i < nUp; ++i) {
-        nRec = nRec + m_pJieSum[i];
+        nRec = nRec + jie_sum_[i];
     }
     CDateTime d;
     d.date_.year_ = 1900;
@@ -350,7 +350,7 @@ int CCalenderV1::getLunarSterm(int nYear, int nth, CDateTime& datetime)
 void CCalenderV1::next(CDateTime& datetime)
 {
     CDateTime datetimeTem;
-    CCalenderV1::getNextDay(datetime, datetimeTem);
+    CCalenderV1::next_day(datetime, datetimeTem);
     mcopy(datetimeTem, datetime);
 }
 
@@ -358,7 +358,7 @@ void CCalenderV1::next(CDate& date)
 {
     CDateTime datetimeTemBase(date);
     CDateTime datetimeOut;
-    CCalenderV1::getNextDay(datetimeTemBase, datetimeOut);
+    CCalenderV1::next_day(datetimeTemBase, datetimeOut);
     date = datetimeOut.date_;
 }
 
@@ -366,7 +366,7 @@ void CCalenderV1::next(CDate& date)
 void CCalenderV1::pre(CDateTime& datetime)
 {
     CDateTime datetimeTem;
-    getPreDay(datetime, datetimeTem);
+    pre_day(datetime, datetimeTem);
     mcopy(datetimeTem, datetime);
 }
 
@@ -374,11 +374,11 @@ void CCalenderV1::pre(CDate& date)
 {
     CDateTime datetimeTemBase(date);
     CDateTime datetimeOut;
-    getPreDay(datetimeTemBase, datetimeOut);
+    pre_day(datetimeTemBase, datetimeOut);
     date = datetimeOut.date_;
 }
 // 返回公历日期的前一天日期
-void CCalenderV1::getPreDay(const CDateTime& datetime, CDateTime& outtime)
+void CCalenderV1::pre_day(const CDateTime& datetime, CDateTime& outtime)
 {
     int y = datetime.date_.year_;
     int m = datetime.date_.mon_;
@@ -530,7 +530,7 @@ void CCalenderV1::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, lo
             outtime.time_.m_ = (nDiv % 3600) / 60;
             outtime.time_.s_ = nDiv % 60;
         } else {
-            getPreDay(basetime, outtime);
+            pre_day(basetime, outtime);
             int nt = 24 * 3600 + nDiv;
             outtime.time_.h_ = nt / 3600;
             outtime.time_.m_ = (nt % 3600) / 60;
@@ -541,7 +541,7 @@ void CCalenderV1::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, lo
         int nDiv = bsec + nRemain;
         if (nDiv > (24 * 3600)) {
             CDateTime temDate(year, mon, day, 12, 0, 0);
-            CCalenderV1::getNextDay(temDate, outtime);
+            CCalenderV1::next_day(temDate, outtime);
             nDiv -= 24 * 3600;
             outtime.time_.h_ = nDiv / 3600;
             outtime.time_.m_ = (nDiv % 3600) / 60;
@@ -563,8 +563,8 @@ int CCalenderV1::get_sec_by_base(const CTime& time) { return time.h_ * 3600 + ti
 // 返回两个日期之间的天数差
 int CCalenderV1::get_diff_day(const CDate& dateA, const CDate& dateB)
 {
-    int nBaseA = getDaysFromBase(dateA);
-    int nBaseB = getDaysFromBase(dateB);
+    int nBaseA = get_days_from_base(dateA);
+    int nBaseB = get_days_from_base(dateB);
     return nBaseA - nBaseB;
 }
 
@@ -584,7 +584,7 @@ long long CCalenderV1::get_sec_by_date(const CDateTime& datetimeA, const CDateTi
     return (nBaseA + nBaseB * 86400);
 }
 
-int CCalenderV1::getDaysFromBase(const CDate& date)
+int CCalenderV1::get_days_from_base(const CDate& date)
 {
     int y = date.year_;
     int m = date.mon_;
@@ -678,7 +678,7 @@ int CCalenderV1::getDaysFromBase(const CDate& date)
 }
 
 // 返回公历日期的后一天日期
-void CCalenderV1::getNextDay(const CDateTime& datetime, CDateTime& outtime)
+void CCalenderV1::next_day(const CDateTime& datetime, CDateTime& outtime)
 {
     int y = datetime.date_.year_;
     int m = datetime.date_.mon_;

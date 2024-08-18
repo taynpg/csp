@@ -8,7 +8,7 @@ CQiMenV1::CQiMenV1()
 {
     pcal_ = nullptr;
     jushu_ = 0;
-    cal_type_ = CALENDAR_V1;
+    cal_type_ = CalendarType::CALENDAR_V1;
 
     // 下标 0 指小寒，即从小寒开始向后排列。
     ju_qi_[0] = 2851;

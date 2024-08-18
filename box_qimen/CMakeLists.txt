@@ -11,6 +11,8 @@ add_library(box_qimen STATIC
         "qm_v2.cpp"
         "qm_v3.h"
         "qm_v3.cpp"
+        "qm_v4.h" 
+        "qm_v4.cpp"
 )
 target_compile_definitions(box_qimen PRIVATE CPP_QIMEN_LIB)
 target_link_libraries(box_qimen box_calendar)
