@@ -10,8 +10,8 @@ bool CQimenV4::run(const QiParam& info, CalendarType type)
     pcal_->set_datetime(datetime_);
 
     //  直接找出当月的节气信息，看在哪个节气的后面
-    const CDateTime& JieA = pcal_->first_jie().dt_;
-    const CDateTime& JieB = pcal_->second_jie().dt_;
+    const CDateTime& JieA = pcal_->get_jie().jq[2].dt_;
+    const CDateTime& JieB = pcal_->get_jie().jq[3].dt_;
 
     // --- 节气1 --- 时间 --- 节气2 ----
     long long diffA = pcal_->get_sec_by_date(datetime_, JieA);
@@ -19,15 +19,12 @@ bool CQimenV4::run(const QiParam& info, CalendarType type)
 
     // 取节气1前的内容
     if (diffA < 0) {
-        //yuan_ = get_yuan(CCalenderBase::remain(24, pcal_->first_jie().index_ - 1), datetime_);
     }
     // 取节气1,2之间的内容
     else if (diffA >= 0 && diffB < 0) {
-        //yuan_ = get_yuan(CCalenderBase::remain(24, pcal_->first_jie().index_), datetime_);
     }
     // 取节气2后的内容
     else {
-        //yuan_ = get_yuan(CCalenderBase::remain(24, pcal_->first_jie().index_ + 1), datetime_);
     }
 
     gen_dipan();

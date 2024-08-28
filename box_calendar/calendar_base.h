@@ -83,6 +83,10 @@ struct CPP_CALENDAR_API CJieQi {
     int index_{};
 };
 
+struct CJieQi6 {
+    CJieQi jq[6]{};
+};
+
 // 日历处理基类
 class CPP_CALENDAR_API CCalenderBase
 {
@@ -130,18 +134,15 @@ public:
 public:
     // 获取四柱
     CGanZhi const& get_sz() const;
-    // 获取第一个节气
-    CJieQi const& first_jie() const;
-    // 获取第二个节气
-    CJieQi const& second_jie() const;
+    // 获取节气信息
+    CJieQi6 get_jie() const;
 
 protected:
     CDateTime dt_;        // 传入的时间日期
     CDateTime lunar_;     // 计算的农历日期
     bool leap_{};         // 当月是否是闰月
     bool big_mon_{};      // 当月是否是大月
-    CJieQi first_jie_;    // 当月第一个节气
-    CJieQi second_jie_;   // 当月第二个节气
+    CJieQi6 jie_{};
     CGanZhi sz_;          // 此时的四柱
 };
 

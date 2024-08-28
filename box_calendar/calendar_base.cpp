@@ -258,15 +258,9 @@ CGanZhi const& CCalenderBase::get_sz() const
     return sz_;
 }
 
-// 获取第一个节气
-CJieQi const& CCalenderBase::first_jie() const
+CJieQi6 CCalenderBase::get_jie() const
 {
-    return first_jie_;
-}
-// 获取第二个节气
-CJieQi const& CCalenderBase::second_jie() const
-{
-    return second_jie_;
+    return jie_;
 }
 
 CGanZhi& CGanZhi::operator=(const CGanZhi& ganzhi)

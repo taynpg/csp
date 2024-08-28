@@ -22,8 +22,8 @@ bool cppbox::CQimenV3::run(const QiParam& info, CalendarType type)
         // 1 4 7 10 下元
         int zhiIndex = futou % 12;
         //  直接找出当月的节气信息，看在哪个节气的后面
-        const CDateTime& JieA = pcal_->first_jie().dt_;
-        const CDateTime& JieB = pcal_->second_jie().dt_;
+    const CDateTime& JieA = pcal_->get_jie().jq[2].dt_;
+    const CDateTime& JieB = pcal_->get_jie().jq[3].dt_;
 
         // --- 节气1 --- 时间 --- 节气2 ----
         long long diffA = pcal_->get_sec_by_date(datetime_, JieA);
@@ -31,14 +31,14 @@ bool cppbox::CQimenV3::run(const QiParam& info, CalendarType type)
 
         int nResult = 0;
         if (diffA >= 0 && diffB < 0) {
-            jq_ = pcal_->first_jie().index_;
+            jq_ = pcal_->get_jie().jq[2].index_;
             nResult = ju_qi_[jq_];
         } else if (diffA < 0) {
-            jq_ = CCalenderBase::remain(24, pcal_->first_jie().index_ - 1);
+            jq_ = CCalenderBase::remain(24, pcal_->get_jie().jq[2].index_ - 1);
             nResult = ju_qi_[jq_];
         } else {
-            jq_ = pcal_->second_jie().index_;
-            nResult = ju_qi_[pcal_->second_jie().index_];
+            jq_ = pcal_->get_jie().jq[3].index_;
+            nResult = ju_qi_[pcal_->get_jie().jq[3].index_];
         }
         if ((nResult % 10) == 1) {
             is_yin_ = false;

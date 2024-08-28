@@ -52,11 +52,11 @@ bool CCalenderV2::set_datetime(const CDateTime& datetime)
         // sxtwl 的 jqindex 是从冬至开始的，而 box_zhdata 是从
         // 小寒开始的，所以这里要做一下处理
         if (time.getDay() < 15) {
-            sx2dt(time, first_jie_.dt_);
-            first_jie_.index_ = CCalenderBase::remain(24, it->jqIndex - 1);
+            sx2dt(time, jie_.jq[2].dt_);
+            jie_.jq[2].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
         } else {
-            sx2dt(time, second_jie_.dt_);
-            second_jie_.index_ = CCalenderBase::remain(24, it->jqIndex - 1);
+            sx2dt(time, jie_.jq[3].dt_);
+            jie_.jq[3].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
             break;
         }
     }
@@ -77,8 +77,8 @@ void CCalenderV2::check_mon_gz()
             sz_.mz_ = CCalenderBase::remain(12, sz_.mz_ - 1);
         }
     };
-    ck(first_jie_.dt_);
-    ck(second_jie_.dt_);
+    ck(jie_.jq[2].dt_);
+    ck(jie_.jq[3].dt_);
 }
 
 // 获取前一天

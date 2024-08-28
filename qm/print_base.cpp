@@ -227,19 +227,21 @@ void CCmdPrint::print_other()
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
     std::string szJieName;
-    szJieName += "[" + CZhData::jq(qm_->get_cal()->first_jie().index_) + "]：";
+    const auto& first_jq = qm_->get_cal()->get_jie().jq[2];
+    const auto& second_jq = qm_->get_cal()->get_jie().jq[3];
+    szJieName += "[" + CZhData::jq(first_jq.index_) + "]：";
     std::cout << szJieName;
     char szTem[128]{};
-    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", qm_->get_cal()->first_jie().dt_.date_.mon_,
-                  qm_->get_cal()->first_jie().dt_.date_.day_, qm_->get_cal()->first_jie().dt_.time_.h_, qm_->get_cal()->first_jie().dt_.time_.m_,
-                  qm_->get_cal()->first_jie().dt_.time_.s_);
+    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", first_jq.dt_.date_.mon_,
+                  first_jq.dt_.date_.day_, first_jq.dt_.time_.h_, first_jq.dt_.time_.m_,
+                  first_jq.dt_.time_.s_);
     std::cout << COLOR_YELLOW << std::string(szTem) << COLOR_RESET;
     szJieName.clear();
-    szJieName += "  [" + CZhData::jq(qm_->get_cal()->second_jie().index_) + "]：";
+    szJieName += "  [" + CZhData::jq(second_jq.index_) + "]：";
     std::cout << szJieName;
-    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", qm_->get_cal()->second_jie().dt_.date_.mon_,
-                  qm_->get_cal()->second_jie().dt_.date_.day_, qm_->get_cal()->second_jie().dt_.time_.h_, qm_->get_cal()->second_jie().dt_.time_.m_,
-                  qm_->get_cal()->second_jie().dt_.time_.s_);
+    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", second_jq.dt_.date_.mon_,
+                  second_jq.dt_.date_.day_, second_jq.dt_.time_.h_, second_jq.dt_.time_.m_,
+                  second_jq.dt_.time_.s_);
     std::cout << COLOR_YELLOW << std::string(szTem) << COLOR_RESET << std::endl;
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
     std::cout << COLOR_YELLOW << "https://github.com/taynpg/csp" << COLOR_RESET << std::endl;

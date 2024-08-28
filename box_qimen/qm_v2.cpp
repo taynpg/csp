@@ -60,10 +60,10 @@ void CQimenV2::get_ju(const CDateTime& datetime)
     dz.date_.day_ = 12;
     dz.time_.h_ = 12;
     pCalendar->set_datetime(dz);
-    dz.date_.day_ = pCalendar->second_jie().dt_.date_.day_;
-    dz.time_.h_ = pCalendar->second_jie().dt_.time_.h_;
-    dz.time_.m_ = pCalendar->second_jie().dt_.time_.m_;
-    dz.time_.s_ = pCalendar->second_jie().dt_.time_.s_;
+    dz.date_.day_ = pCalendar->get_jie().jq[3].dt_.date_.day_;
+    dz.time_.h_ = pCalendar->get_jie().jq[3].dt_.time_.h_;
+    dz.time_.m_ = pCalendar->get_jie().jq[3].dt_.time_.m_;
+    dz.time_.s_ = pCalendar->get_jie().jq[3].dt_.time_.s_;
 
     // 2.夏至时间
     CDateTime xz;
@@ -72,10 +72,10 @@ void CQimenV2::get_ju(const CDateTime& datetime)
     xz.date_.day_ = 15;
     xz.time_.h_ = 12;
     pCalendar->set_datetime(xz);
-    xz.date_.day_ = pCalendar->second_jie().dt_.date_.day_;
-    xz.time_.h_ = pCalendar->second_jie().dt_.time_.h_;
-    xz.time_.m_ = pCalendar->second_jie().dt_.time_.m_;
-    xz.time_.s_ = pCalendar->second_jie().dt_.time_.s_;
+    xz.date_.day_ = pCalendar->get_jie().jq[3].dt_.date_.day_;
+    xz.time_.h_ = pCalendar->get_jie().jq[3].dt_.time_.h_;
+    xz.time_.m_ = pCalendar->get_jie().jq[3].dt_.time_.m_;
+    xz.time_.s_ = pCalendar->get_jie().jq[3].dt_.time_.s_;
 
     // ------- 阳遁 ------- 夏至 ------- 阴遁 ------- 冬至 ------- 阳遁
     if (pCalendar->get_sec_by_date(datetime, xz) > 0 && pCalendar->get_sec_by_date(datetime, dz) <= 0) {

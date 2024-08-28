@@ -4,7 +4,10 @@
 
 namespace cppbox {
 
-CCalenderV1::CCalenderV1() { initSelf(); }
+CCalenderV1::CCalenderV1()
+{
+    initSelf();
+}
 
 CCalenderV1::~CCalenderV1()
 {
@@ -108,11 +111,11 @@ bool CCalenderV1::set_datetime(const CDateTime& datetime)
     big_mon_ = leap_ ? get_leap_days(lunar_.date_.year_) != 0 : get_lunar_day(lunar_.date_.year_, lunar_.date_.mon_) > 29;
 
     // 计算节气相关
-    get_lunar_sterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2, first_jie_.dt_);
-    first_jie_.index_ = (first_jie_.dt_.date_.mon_ - 1) * 2;
+    get_lunar_sterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2, jie_.jq[2].dt_);
+    jie_.jq[2].index_ = (jie_.jq[2].dt_.date_.mon_ - 1) * 2;
 
-    get_lunar_sterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2 + 1, second_jie_.dt_);
-    second_jie_.index_ = (second_jie_.dt_.date_.mon_ - 1) * 2 + 1;
+    get_lunar_sterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2 + 1, jie_.jq[3].dt_);
+    jie_.jq[3].index_ = (jie_.jq[3].dt_.date_.mon_ - 1) * 2 + 1;
 
     // 计算日柱
     int day_cnt = get_days_from_base(dt_.date_);
@@ -256,17 +259,18 @@ void CCalenderV1::get_ym_gz()
     int nStartYear = 1900;
     int nStartMon = 1;
 
-    int nJieQiCnt = (dt_.date_.year_ - 1900) * 24 + first_jie_.index_;
+    const auto& first_jq = jie_.jq[2];
+    int nJieQiCnt = (dt_.date_.year_ - 1900) * 24 + first_jq.index_;
     for (int i = 0; i < nJieQiCnt; ++i) {
         get_next_jie(nStartYear, nStartMon, nJieQiIndex, nStartMGanZhi, nStartYGanZhi);
     }
-    long long nChange = get_sec_by_date(first_jie_.dt_, dt_);
-    int       nTemA = 0, nTemB = 0;
+    long long nChange = get_sec_by_date(first_jq.dt_, dt_);
+    int nTemA = 0, nTemB = 0;
     if (nChange < 0) {
         nTemA = nStartYGanZhi;
         nTemB = nStartMGanZhi;
     } else {
-        if (first_jie_.index_ == 2) {
+        if (first_jq.index_ == 2) {
             get_prem_ymgz(nStartYGanZhi, nStartMGanZhi, nTemA, nTemB, true);
         } else {
             get_prem_ymgz(nStartYGanZhi, nStartMGanZhi, nTemA, nTemB, false);
@@ -407,18 +411,18 @@ void CCalenderV1::pre_day(const CDateTime& datetime, CDateTime& outtime)
         }
         outtime.date_.mon_ = m - 1;
         switch (outtime.date_.mon_) {
-        case 3:
-        case 5:
-        case 7:
-        case 8:
-        case 10: {
-            outtime.date_.day_ = 31;
-            break;
-        }
-        default: {
-            outtime.date_.day_ = 30;
-            break;
-        }
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10: {
+                outtime.date_.day_ = 31;
+                break;
+            }
+            default: {
+                outtime.date_.day_ = 30;
+                break;
+            }
         }
         return;
     }
@@ -436,10 +440,10 @@ void CCalenderV1::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, lo
     int min = basetime.time_.m_;
     int sec = basetime.time_.s_;
 
-    char      c;
+    char c;
     long long n = 0;
     long long num = nSecond / (24 * 3600);
-    int       nRemain = static_cast<int>(nSecond % (24 * 3600));
+    int nRemain = static_cast<int>(nSecond % (24 * 3600));
     if (nRemain < 0) {
         nRemain = -nRemain;
     }
@@ -461,61 +465,61 @@ void CCalenderV1::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, lo
                     --year;
                 }
                 switch (mon) {
-                case 4:
-                case 6:
-                case 9:
-                case 11: {
-                    day = 30;
-                    break;
-                }
-                case 2: {
-                    if (CCalenderBase::is_leap(year)) {
-                        day = 29;
-                    } else {
-                        day = 28;
+                    case 4:
+                    case 6:
+                    case 9:
+                    case 11: {
+                        day = 30;
+                        break;
                     }
-                    break;
-                }
-                default: {
-                    day = 31;
-                    break;
-                }
+                    case 2: {
+                        if (CCalenderBase::is_leap(year)) {
+                            day = 29;
+                        } else {
+                            day = 28;
+                        }
+                        break;
+                    }
+                    default: {
+                        day = 31;
+                        break;
+                    }
                 }
             }
         } else {
             ++day;
             switch (mon) {
-            case 4:
-            case 6:
-            case 9:
-            case 11: {
-                if (day == 31) {
-                    day = 1;
-                    ++mon;
-                }
-                break;
-            }
-            case 2: {
-                if (CCalenderBase::is_leap(year)) {
-                    if (day == 30) {
+                case 4:
+                case 6:
+                case 9:
+                case 11: {
+                    if (day == 31) {
                         day = 1;
                         ++mon;
                     }
-                } else {
-                    if (day == 29) {
+                    break;
+                }
+                case 2: {
+                    if (CCalenderBase::is_leap(year)) {
+                        if (day == 30) {
+                            day = 1;
+                            ++mon;
+                        }
+                    } else {
+                        if (day == 29) {
+                            day = 1;
+                            ++mon;
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    if (day == 32) {
                         day = 1;
                         ++mon;
                     }
+                    break;
                 }
-                break;
-            }
-            default: {
-                if (day == 32) {
-                    day = 1;
-                    ++mon;
-                }
-                break;
-            }
             }
             if (mon == 13) {
                 mon = 1;
@@ -558,7 +562,10 @@ void CCalenderV1::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, lo
 }
 
 // 返回距离 00:00:00 的秒数
-int CCalenderV1::get_sec_by_base(const CTime& time) { return time.h_ * 3600 + time.m_ * 60 + time.s_; }
+int CCalenderV1::get_sec_by_base(const CTime& time)
+{
+    return time.h_ * 3600 + time.m_ * 60 + time.s_;
+}
 
 // 返回两个日期之间的天数差
 int CCalenderV1::get_diff_day(const CDate& dateA, const CDate& dateB)
@@ -602,32 +609,32 @@ int CCalenderV1::get_days_from_base(const CDate& date)
         }
         for (int i = 1; i < m; ++i) {
             switch (i) {
-            case 1:
-            case 3:
-            case 5:
-            case 7:
-            case 8:
-            case 10:
-            case 12:
-                nm += 31;
-                break;
-            case 4:
-            case 6:
-            case 9:
-            case 11:
-                nm += 30;
-                break;
-            case 2: {
-                if (CCalenderBase::is_leap(y)) {
-                    nm += 29;
-                } else {
-                    nm += 28;
+                case 1:
+                case 3:
+                case 5:
+                case 7:
+                case 8:
+                case 10:
+                case 12:
+                    nm += 31;
+                    break;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    nm += 30;
+                    break;
+                case 2: {
+                    if (CCalenderBase::is_leap(y)) {
+                        nm += 29;
+                    } else {
+                        nm += 28;
+                    }
+                    break;
                 }
-                break;
-            }
-            default: {
-                break;
-            }
+                default: {
+                    break;
+                }
             }
         }
         nd = d - 1;
@@ -642,32 +649,32 @@ int CCalenderV1::get_days_from_base(const CDate& date)
         }
         for (int i = 1; i < m; ++i) {
             switch (i) {
-            case 1:
-            case 3:
-            case 5:
-            case 7:
-            case 8:
-            case 10:
-            case 12:
-                nm += 31;
-                break;
-            case 4:
-            case 6:
-            case 9:
-            case 11:
-                nm += 30;
-                break;
-            case 2: {
-                if (CCalenderBase::is_leap(y)) {
-                    nm += 29;
-                } else {
-                    nm += 28;
+                case 1:
+                case 3:
+                case 5:
+                case 7:
+                case 8:
+                case 10:
+                case 12:
+                    nm += 31;
+                    break;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    nm += 30;
+                    break;
+                case 2: {
+                    if (CCalenderBase::is_leap(y)) {
+                        nm += 29;
+                    } else {
+                        nm += 28;
+                    }
+                    break;
                 }
-                break;
-            }
-            default: {
-                break;
-            }
+                default: {
+                    break;
+                }
             }
         }
         nd = d - 1;
@@ -690,28 +697,28 @@ void CCalenderV1::next_day(const CDateTime& datetime, CDateTime& outtime)
 
     int nDay = 0;
     switch (m) {
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    case 8:
-    case 10:
-    case 12: {
-        nDay = 31;
-        break;
-    }
-    case 2: {
-        if (CCalenderBase::is_leap(y)) {
-            nDay = 29;
-        } else {
-            nDay = 28;
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12: {
+            nDay = 31;
+            break;
         }
-        break;
-    }
-    default: {
-        nDay = 30;
-        break;
-    }
+        case 2: {
+            if (CCalenderBase::is_leap(y)) {
+                nDay = 29;
+            } else {
+                nDay = 28;
+            }
+            break;
+        }
+        default: {
+            nDay = 30;
+            break;
+        }
     }
 
     if (m <= 11) {

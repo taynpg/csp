@@ -125,7 +125,7 @@ bool CQiMenV1::run(const QiParam& info, CalendarType type)
 void CQiMenV1::get_cur_jie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff)
 {
     pcal_->set_datetime(datetime);
-    datetimeJie = pcal_->first_jie().dt_;
+    datetimeJie = pcal_->get_jie().jq[2].dt_;
     pcal_->set_datetime(datetimeJie);
     nJiazi = get_jz(pcal_->get_sz().dg_, pcal_->get_sz().dz_);
     int nFutou = (nJiazi / 15) * 15;
