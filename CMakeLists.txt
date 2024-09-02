@@ -29,12 +29,12 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 set(PROJECT_SOURCES
-        csp_base.hpp
-        qm/qm_use.cpp
-        qm/qm_use.h
-        qm/print_base.cpp
-        qm/print_base.h
-        main.cpp
+    csp_base.hpp
+    qm/qm_use.cpp
+    qm/qm_use.h
+    qm/print_base.cpp
+    qm/print_base.h
+    main.cpp
 )
 
 set(TEST_SOURCES

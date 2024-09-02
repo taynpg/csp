@@ -171,6 +171,10 @@ void CCmdPrint::print_base()
             std::cout << COLOR_CYAN << "    <时家转盘拆补法>" << COLOR_RESET << std::endl;
             break;
         }
+        case 4: {
+            std::cout << COLOR_CYAN << "    <时家转盘茅山法>" << COLOR_RESET << std::endl;
+            break;
+        }
         default:
             break;
     }
@@ -232,16 +236,14 @@ void CCmdPrint::print_other()
     szJieName += "[" + CZhData::jq(first_jq.index_) + "]：";
     std::cout << szJieName;
     char szTem[128]{};
-    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", first_jq.dt_.date_.mon_,
-                  first_jq.dt_.date_.day_, first_jq.dt_.time_.h_, first_jq.dt_.time_.m_,
-                  first_jq.dt_.time_.s_);
+    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", first_jq.dt_.date_.mon_, first_jq.dt_.date_.day_, first_jq.dt_.time_.h_,
+                  first_jq.dt_.time_.m_, first_jq.dt_.time_.s_);
     std::cout << COLOR_YELLOW << std::string(szTem) << COLOR_RESET;
     szJieName.clear();
     szJieName += "  [" + CZhData::jq(second_jq.index_) + "]：";
     std::cout << szJieName;
-    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", second_jq.dt_.date_.mon_,
-                  second_jq.dt_.date_.day_, second_jq.dt_.time_.h_, second_jq.dt_.time_.m_,
-                  second_jq.dt_.time_.s_);
+    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", second_jq.dt_.date_.mon_, second_jq.dt_.date_.day_, second_jq.dt_.time_.h_,
+                  second_jq.dt_.time_.m_, second_jq.dt_.time_.s_);
     std::cout << COLOR_YELLOW << std::string(szTem) << COLOR_RESET << std::endl;
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
     std::cout << COLOR_YELLOW << "https://github.com/taynpg/csp" << COLOR_RESET << std::endl;

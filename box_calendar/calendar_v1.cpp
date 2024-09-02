@@ -110,12 +110,40 @@ bool CCalenderV1::set_datetime(const CDateTime& datetime)
     lunar_.date_.day_ = offset + 1;
     big_mon_ = leap_ ? get_leap_days(lunar_.date_.year_) != 0 : get_lunar_day(lunar_.date_.year_, lunar_.date_.mon_) > 29;
 
-    // 计算节气相关
-    get_lunar_sterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2, jie_.jq[2].dt_);
-    jie_.jq[2].index_ = (jie_.jq[2].dt_.date_.mon_ - 1) * 2;
+    int tyear = dt_.date_.year_;
+    int tmon = dt_.date_.mon_;
 
-    get_lunar_sterm(dt_.date_.year_, (dt_.date_.mon_ - 1) * 2 + 1, jie_.jq[3].dt_);
-    jie_.jq[3].index_ = (jie_.jq[3].dt_.date_.mon_ - 1) * 2 + 1;
+    if (tmon == 1) {
+        tyear -= 1;
+        tmon = 12;
+    }
+
+    auto jie_info = [&](int year, int mon, CDateTime& dt, CJieQi& jie, bool f) {
+        if (f) {
+            get_lunar_sterm(year, (mon - 1) * 2, dt);
+            jie.index_ = (dt.date_.mon_ - 1) * 2;
+        } else {
+            get_lunar_sterm(year, (mon - 1) * 2 + 1, dt);
+            jie.index_ = (dt.date_.mon_ - 1) * 2 + 1;
+        }
+    };
+
+    jie_info(tyear, tmon, jie_.jq[0].dt_, jie_.jq[0], true);
+    jie_info(tyear, tmon, jie_.jq[1].dt_, jie_.jq[1], false);
+
+    tyear = dt_.date_.year_;
+    tmon = dt_.date_.mon_;
+
+    jie_info(tyear, tmon, jie_.jq[2].dt_, jie_.jq[2], true);
+    jie_info(tyear, tmon, jie_.jq[3].dt_, jie_.jq[3], false);
+
+    if (tmon == 12) {
+        tyear += 1;
+        tmon = 1;
+    }
+
+    jie_info(tyear, tmon, jie_.jq[4].dt_, jie_.jq[4], true);
+    jie_info(tyear, tmon, jie_.jq[5].dt_, jie_.jq[5], false);
 
     // 计算日柱
     int day_cnt = get_days_from_base(dt_.date_);

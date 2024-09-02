@@ -26,6 +26,8 @@ git clone --recursive https://github.com/taynpg/csp
 
 # 二、用法
 
+**注：** 第三位版本号为`0`均为测试版本。
+
 ## 2.1 使用 csp --help 查看帮助
 
 示例图：

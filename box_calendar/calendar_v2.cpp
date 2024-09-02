@@ -37,27 +37,66 @@ bool CCalenderV2::set_datetime(const CDateTime& datetime)
 
     leap_ = day_->isLunarLeap();
     std::vector<sxtwl::JieQiInfo> jq_vec{};
-    if (dt_.date_.mon_ == 1) {
+
+    // 这里之所以这样处理是，接口抛出的结果，从2月开始
+    if (dt_.date_.mon_ == 1 || dt_.date_.mon_ == 2) {
         jq_vec = sxtwl::getJieQiByYear(dt_.date_.year_ - 1);
+        auto add_jie = sxtwl::getJieQiByYear(dt_.date_.year_);
+        jq_vec.reserve(jq_vec.size() + add_jie.size());
+        std::copy(add_jie.begin(), add_jie.end(), std::back_inserter(jq_vec));
     } else {
         jq_vec = sxtwl::getJieQiByYear(dt_.date_.year_);
+    }
+
+    std::vector<std::pair<int, int>> cache;
+    if (dt_.date_.mon_ == 1) {
+        cache.emplace_back(std::make_pair(dt_.date_.year_ - 1, 12));
+        cache.emplace_back(std::make_pair(dt_.date_.year_, dt_.date_.mon_));
+        cache.emplace_back(std::make_pair(dt_.date_.year_, dt_.date_.mon_ + 1));
+    } else if (dt_.date_.mon_ == 12) {
+        cache.emplace_back(std::make_pair(dt_.date_.year_, dt_.date_.mon_ - 1));
+        cache.emplace_back(std::make_pair(dt_.date_.year_, dt_.date_.mon_));
+        cache.emplace_back(std::make_pair(dt_.date_.year_ + 1, 1));
+    } else {
+        cache.emplace_back(std::make_pair(dt_.date_.year_, dt_.date_.mon_ - 1));
+        cache.emplace_back(std::make_pair(dt_.date_.year_, dt_.date_.mon_));
+        cache.emplace_back(std::make_pair(dt_.date_.year_, dt_.date_.mon_ + 1));
     }
 
     std::vector<sxtwl::JieQiInfo>::const_iterator it;
     for (it = jq_vec.begin(); it != jq_vec.end(); ++it) {
         Time time = sxtwl::JD2DD(it->jd);
-        if (time.getMonth() != dt_.date_.mon_) {
-            continue;
-        }
         // sxtwl 的 jqindex 是从冬至开始的，而 box_zhdata 是从
         // 小寒开始的，所以这里要做一下处理
-        if (time.getDay() < 15) {
-            sx2dt(time, jie_.jq[2].dt_);
-            jie_.jq[2].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
-        } else {
-            sx2dt(time, jie_.jq[3].dt_);
-            jie_.jq[3].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
-            break;
+        if (time.getYear() == cache[0].first && time.getMonth() == cache[0].second) {
+            if (time.getDay() < 15) {
+                sx2dt(time, jie_.jq[0].dt_);
+                jie_.jq[0].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
+            } else {
+                sx2dt(time, jie_.jq[1].dt_);
+                jie_.jq[1].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
+            }
+            continue;
+        }
+        if (time.getYear() == cache[1].first && time.getMonth() == cache[1].second) {
+            if (time.getDay() < 15) {
+                sx2dt(time, jie_.jq[2].dt_);
+                jie_.jq[2].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
+            } else {
+                sx2dt(time, jie_.jq[3].dt_);
+                jie_.jq[3].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
+            }
+            continue;
+        }
+        if (time.getYear() == cache[2].first && time.getMonth() == cache[2].second) {
+            if (time.getDay() < 15) {
+                sx2dt(time, jie_.jq[4].dt_);
+                jie_.jq[4].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
+            } else {
+                sx2dt(time, jie_.jq[5].dt_);
+                jie_.jq[5].index_ = CCalenderBase::remain(24, it->jqIndex - 1);
+            }
+            continue;
         }
     }
     check_mon_gz();
@@ -140,6 +179,11 @@ int CCalenderV2::get_sec_by_base(const CTime& time)
 // 基于基础时间和差值计算新的日期
 void CCalenderV2::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, long long nSecond)
 {
+    Time ta(basetime.date_.year_, basetime.date_.mon_, basetime.date_.day_, basetime.time_.h_, basetime.time_.m_, basetime.time_.s_);
+    double a = sxtwl::toJD(ta);
+    double b = a + static_cast<double>(nSecond / 86400.0);
+    Time time = sxtwl::JD2DD(b);
+    sx2dt(time, outtime);
 }
 
 // 返回两个时间之间的秒数差
