@@ -110,7 +110,7 @@ void CCalenderV2::check_mon_gz()
         if (dt_.date_ != datetime.date_) {
             return;
         }
-        int df = get_diff_by_time(datetime.time_, datetime.time_);
+        int df = get_diff_by_time(dt_.time_, datetime.time_);
         if (df < 0) {
             sz_.mg_ = CCalenderBase::remain(10, sz_.mg_ - 1);
             sz_.mz_ = CCalenderBase::remain(12, sz_.mz_ - 1);
