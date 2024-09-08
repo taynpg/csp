@@ -1,4 +1,5 @@
 #include "qm_v4.h"
+#include <cmath>
 
 namespace cppbox {
 

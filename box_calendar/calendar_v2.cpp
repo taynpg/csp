@@ -13,6 +13,10 @@ CCalenderV2::~CCalenderV2()
 bool CCalenderV2::set_datetime(const CDateTime& datetime)
 {
     dt_ = datetime;
+
+    if (day_) {
+        delete day_;
+    }
     day_ = sxtwl::fromSolar(dt_.date_.year_, dt_.date_.mon_, dt_.date_.day_);
 
     lunar_.time_ = dt_.time_;

@@ -1,7 +1,7 @@
 {
     "files.autoSave": "onFocusChange",
     "editor.fontSize": 14,
-    "editor.fontFamily": "'Cousine Nerd Font Mono', 'Cousine Nerd Font Mono', 'Cousine Nerd Font Mono'",
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'JetBrainsMono Nerd Font', 'JetBrainsMono Nerd Font'",
     "cmake.configureOnOpen": true,
     "cmake.debugConfig": {
         "console": "integratedTerminal",

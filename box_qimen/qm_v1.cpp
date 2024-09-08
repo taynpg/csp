@@ -50,12 +50,10 @@ CQiMenV1::CQiMenV1()
 
 CQiMenV1::~CQiMenV1()
 {
-    if (!one_year_.empty()) {
-        std::vector<OneDay*>::iterator it;
-        for (it = one_year_.begin(); it != one_year_.end(); ++it) {
-            delete *it;
-        }
+    for (auto& item : one_year_) {
+        delete item;
     }
+    one_year_.clear();
 }
 
 // 传入日期数据
