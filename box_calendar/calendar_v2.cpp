@@ -111,9 +111,6 @@ bool CCalenderV2::set_datetime(const CDateTime& datetime)
 void CCalenderV2::check_mon_gz()
 {
     auto ck = [&](const CDateTime& datetime) {
-        if (dt_.date_ != datetime.date_) {
-            return;
-        }
         int df = get_diff_by_time(dt_.time_, datetime.time_);
         if (df < 0) {
             sz_.mg_ = CCalenderBase::remain(10, sz_.mg_ - 1);
@@ -121,7 +118,6 @@ void CCalenderV2::check_mon_gz()
         }
     };
     ck(jie_.jq[2].dt_);
-    ck(jie_.jq[3].dt_);
 }
 
 // 获取前一天
