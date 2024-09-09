@@ -10,7 +10,7 @@ bool CQimenV4::run(const QiParam& info, CalendarType type)
     }
     pcal_->set_datetime(datetime_);
 
-    //  直接找出当月的节气信息，看在哪个节气的后面
+    //  直接找出当月的节气信息，看在哪个节气的后面 
     const CDateTime& JieA = pcal_->get_jie().jq[2].dt_;
     const CDateTime& JieB = pcal_->get_jie().jq[3].dt_;
 

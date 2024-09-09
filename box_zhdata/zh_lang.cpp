@@ -26,7 +26,7 @@ std::string CZhData::gua(int index)
     if (index < 0 || index > 8) {
         return "";
     }
-    std::string result = std::string(gStr_Gua[index]);
+    std::string result(gStr_Gua[index]);
     return result;
 }
 
@@ -35,7 +35,7 @@ std::string CZhData::zs(int index)
     if (index < 0 || index > 11) {
         return "";
     }
-    std::string result = std::string(gStr_ZhangSheng[index]);
+    std::string result(gStr_ZhangSheng[index]);
     return result;
 }
 
@@ -44,7 +44,7 @@ std::string CZhData::num(int index)
     if (index < 0 || index > 10) {
         return "";
     }
-    std::string result = std::string(gStr_num[index]);
+    std::string result(gStr_num[index]);
     return result;
 }
 std::string CZhData::mon(int index)
@@ -52,7 +52,7 @@ std::string CZhData::mon(int index)
     if (index < 0 || index > 11) {
         return "";
     }
-    std::string result = std::string(gStr_ymc[index]);
+    std::string result(gStr_ymc[index]);
     return result;
 }
 std::string CZhData::mon2(int index)
@@ -60,7 +60,8 @@ std::string CZhData::mon2(int index)
     if (index < 0 || index > 11) {
         return "";
     }
-    std::string result = std::string(gStr_ymc[index]) + "月";
+    std::string result(gStr_ymc[index]);
+    result.append("月");
     return result;
 }
 std::string CZhData::jq(int index)
@@ -68,7 +69,7 @@ std::string CZhData::jq(int index)
     if (index < 0 || index > 23) {
         return "";
     }
-    std::string result = std::string(gStr_jq[index]);
+    std::string result(gStr_jq[index]);
     return result;
 }
 
@@ -77,7 +78,7 @@ std::string CZhData::lunar_day(int index)
     if (index < 0 || index > 29) {
         return "";
     }
-    std::string result = std::string(gStr_lua[index]);
+    std::string result(gStr_lua[index]);
     return result;
 }
 // 获取天干
@@ -86,7 +87,7 @@ std::string CZhData::gan(int index)
     if (index < 0 || index > 9) {
         return "";
     }
-    std::string result = std::string(gStr_gan[index]);
+    std::string result(gStr_gan[index]);
     return result;
 }
 // 获取地支
@@ -95,7 +96,7 @@ std::string CZhData::zhi(int index)
     if (index < 0 || index > 11) {
         return "";
     }
-    std::string result = std::string(gStr_zhi[index]);
+    std::string result(gStr_zhi[index]);
     return result;
 }
 // 获取六十甲子
@@ -104,7 +105,7 @@ std::string CZhData::jz(int index)
     if (index < 0 || index > 59) {
         return "";
     }
-    std::string result = std::string(gStr_Jiazi[index]);
+    std::string result(gStr_Jiazi[index]);
     return result;
 }
 
@@ -114,7 +115,7 @@ std::string CZhData::jx(int index)
     if (index < 0 || index > 8) {
         return "";
     }
-    std::string result = std::string(gStr_Jiuxing[index]);
+    std::string result(gStr_Jiuxing[index]);
     return result;
 }
 // 获取八门
@@ -123,7 +124,7 @@ std::string CZhData::bm(int index)
     if (index < 0 || index > 8) {
         return "";
     }
-    std::string result = std::string(gStr_Bamen[index]);
+    std::string result(gStr_Bamen[index]);
     return result;
 }
 // 获取八神
@@ -132,7 +133,7 @@ std::string CZhData::bs(int index)
     if (index < 0 || index > 8) {
         return "";
     }
-    std::string result = std::string(gStr_Bashen[index]);
+    std::string result(gStr_Bashen[index]);
     return result;
 }
 // 获取空亡
