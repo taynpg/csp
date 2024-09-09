@@ -6,13 +6,6 @@
 #include "../csp_base.hpp"
 #include "zh_lang.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
-#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
-#endif
-#endif
-
 // 定义ANSI颜色码
 #define COLOR_RESET "\033[0m"
 #define COLOR_BLACK "\033[30m"
@@ -253,15 +246,6 @@ void CCmdPrint::print_other()
 void CCmdPrint::run(cppbox::CQimen* qm, int nType)
 {
     type_ = nType;
-#ifdef _WIN32
-    // 获取标准输出句柄
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    // 启用 ANSI 转义代码支持
-    DWORD mode;
-    GetConsoleMode(hConsole, &mode);
-    mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    SetConsoleMode(hConsole, mode);
-#endif
     this->qm_ = qm;
 
     print_base();

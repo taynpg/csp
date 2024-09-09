@@ -9,6 +9,13 @@
 #include "csp_base.hpp"
 #include "qm_use.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+#endif
+#endif
+
 bool parse(const std::string& str, CMDParam& param)
 {
     std::regex dateRegex(R"((-?\d{1,4})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2}))");
@@ -69,9 +76,24 @@ bool cmd(int argc, char** argv, CMDParam& param)
     }
 }
 
+void set_output_supply()
+{
+#ifdef _WIN32
+    // 获取标准输出句柄
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    // 启用 ANSI 转义代码支持
+    DWORD mode;
+    GetConsoleMode(hConsole, &mode);
+    mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hConsole, mode);
+#endif
+}
+
 int main(int argc, char** argv)
 {
     CMDParam param;
+    set_output_supply();
+    
     if (!cmd(argc, argv, param)) {
         return 0;
     }
