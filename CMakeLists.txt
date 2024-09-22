@@ -1,16 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
 project(csp LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
-    # if (GBK)
-    #     add_compile_options(/source-charset:utf-8)
-    # else()
-    #     add_compile_options(/utf-8)
-    # endif()
-    add_compile_options(/source-charset:utf-8)
+    add_compile_options(/utf-8)
     # 以下抑制，主要作用与三方库。
     add_compile_options(/wd4018) #有符号与无符号的比较
     add_compile_options(/wd4800) #将值强制为布尔值“true”或“false”(性能警告)

@@ -91,6 +91,7 @@ void set_output_supply()
 
 int main(int argc, char** argv)
 {
+    setlocale(LC_ALL, ".utf-8");
     CMDParam param;
     set_output_supply();
     
