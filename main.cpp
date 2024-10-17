@@ -44,7 +44,7 @@ bool parse(const std::string& str, CMDParam& param)
 
 bool cmd(int argc, char** argv, CMDParam& param)
 {
-    std::string intro("命令行排盘工具 csp");
+    std::string intro("命令行排盘工具 csp ");
     intro.append(CSP_VERSION);
     intro.append(" => https://github.com/taynpg/csp");
     CLI::App app(intro);
