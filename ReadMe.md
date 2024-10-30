@@ -22,7 +22,7 @@ csp-(cpp shi pan，C++式盘)，一个cmd命令行起盘工具，计划支持排
 git clone --recursive https://github.com/taynpg/csp
 ```
 
-鉴于使用`Linux`、`Macos`等类`Unix`系统的一般都有编译器，因此二进制发行版仅包含Windows`(x86)`版本、其余系统请自行编译，如您遇到编译相关问题，请及时提`issue`。
+鉴于使用`Linux`、`Macos`等类`Unix`系统的一般都有编译器，因此二进制发行版仅包含`Windows`版本、其余系统请自行编译，如您遇到编译相关问题，请及时提`issue`。
 
 # 二、用法
 
@@ -30,7 +30,7 @@ git clone --recursive https://github.com/taynpg/csp
 
 ## 2.1 使用 csp --help 查看帮助
 
-示例图：
+示例图（示例图不一定是最新的，具体看文字功能介绍）：
 
 ![示例图片](https://github.com/taynpg/csp/raw/main/images/usage.png)
 
@@ -53,13 +53,14 @@ v1.3.1 版本及以后已加入寿星万年历，可以支持年跨度`-198~9999
 
 ## 3.1 奇门遁甲
 
-示例图：
+示例图（示例图不一定是最新的，具体看文字功能介绍）：
 
 ![示例图片](https://github.com/taynpg/csp/raw/main/images/csp_qm_sjzpcjzr.png)
 
 - 时家，转盘，超接置润法
 - 时家，转盘，阴盘
 - 时家，转盘，拆补
+- 时家，转盘，茅山
 
 ## 3.2 大六壬
 
@@ -84,10 +85,8 @@ v1.3.1 版本及以后已加入寿星万年历，可以支持年跨度`-198~9999
 ```shell
 git clone --recursive https://github.com/taynpg/csp
 cd csp
-mkdir build
-cd build
-cmake ..
-cmake --build . --config release
+cmake -Bbuild
+cmake --build build --config release
 ```
 
 构建的结果在：`build/bin`下。
