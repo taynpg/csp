@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 
 project(box_yxbase)
 add_library(box_yxbase STATIC "box_yxbase.h" "box_yxbase.cpp")
