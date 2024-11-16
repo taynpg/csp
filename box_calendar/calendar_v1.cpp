@@ -176,7 +176,7 @@ bool CCalenderV1::check_format(const CDateTime& datetime)
         return false;
     }
 
-    if (CCalenderBase::is_leap(y)) {
+    if (CCalender::is_leap(y)) {
         if (m == 2) {
             if (d > 29) {
                 return false;
@@ -430,7 +430,7 @@ void CCalenderV1::pre_day(const CDateTime& datetime, CDateTime& outtime)
         outtime.date_.year_ = y;
         if ((m - 1) == 2) {
             outtime.date_.mon_ = 2;
-            if (CCalenderBase::is_leap(y)) {
+            if (CCalender::is_leap(y)) {
                 outtime.date_.day_ = 29;
             } else {
                 outtime.date_.day_ = 28;
@@ -501,7 +501,7 @@ void CCalenderV1::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, lo
                         break;
                     }
                     case 2: {
-                        if (CCalenderBase::is_leap(year)) {
+                        if (CCalender::is_leap(year)) {
                             day = 29;
                         } else {
                             day = 28;
@@ -528,7 +528,7 @@ void CCalenderV1::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, lo
                     break;
                 }
                 case 2: {
-                    if (CCalenderBase::is_leap(year)) {
+                    if (CCalender::is_leap(year)) {
                         if (day == 30) {
                             day = 1;
                             ++mon;
@@ -629,7 +629,7 @@ int CCalenderV1::get_days_from_base(const CDate& date)
 
     if (y >= 1900) {
         for (int i = 1900; i < y; ++i) {
-            if (CCalenderBase::is_leap(i)) {
+            if (CCalender::is_leap(i)) {
                 ny += 366;
             } else {
                 ny += 365;
@@ -653,7 +653,7 @@ int CCalenderV1::get_days_from_base(const CDate& date)
                     nm += 30;
                     break;
                 case 2: {
-                    if (CCalenderBase::is_leap(y)) {
+                    if (CCalender::is_leap(y)) {
                         nm += 29;
                     } else {
                         nm += 28;
@@ -669,7 +669,7 @@ int CCalenderV1::get_days_from_base(const CDate& date)
         nsum = ny + nm + nd;
     } else {
         for (int i = y; i < 1900; ++i) {
-            if (CCalenderBase::is_leap(i)) {
+            if (CCalender::is_leap(i)) {
                 ny += 366;
             } else {
                 ny += 365;
@@ -693,7 +693,7 @@ int CCalenderV1::get_days_from_base(const CDate& date)
                     nm += 30;
                     break;
                 case 2: {
-                    if (CCalenderBase::is_leap(y)) {
+                    if (CCalender::is_leap(y)) {
                         nm += 29;
                     } else {
                         nm += 28;
@@ -736,7 +736,7 @@ void CCalenderV1::next_day(const CDateTime& datetime, CDateTime& outtime)
             break;
         }
         case 2: {
-            if (CCalenderBase::is_leap(y)) {
+            if (CCalender::is_leap(y)) {
                 nDay = 29;
             } else {
                 nDay = 28;

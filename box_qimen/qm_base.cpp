@@ -14,7 +14,7 @@ CQimen* CQimenFactory::createInstance(QIMEN_STYLE type)
 {
     CQimen* pQimen = nullptr;
     switch (type) {
-        case QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN : {   // 时家超接置润法
+        case QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {   // 时家超接置润法
             pQimen = new CQiMenV1();
             break;
         }
@@ -299,7 +299,7 @@ const int* CQimen::get_kw() const
     return kw_;
 }
 // 获取日历
-const CCalenderBase* CQimen::get_cal() const
+const CCalender* CQimen::get_cal() const
 {
     return pcal_;
 }

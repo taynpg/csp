@@ -8,7 +8,7 @@ bool CQimenUse::run(const CMDParam& param)
     QiParam info;
 
     if (param.is_auto_date_) {
-        CCalenderBase::now(info.datetime_);
+        CCalender::now(info.datetime_);
     } else {
         info.datetime_ = param.dt_;
     }
@@ -18,19 +18,19 @@ bool CQimenUse::run(const CMDParam& param)
 
     switch (param.type_) {
         case 1: {
-            qm = CQimenFactory::createInstance(cppbox::QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
+            qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
             break;
         }
         case 2: {
-            qm = CQimenFactory::createInstance(cppbox::QIMEN_STYLE::SHIJIA_ZHUANPAN_YINPAN);
+            qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_YINPAN);
             break;
         }
         case 3: {
-            qm = CQimenFactory::createInstance(cppbox::QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAIBU);
+            qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAIBU);
             break;
         }
         case 4: {
-            qm = CQimenFactory::createInstance(cppbox::QIMEN_STYLE::SHIJIA_ZHUANPAN_MAOSHAN);
+            qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_MAOSHAN);
             break;
         }
         default:

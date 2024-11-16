@@ -34,7 +34,7 @@ bool cppbox::CQimenV3::run(const QiParam& info, CalendarType type)
             jq_ = pcal_->get_jie().jq[2].index_;
             nResult = ju_qi_[jq_];
         } else if (diffA < 0) {
-            jq_ = CCalenderBase::remain(24, pcal_->get_jie().jq[2].index_ - 1);
+            jq_ = CCalender::remain(24, pcal_->get_jie().jq[2].index_ - 1);
             nResult = ju_qi_[jq_];
         } else {
             jq_ = pcal_->get_jie().jq[3].index_;

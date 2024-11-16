@@ -8,7 +8,7 @@
 
 namespace cppbox {
 
-class CCalenderV2 : public CCalenderBase
+class CCalenderV2 : public CCalender
 {
 public:
     CCalenderV2();

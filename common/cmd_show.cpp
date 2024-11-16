@@ -22,7 +22,9 @@
 
 #define RESET_COLOR "\033[0m"
 
-CGuaPrint::~CGuaPrint() {}
+CGuaPrint::~CGuaPrint()
+{
+}
 
 void CGuaPrint::show(bool qian)
 {
@@ -34,7 +36,7 @@ void CGuaPrint::show(bool qian)
     std::cout << YELLOW_BG << "     " << RESET_COLOR << "\n";
 }
 
-void CGuaPrint::show_six(const std::array<int, 6>& array) 
+void CGuaPrint::show_six(const std::array<int, 6>& array)
 {
     std::cout << "\n";
     for (int i = 5; i >= 0; --i) {

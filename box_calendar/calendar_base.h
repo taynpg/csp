@@ -1,27 +1,6 @@
 #ifndef BOX_CALENDAR_BASE_H
 #define BOX_CALENDAR_BASE_H
 
-#if defined(DYNAMIC_DLL)
-#if defined(_MSC_VER)
-#define CPP_CALENDAR_EXPORT __declspec(dllexport)
-#define CPP_CALENDAR_IMPORT __declspec(dllimport)
-#else
-#define CPP_CALENDAR_EXPORT __attribute__((visibility("default")))
-#define CPP_CALENDAR_IMPORT __attribute__((visibility("default")))
-#endif
-
-#ifdef CPP_CALENDAR_LIB
-#define CPP_CALENDAR_API CPP_CALENDAR_EXPORT
-#else
-#define CPP_CALENDAR_API CPP_CALENDAR_IMPORT
-#endif
-#else
-#define CPP_CALENDAR_API
-#if defined(_MSC_VER)
-#pragma warning(disable : 4251)
-#endif
-#endif
-
 namespace cppbox {
 
 // 日历的不同实现版本
@@ -46,7 +25,7 @@ struct CGanZhi {
 };
 
 // 日期
-struct CPP_CALENDAR_API CDate {
+struct CDate {
     bool operator==(const CDate& rh) const;
     CDate();
     CDate(int y, int m, int d);
@@ -59,14 +38,14 @@ struct CPP_CALENDAR_API CDate {
 };
 
 // 时间
-struct CPP_CALENDAR_API CTime {
+struct CTime {
     int h_ = 0;
     int m_ = 0;
     int s_ = 0;
 };
 
 // 日期和时间
-struct CPP_CALENDAR_API CDateTime {
+struct CDateTime {
     CDateTime(int y, int m, int d, int h, int min, int sec);
     CDateTime& operator=(const CDateTime& datetime);
     CDateTime& operator=(const CDate& date);
@@ -77,7 +56,7 @@ struct CPP_CALENDAR_API CDateTime {
     explicit CDateTime(const CDate& rh);
 };
 
-struct CPP_CALENDAR_API CJieQi {
+struct CJieQi {
     CDateTime dt_{};
     // 二十四节气索引，以 0 为小寒
     int index_{};
@@ -88,11 +67,11 @@ struct CJieQi6 {
 };
 
 // 日历处理基类
-class CPP_CALENDAR_API CCalenderBase
+class CCalender
 {
 public:
-    CCalenderBase();
-    virtual ~CCalenderBase() = default;
+    CCalender();
+    virtual ~CCalender() = default;
 
 public:
     // 仅检查日期格式上的合法性，并不考虑实现方是否支持这个日期范围
@@ -138,16 +117,16 @@ public:
     CJieQi6 get_jie() const;
 
 protected:
-    CDateTime dt_;        // 传入的时间日期
-    CDateTime lunar_;     // 计算的农历日期
-    bool leap_{};         // 当月是否是闰月
-    bool big_mon_{};      // 当月是否是大月
+    CDateTime dt_;      // 传入的时间日期
+    CDateTime lunar_;   // 计算的农历日期
+    bool leap_{};       // 当月是否是闰月
+    bool big_mon_{};    // 当月是否是大月
     CJieQi6 jie_{};
-    CGanZhi sz_;          // 此时的四柱
+    CGanZhi sz_;   // 此时的四柱
 };
 
 // 日历类实例生成工厂
-class CPP_CALENDAR_API CCalenderFactory
+class CCalenderFactory
 {
 private:
     CCalenderFactory() = default;
@@ -155,9 +134,9 @@ private:
 
 public:
     // 获取日历类指针
-    static CCalenderBase* creat_instance(CalendarType etype);
+    static CCalender* creat_instance(CalendarType etype);
     // 释放内存
-    static void free(CCalenderBase* pCalender);
+    static void free(CCalender* pCalender);
 };
 }   // namespace cppbox
 #endif

@@ -11,6 +11,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <io.h>
+#include <fcntl.h>
 #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
 #endif
@@ -29,7 +31,7 @@ bool parse(const std::string& str, CMDParam& param)
         param.dt_.time_.h_ = std::stoi(match[4].str());
         param.dt_.time_.m_ = std::stoi(match[5].str());
         param.dt_.time_.s_ = std::stoi(match[6].str());
-        if (cppbox::CCalenderBase::check_format_only(param.dt_)) {
+        if (cppbox::CCalender::check_format_only(param.dt_)) {
             is_valid = true;
         }
     }
@@ -86,6 +88,7 @@ void set_output_supply()
     GetConsoleMode(hConsole, &mode);
     mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     SetConsoleMode(hConsole, mode);
+    _setmode(_fileno(stdout), _O_U16TEXT);
 #endif
 }
 
@@ -93,7 +96,7 @@ int main(int argc, char** argv)
 {
     CMDParam param;
     set_output_supply();
-    
+
     if (!cmd(argc, argv, param)) {
         return 0;
     }

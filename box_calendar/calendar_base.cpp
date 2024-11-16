@@ -99,9 +99,9 @@ CDateTime& CDateTime::operator=(const CDate& date)
     return *this;
 }
 
-CCalenderBase* CCalenderFactory::creat_instance(CalendarType etype)
+CCalender* CCalenderFactory::creat_instance(CalendarType etype)
 {
-    CCalenderBase* pResult = nullptr;
+    CCalender* pResult = nullptr;
 
     switch (etype) {
         case CalendarType::CALENDAR_V1: {
@@ -119,25 +119,25 @@ CCalenderBase* CCalenderFactory::creat_instance(CalendarType etype)
 }
 
 // 释放内存
-void CCalenderFactory::free(CCalenderBase* pCalender)
+void CCalenderFactory::free(CCalender* pCalender)
 {
     delete pCalender;
 }
 
-CCalenderBase::CCalenderBase() = default;
+CCalender::CCalender() = default;
 
-CDateTime const& CCalenderBase::get_solar() const
+CDateTime const& CCalender::get_solar() const
 {
     return dt_;
 }
 
-CDateTime const& CCalenderBase::get_lunnar() const
+CDateTime const& CCalender::get_lunnar() const
 {
     return lunar_;
 }
 #ifdef _WIN32
 // 获取系统时间
-void CCalenderBase::now(CDateTime& datetime)
+void CCalender::now(CDateTime& datetime)
 {
     SYSTEMTIME nowTime;
     GetLocalTime(&nowTime);
@@ -166,7 +166,7 @@ void CCalenderBase::now(CDateTime& datetime)
 #endif
 
 // 仅检查日期格式上的合法性，并不考虑实现方是否支持这个日期范围
-bool CCalenderBase::check_format_only(const CDateTime& datetime)
+bool CCalender::check_format_only(const CDateTime& datetime)
 {
     if (datetime.date_.mon_ < 1 || datetime.date_.mon_ > 12) {
         return false;
@@ -180,7 +180,7 @@ bool CCalenderBase::check_format_only(const CDateTime& datetime)
         return false;
     }
 
-    if (CCalenderBase::is_leap(y)) {
+    if (CCalender::is_leap(y)) {
         if (m == 2) {
             if (d > 29) {
                 return false;
@@ -223,7 +223,7 @@ bool CCalenderBase::check_format_only(const CDateTime& datetime)
     return true;
 }
 
-bool CCalenderBase::is_leap(int year)
+bool CCalender::is_leap(int year)
 {
     if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
         return true;
@@ -232,7 +232,7 @@ bool CCalenderBase::is_leap(int year)
 }
 
 // 求余数(结果大于0)
-int CCalenderBase::remain(int nBase, int nValue)
+int CCalender::remain(int nBase, int nValue)
 {
     int nRet = nValue % nBase;
     if (nRet < 0) {
@@ -242,7 +242,7 @@ int CCalenderBase::remain(int nBase, int nValue)
 }
 
 // 复制日期
-void CCalenderBase::mcopy(const CDateTime& datetime, CDateTime& outtime)
+void CCalender::mcopy(const CDateTime& datetime, CDateTime& outtime)
 {
     outtime.date_.year_ = datetime.date_.year_;
     outtime.date_.mon_ = datetime.date_.mon_;
@@ -253,12 +253,12 @@ void CCalenderBase::mcopy(const CDateTime& datetime, CDateTime& outtime)
 }
 
 // 获取四柱
-CGanZhi const& CCalenderBase::get_sz() const
+CGanZhi const& CCalender::get_sz() const
 {
     return sz_;
 }
 
-CJieQi6 CCalenderBase::get_jie() const
+CJieQi6 CCalender::get_jie() const
 {
     return jie_;
 }

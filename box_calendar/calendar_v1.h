@@ -5,9 +5,9 @@
 
 namespace cppbox {
 constexpr int g_cnum = 10;
-using cb = CCalenderBase;
+using cb = CCalender;
 // 日期处理类
-class CCalenderV1 : public CCalenderBase
+class CCalenderV1 : public CCalender
 {
 public:
     CCalenderV1();
@@ -80,12 +80,12 @@ private:
     void get_nextm_ymgz(int nJiaZiY, int& nJiaZiNextY, int& nJiaZiNextM);
 
 private:
-    int* jie_sum_{};         // 计算节气的差值数组
-    int* lunar_table_{};     // 农历表数组
+    int* jie_sum_{};       // 计算节气的差值数组
+    int* lunar_table_{};   // 农历表数组
 private:
     // 辅助表
-    int wuhu_[g_cnum]{};     // 五虎遁年起月表
-    int qishi_[g_cnum]{};    // 日上起时表
+    int wuhu_[g_cnum]{};    // 五虎遁年起月表
+    int qishi_[g_cnum]{};   // 日上起时表
 };
 }   // namespace cppbox
 #endif

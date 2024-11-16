@@ -3,30 +3,9 @@
 
 #include "calendar_base.h"
 
-#if defined(DYNAMIC_DLL)
-#if defined(_MSC_VER)
-#define CPP_QIMEN_EXPORT __declspec(dllexport)
-#define CPP_QIMEN_IMPORT __declspec(dllimport)
-#else
-#define CPP_QIMEN_EXPORT __attribute__((visibility("default")))
-#define CPP_QIMEN_IMPORT __attribute__((visibility("default")))
-#endif
-
-#ifdef CPP_QIMEN_LIB
-#define CPP_QIMEN_API CPP_QIMEN_EXPORT
-#else
-#define CPP_QIMEN_API CPP_QIMEN_IMPORT
-#endif
-#else
-#define CPP_QIMEN_API
-#if defined(_MSC_VER)
-#pragma warning(disable : 4251)
-#endif
-#endif
-
 namespace cppbox {
 
-using cb = CCalenderBase;
+using cb = CCalender;
 constexpr int g_num = 9;
 enum class QIMEN_STYLE {
     SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN = 1,   // 时家转盘，超接置润法
@@ -73,12 +52,12 @@ enum class QIMEN_STYLE {
  */
 
 // 排盘的参数信息
-struct CPP_QIMEN_API QiParam {
+struct QiParam {
     int ju_{};               // 局数，默认: 0 为程序自动选择，其他指定。
     CDateTime datetime_{};   // 时间日期
 };
 
-class CPP_QIMEN_API CQimen
+class CQimen
 {
 public:
     CQimen();
@@ -156,7 +135,7 @@ public:
     // 获取旬空信息
     const int* get_xk() const;
     // 获取日历
-    const CCalenderBase* get_cal() const;
+    const CCalender* get_cal() const;
     // 获取值班人员
     int get_duty() const;
     // 获取寄宫
@@ -206,7 +185,7 @@ protected:
     int jz_{};               // 当日六十甲子
 protected:
     CDateTime datetime_;
-    CCalenderBase* pcal_{};   // 日历实例
+    CCalender* pcal_{};       // 日历实例
     int gua2pos_[g_num]{};    // 卦数转位置
     int sanhe_[12]{};         // 地支三和
     int dzc_[12]{};           // 地支相冲
@@ -216,7 +195,7 @@ protected:
 };
 
 // 奇门工厂类
-class CPP_QIMEN_API CQimenFactory
+class CQimenFactory
 {
 private:
     CQimenFactory() = default;

@@ -14,5 +14,4 @@ add_library(box_calendar STATIC
     "calendar_v2.cpp"
 )
 target_link_libraries(box_calendar PRIVATE sxtwl)
-target_compile_definitions(box_calendar PRIVATE CPP_CALENDAR_LIB)
 target_include_directories(box_calendar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

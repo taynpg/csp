@@ -36,7 +36,7 @@ bool CQimenV2::run(const QiParam& info, CalendarType type)
 
 void CQimenV2::get_ju(const CDateTime& datetime)
 {
-    CCalenderBase* pCalendar = CCalenderFactory::creat_instance(cal_type_);
+    CCalender* pCalendar = CCalenderFactory::creat_instance(cal_type_);
     pCalendar->set_datetime(datetime);
     // 年支数
     int zhinum = pCalendar->get_sz().yz_ + 1;
