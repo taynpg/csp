@@ -1,0 +1,25 @@
+version: 1.0.{build}
+skip_tags: true
+skip_branch_with_pr: true
+image:
+  - Visual Studio 2015
+  - Visual Studio 2017
+  - Ubuntu
+  - macOS
+
+platform: Any CPU
+
+configuration:
+  - Debug
+  - Release
+
+before_build:
+  - mkdir build
+  - cd build
+  - cmake ..  -DSXTWL_BUILD_EXAMPLES=1 -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=C:/projects/sxtwl-cpp/build/out -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=C:/projects/sxtwl-cpp/build/out
+
+build_script:
+  - cmake --build . 
+
+# after_build:
+#   - C:/projects/sxtwl-cpp/build/out/example.exe

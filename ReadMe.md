@@ -19,7 +19,7 @@ csp-(cpp shi pan，C++式盘)，一个cmd命令行起盘工具，计划支持排
 **拉取项目请使用：**
 
 ```shell
-git clone --recursive https://github.com/taynpg/csp
+git clone https://github.com/taynpg/csp
 ```
 
 鉴于使用`Linux`、`Macos`等类`Unix`系统的一般都有编译器，因此二进制发行版仅包含`Windows`版本、其余系统请自行编译，如您遇到编译相关问题，请及时提`issue`。
@@ -83,7 +83,7 @@ v1.3.1 版本及以后已加入寿星万年历，可以支持年跨度`-198~9999
 拉取项目请保证网络畅通（可访问`github`）。
 
 ```shell
-git clone --recursive https://github.com/taynpg/csp
+git clone https://github.com/taynpg/csp
 cd csp
 cmake -Bbuild
 cmake --build build --config release
