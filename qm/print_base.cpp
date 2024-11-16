@@ -40,18 +40,18 @@ void CCmdPrint::print_one(int g)
     } else if (g == qm_->get_kw()[0] || g == qm_->get_kw()[1]) {
         std::wcout << COLOR_CYAN << L" (" << CZhData::kw() + L")  " << COLOR_RESET;
     } else {
-        std::wcout << "       ";
+        std::wcout << L"       ";
     }
 }
 
 void CCmdPrint::print_two(int g)
 {
     if (g == 8) {
-        std::wcout << "              ";
+        std::wcout << L"              ";
         return;
     }
     std::wstring jiuxing = CZhData::jx(qm_->get_jx()[g]);
-    std::wcout << COLOR_GREEN << "  " << jiuxing << "   ";
+    std::wcout << COLOR_GREEN << L"  " << jiuxing << L"   ";
     bool isJi = false;
     std::wstring szJi;
     // 如果此宫的星是寄宫星，那么就寄到这里
@@ -72,11 +72,11 @@ void CCmdPrint::print_two(int g)
 void CCmdPrint::print_three(int g)
 {
     if (g == 8) {
-        std::wcout << "              ";
+        std::wcout << L"              ";
         return;
     }
     std::wstring bamen = CZhData::bm(qm_->get_bm()[g]);
-    std::wcout << COLOR_CYAN << "  " << bamen << "   ";
+    std::wcout << COLOR_CYAN << L"  " << bamen << L"   ";
     bool isJi = false;
     std::wstring szJi;
     // 如果此宫的星是寄宫星，那么就寄到这里
@@ -141,7 +141,7 @@ void CCmdPrint::print_base()
     std::wcout << COLOR_CYAN << CZhData::zhi((lunar.time_.h_ + 1) / 2 % 12) << COLOR_RESET << L"时\n";
 
     // std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
-    std::wcout << L"干支：" << COLOR_YELLOW << CZhData::gan(gz.yg_) << "  ";
+    std::wcout << L"干支：" << COLOR_YELLOW << CZhData::gan(gz.yg_) << L"  ";
     std::wcout << CZhData::gan(gz.mg_) << L"  ";
     std::wcout << CZhData::gan(gz.dg_) << L"  ";
     std::wcout << CZhData::gan(gz.hg_) << L"  \n";
@@ -175,7 +175,7 @@ void CCmdPrint::print_base()
     std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
     std::wcout << L"值符：" << COLOR_YELLOW << CZhData::jx(qm_->get_jx_pre()[qm_->get_duty()]) << COLOR_RESET;
-    std::wcout << L"  值使：" << COLOR_YELLOW << CZhData::bm(qm_->get_bm_pre()[qm_->get_duty()]) << " ";
+    std::wcout << L"  值使：" << COLOR_YELLOW << CZhData::bm(qm_->get_bm_pre()[qm_->get_duty()]) << L" ";
 
     std::wstring szYuan;
     switch (qm_->get_yuan()) {
