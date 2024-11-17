@@ -1,7 +1,7 @@
 #ifndef CSP_HEADER_H
 #define CSP_HEADER_H
 
-#define CSP_VERSION L"v1.4.1"
+#define CSP_VERSION "v1.4.1"
 
 #include "box_calendar/calendar_base.h"
 

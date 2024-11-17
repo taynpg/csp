@@ -40,6 +40,7 @@ set(TEST_SOURCES
 
 include_directories(qm)
 include_directories(${CMAKE_SOURCE_DIR}/3rd/)
+include_directories(${CMAKE_SOURCE_DIR}/3rd/CLI11)
 add_subdirectory(box_calendar)
 add_subdirectory(box_qimen)
 add_subdirectory(box_yxbase)
