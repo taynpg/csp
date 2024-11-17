@@ -150,7 +150,7 @@ void CCalender::now(CDateTime& datetime)
 }
 #else
 // 获取系统时间
-void CCalenderBase::now(CDateTime& datetime)
+void CCalender::now(CDateTime& datetime)
 {
     struct std::tm* nowTime = nullptr;
     std::time_t _otime_t;
