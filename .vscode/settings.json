@@ -18,11 +18,13 @@
         ],
         "args": [
             "-d",
-            "1996-11-14-8-0-0",
+            "1995-11-14-8-0-0",
             "-t",
             "1",
             "-c",
-            "0"
+            "0",
+            "-z",
+            "-1"
         ]
     },
     "cmake.options.statusBarVisibility": "visible",
@@ -110,6 +112,7 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "variant": "cpp",
-        "xmemory0": "cpp"
+        "xmemory0": "cpp",
+        "complex": "cpp"
     }
 }

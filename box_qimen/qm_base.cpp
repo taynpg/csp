@@ -203,6 +203,7 @@ bool CQimen::base_run(const QiParam& info, CalendarType type)
     cal_type_ = type;
     CCalenderFactory::free(pcal_);
     pcal_ = CCalenderFactory::creat_instance(cal_type_);
+
     if (!pcal_->check_format(info.datetime_)) {
         std::snprintf(err_, sizeof(err_), "%s", "日期不在支持的范围内。");
         return false;

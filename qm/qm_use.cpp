@@ -14,8 +14,8 @@ bool CQimenUse::run(const CMDParam& param)
     }
 
     info.ju_ = param.ju_;
-    CQimen* qm{};
 
+    CQimen* qm{};
     switch (param.type_) {
         case 1: {
             qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
@@ -39,6 +39,15 @@ bool CQimenUse::run(const CMDParam& param)
 
     qm->base_init();
     CalendarType type = (CalendarType)param.cal_type_;
+
+    CDateTime tdt = info.datetime_;
+    if (param.zone_ != 0) {
+        CCalender* pt = CCalenderFactory::creat_instance(type);
+        pt->get_diff_sec(info.datetime_, tdt, param.zone_ * 3600);
+        CCalenderFactory::free(pt);
+    }
+    info.datetime_ = tdt;
+
     if (!qm->run(info, type)) {
         std::cout << qm->getLastError() << std::endl;
         return false;

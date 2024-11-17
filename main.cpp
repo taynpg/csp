@@ -68,6 +68,7 @@ bool cmd(int argc, char** argv, CMDParam& param)
                    "[1,天文历(-198-1-1~9999-12-31)]");
 
     app.add_option("-j,--ju", param.ju_, "局数(默认自动局数)");
+    app.add_option("-z,--zone", param.zone_, "与现在的时间差值(单位为小时，默认为0)");
 
     try {
         CLI11_PARSE(app, argc, argv);

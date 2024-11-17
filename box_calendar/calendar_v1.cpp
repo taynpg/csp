@@ -472,9 +472,11 @@ void CCalenderV1::get_diff_sec(const CDateTime& basetime, CDateTime& outtime, lo
     long long n = 0;
     long long num = nSecond / (24 * 3600);
     int nRemain = static_cast<int>(nSecond % (24 * 3600));
-    if (nRemain < 0) {
-        nRemain = -nRemain;
-    }
+
+    // 这里当时我为啥要取反来着？
+    // if (nRemain < 0) {
+    //     nRemain = -nRemain;
+    // }
     int bsec = hour * 3600 + min * 60 + sec;
     if (num < 0) {
         c = '-';
