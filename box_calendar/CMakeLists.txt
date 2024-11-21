@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(box_calendar LANGUAGES CXX)
-
+if (MSVC)
+    add_compile_options(/utf-8)
+endif()
 include_directories(${CMAKE_SOURCE_DIR}/3rd/sxtwl_cpp/src)
 add_library(box_calendar STATIC 
     "calendar_v1.h" 

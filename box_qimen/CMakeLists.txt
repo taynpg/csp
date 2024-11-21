@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(box_qimen)
+if (MSVC)
+    add_compile_options(/utf-8)
+endif()
 include_directories(../box_calendar)
 add_library(box_qimen STATIC 
         "qm_base.h"
