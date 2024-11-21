@@ -4,7 +4,7 @@ project(sxtwl)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 if (MSVC)
-    add_compile_options(/utf-8)
+    add_compile_options(/source-charset:utf-8)
 endif()
 file(GLOB SRC_FILES  "*.cpp" )
 

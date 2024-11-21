@@ -90,9 +90,6 @@ void set_output_supply()
     GetConsoleMode(hConsole, &mode);
     mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     SetConsoleMode(hConsole, mode);
-    setlocale(LC_ALL, ".utf-8");
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
 #endif
 }
 
