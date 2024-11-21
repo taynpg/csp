@@ -90,12 +90,14 @@ void set_output_supply()
     GetConsoleMode(hConsole, &mode);
     mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     SetConsoleMode(hConsole, mode);
+    setlocale(LC_ALL, ".utf-8");
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
 #endif
 }
 
 int main(int argc, char** argv)
 {
-    setlocale(LC_ALL, "");
     CMDParam param;
     set_output_supply();
 
@@ -116,11 +118,6 @@ int main(int argc, char** argv)
     if (!param.str_dt_.empty() && !parse(param.str_dt_, param)) {
         return -1;
     }
-
-#ifdef _WIN32
-    _setmode(_fileno(stdout), _O_U16TEXT);
-#endif
-
     switch (param.type_) {
         case 1:
         case 2:

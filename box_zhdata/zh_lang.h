@@ -12,35 +12,35 @@ public:
 
 public:
     // 获取十二长生(长生、沐浴...)
-    static std::wstring zs(int index);
+    static std::string zs(int index);
     // 获取数字中文(零，一...)
-    static std::wstring num(int index);
+    static std::string num(int index);
     // 获取阴历月份名称(正, 二, ...)
-    static std::wstring mon(int index);
+    static std::string mon(int index);
     // 获取阴历月份名称(正月, 二月, ...)
-    static std::wstring mon2(int index);
+    static std::string mon2(int index);
     // 获取二十四节气名称，下标从公历 1 月的小寒开始
-    static std::wstring jq(int index);
+    static std::string jq(int index);
     // 获取农历日名称
-    static std::wstring lunar_day(int index);
+    static std::string lunar_day(int index);
     // 获取天干
-    static std::wstring gan(int index);
+    static std::string gan(int index);
     // 获取地支
-    static std::wstring zhi(int index);
+    static std::string zhi(int index);
     // 获取六十甲子
-    static std::wstring jz(int index);
+    static std::string jz(int index);
     // 获取九星
-    static std::wstring jx(int index);
+    static std::string jx(int index);
     // 获取八门
-    static std::wstring bm(int index);
+    static std::string bm(int index);
     // 获取八神
-    static std::wstring bs(int index);
+    static std::string bs(int index);
     // 获取空亡
-    static std::wstring kw();
+    static std::string kw();
     // 获取马星
-    static std::wstring mx();
+    static std::string mx();
     // 获取卦名
-    static std::wstring gua(int index);
+    static std::string gua(int index);
 };
 }   // namespace cppbox
 #endif

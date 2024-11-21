@@ -26,95 +26,95 @@ CCmdPrint::~CCmdPrint() = default;
 void CCmdPrint::print_one(int g)
 {
     if (g == 8) {
-        std::wcout << L"              ";
+        std::cout << "              ";
         return;
     }
-    std::wstring bashen = CZhData::bs(qm_->get_bs()[g]);
-    std::wcout << COLOR_WHITE << L"  " << bashen << L" ";
+    std::string bashen = CZhData::bs(qm_->get_bs()[g]);
+    std::cout << COLOR_WHITE << "  " << bashen << " ";
     if (g == qm_->get_mx()) {
         if (g == qm_->get_kw()[0] || g == qm_->get_kw()[1]) {
-            std::wcout << COLOR_CYAN << L" (" << CZhData::mx() + CZhData::kw() + L")" << COLOR_RESET;
+            std::cout << COLOR_CYAN << " (" << CZhData::mx() + CZhData::kw() + ")" << COLOR_RESET;
         } else {
-            std::wcout << COLOR_CYAN << L" (" << CZhData::mx() + L")  " << COLOR_RESET;
+            std::cout << COLOR_CYAN << " (" << CZhData::mx() + ")  " << COLOR_RESET;
         }
     } else if (g == qm_->get_kw()[0] || g == qm_->get_kw()[1]) {
-        std::wcout << COLOR_CYAN << L" (" << CZhData::kw() + L")  " << COLOR_RESET;
+        std::cout << COLOR_CYAN << " (" << CZhData::kw() + ")  " << COLOR_RESET;
     } else {
-        std::wcout << L"       ";
+        std::cout << "       ";
     }
 }
 
 void CCmdPrint::print_two(int g)
 {
     if (g == 8) {
-        std::wcout << L"              ";
+        std::cout << "              ";
         return;
     }
-    std::wstring jiuxing = CZhData::jx(qm_->get_jx()[g]);
-    std::wcout << COLOR_GREEN << L"  " << jiuxing << L"   ";
+    std::string jiuxing = CZhData::jx(qm_->get_jx()[g]);
+    std::cout << COLOR_GREEN << "  " << jiuxing << "   ";
     bool isJi = false;
-    std::wstring szJi;
+    std::string szJi;
     // 如果此宫的星是寄宫星，那么就寄到这里
     if (qm_->get_jx()[g] == qm_->get_jx_pre()[qm_->get_jg()]) {
         isJi = true;
         szJi = CZhData::gan(qm_->get_dp()[8]);
     }
-    std::wstring tian = CZhData::gan(qm_->get_tp()[g]);
-    std::wstring szprint = tian;
+    std::string tian = CZhData::gan(qm_->get_tp()[g]);
+    std::string szprint = tian;
     if (isJi) {
-        szprint += szJi + L" ";
+        szprint += szJi + " ";
     } else {
-        szprint += L"   ";
+        szprint += "   ";
     }
-    std::wcout << COLOR_YELLOW << szprint << COLOR_RESET;
+    std::cout << COLOR_YELLOW << szprint << COLOR_RESET;
 }
 
 void CCmdPrint::print_three(int g)
 {
     if (g == 8) {
-        std::wcout << L"              ";
+        std::cout << "              ";
         return;
     }
-    std::wstring bamen = CZhData::bm(qm_->get_bm()[g]);
-    std::wcout << COLOR_CYAN << L"  " << bamen << L"   ";
+    std::string bamen = CZhData::bm(qm_->get_bm()[g]);
+    std::cout << COLOR_CYAN << "  " << bamen << "   ";
     bool isJi = false;
-    std::wstring szJi;
+    std::string szJi;
     // 如果此宫的星是寄宫星，那么就寄到这里
     if (g == qm_->get_jg()) {
         isJi = true;
         szJi = CZhData::gan(qm_->get_dp()[8]);
     }
-    std::wstring di = CZhData::gan(qm_->get_dp()[g]);
-    std::wstring szprint = di;
+    std::string di = CZhData::gan(qm_->get_dp()[g]);
+    std::string szprint = di;
     if (isJi) {
-        szprint += szJi + L" ";
+        szprint += szJi + " ";
     } else {
-        szprint += L"   ";
+        szprint += "   ";
     }
-    std::wcout << COLOR_YELLOW << szprint << COLOR_RESET;
+    std::cout << COLOR_YELLOW << szprint << COLOR_RESET;
 }
 
 void CCmdPrint::print_base()
 {
     const CDateTime& solar = qm_->get_cal()->get_solar();
     const CDateTime& lunar = qm_->get_cal()->get_lunnar();
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
-    std::wcout << L"公元：" << COLOR_CYAN << std::setw(4) << std::setfill(L'0') << solar.date_.year_ << COLOR_RESET << L"年";
-    std::wcout << COLOR_CYAN << std::setw(2) << std::setfill(L'0') << solar.date_.mon_ << COLOR_RESET << L"月";
-    std::wcout << COLOR_CYAN << std::setw(2) << std::setfill(L'0') << solar.date_.day_ << COLOR_RESET << L"日 ";
-    std::wcout << COLOR_CYAN << std::setw(2) << std::setfill(L'0') << solar.time_.h_ << COLOR_RESET << L"时";
-    std::wcout << COLOR_CYAN << std::setw(2) << std::setfill(L'0') << solar.time_.m_ << COLOR_RESET << L"分";
-    std::wcout << COLOR_CYAN << std::setw(2) << std::setfill(L'0') << solar.time_.s_ << COLOR_RESET << L"秒       ";
-    std::wcout << COLOR_CYAN << CSP_VERSION << COLOR_RESET << std::endl;
+    std::cout << "公元：" << COLOR_CYAN << std::setw(4) << std::setfill('0') << solar.date_.year_ << COLOR_RESET << "年";
+    std::cout << COLOR_CYAN << std::setw(2) << std::setfill('0') << solar.date_.mon_ << COLOR_RESET << "月";
+    std::cout << COLOR_CYAN << std::setw(2) << std::setfill('0') << solar.date_.day_ << COLOR_RESET << "日 ";
+    std::cout << COLOR_CYAN << std::setw(2) << std::setfill('0') << solar.time_.h_ << COLOR_RESET << "时";
+    std::cout << COLOR_CYAN << std::setw(2) << std::setfill('0') << solar.time_.m_ << COLOR_RESET << "分";
+    std::cout << COLOR_CYAN << std::setw(2) << std::setfill('0') << solar.time_.s_ << COLOR_RESET << "秒       ";
+    std::cout << COLOR_CYAN << CSP_VERSION << COLOR_RESET << std::endl;
 
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
-    std::wstring yearStr{};
+    std::string yearStr{};
     int lyear{};
     if (lunar.date_.year_ < 0) {
         lyear = -lunar.date_.year_;
-        yearStr.append(L"前");
+        yearStr.append("前");
     } else {
         lyear = lunar.date_.year_;
     }
@@ -135,112 +135,112 @@ void CCmdPrint::print_base()
     if (add) yearStr.append(CZhData::num(oyd));
 
     const CGanZhi& gz = qm_->get_cal()->get_sz();
-    std::wcout << L"阴历：" << COLOR_CYAN << yearStr << COLOR_RESET << L"年 ";
-    std::wcout << COLOR_CYAN << CZhData::mon(lunar.date_.mon_ - 1) << COLOR_RESET << L"月";
-    std::wcout << COLOR_CYAN << CZhData::lunar_day(lunar.date_.day_ - 1) << COLOR_RESET << L"日 ";
-    std::wcout << COLOR_CYAN << CZhData::zhi((lunar.time_.h_ + 1) / 2 % 12) << COLOR_RESET << L"时\n";
+    std::cout << "阴历：" << COLOR_CYAN << yearStr << COLOR_RESET << "年 ";
+    std::cout << COLOR_CYAN << CZhData::mon(lunar.date_.mon_ - 1) << COLOR_RESET << "月";
+    std::cout << COLOR_CYAN << CZhData::lunar_day(lunar.date_.day_ - 1) << COLOR_RESET << "日 ";
+    std::cout << COLOR_CYAN << CZhData::zhi((lunar.time_.h_ + 1) / 2 % 12) << COLOR_RESET << "时\n";
 
-    // std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
-    std::wcout << L"干支：" << COLOR_YELLOW << CZhData::gan(gz.yg_) << L"  ";
-    std::wcout << CZhData::gan(gz.mg_) << L"  ";
-    std::wcout << CZhData::gan(gz.dg_) << L"  ";
-    std::wcout << CZhData::gan(gz.hg_) << L"  \n";
-    std::wcout << L"      " << CZhData::zhi(gz.yz_) << L"  ";
-    std::wcout << CZhData::zhi(gz.mz_) << L"  ";
-    std::wcout << CZhData::zhi(gz.dz_) << L"  ";
-    std::wcout << CZhData::zhi(gz.hz_) << L"      " << COLOR_RESET;
+    // std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << "干支：" << COLOR_YELLOW << CZhData::gan(gz.yg_) << "  ";
+    std::cout << CZhData::gan(gz.mg_) << "  ";
+    std::cout << CZhData::gan(gz.dg_) << "  ";
+    std::cout << CZhData::gan(gz.hg_) << "  \n";
+    std::cout << "      " << CZhData::zhi(gz.yz_) << "  ";
+    std::cout << CZhData::zhi(gz.mz_) << "  ";
+    std::cout << CZhData::zhi(gz.dz_) << "  ";
+    std::cout << CZhData::zhi(gz.hz_) << "      " << COLOR_RESET;
 
     switch (type_) {
         case 1: {
-            std::wcout << COLOR_CYAN << L"<时家转盘超接置润法>" << COLOR_RESET << std::endl;
+            std::cout << COLOR_CYAN << "<时家转盘超接置润法>" << COLOR_RESET << std::endl;
             break;
         }
         case 2: {
-            std::wstring szYueJiang = CZhData::zhi(12 - qm_->get_cal()->get_lunnar().date_.mon_);
-            std::wcout << COLOR_CYAN << L" (月将:" << szYueJiang << L")(时家阴盘)" << COLOR_RESET << std::endl;
+            std::string szYueJiang = CZhData::zhi(12 - qm_->get_cal()->get_lunnar().date_.mon_);
+            std::cout << COLOR_CYAN << " (月将:" << szYueJiang << ")(时家阴盘)" << COLOR_RESET << std::endl;
             break;
         }
         case 3: {
-            std::wcout << COLOR_CYAN << L"    <时家转盘拆补法>" << COLOR_RESET << std::endl;
+            std::cout << COLOR_CYAN << "    <时家转盘拆补法>" << COLOR_RESET << std::endl;
             break;
         }
         case 4: {
-            std::wcout << COLOR_CYAN << L"    <时家转盘茅山法>" << COLOR_RESET << std::endl;
+            std::cout << COLOR_CYAN << "    <时家转盘茅山法>" << COLOR_RESET << std::endl;
             break;
         }
         default:
             break;
     }
 
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
-    std::wcout << L"值符：" << COLOR_YELLOW << CZhData::jx(qm_->get_jx_pre()[qm_->get_duty()]) << COLOR_RESET;
-    std::wcout << L"  值使：" << COLOR_YELLOW << CZhData::bm(qm_->get_bm_pre()[qm_->get_duty()]) << L" ";
+    std::cout << "值符：" << COLOR_YELLOW << CZhData::jx(qm_->get_jx_pre()[qm_->get_duty()]) << COLOR_RESET;
+    std::cout << "  值使：" << COLOR_YELLOW << CZhData::bm(qm_->get_bm_pre()[qm_->get_duty()]) << " ";
 
-    std::wstring szYuan;
+    std::string szYuan;
     switch (qm_->get_yuan()) {
         case 0:
-            szYuan = L"手动定局";
+            szYuan = "手动定局";
             break;
         case 1:
-            szYuan = L"下元";
+            szYuan = "下元";
             break;
         case 2:
-            szYuan = L"中元";
+            szYuan = "中元";
             break;
         case 3:
-            szYuan = L"上元";
+            szYuan = "上元";
             break;
         default:
             break;
     }
-    std::wstring jieQi = CZhData::jq(qm_->get_jq());
+    std::string jieQi = CZhData::jq(qm_->get_jq());
     if (qm_->get_yuan() == 0) {
-        szYuan = L"   [" + szYuan + L"]";
+        szYuan = "   [" + szYuan + "]";
     } else {
-        szYuan = L"   [" + jieQi + szYuan + L"]";
+        szYuan = "   [" + jieQi + szYuan + "]";
     }
-    std::wcout << COLOR_YELLOW << szYuan;
+    std::cout << COLOR_YELLOW << szYuan;
 
-    std::wstring dun;
+    std::string dun;
     if (qm_->is_yin()) {
-        dun = L"[阴遁" + CZhData::num(qm_->get_js()) + L"局]\n";
+        dun = "[阴遁" + CZhData::num(qm_->get_js()) + "局]\n";
     } else {
-        dun = L"[阳遁" + CZhData::num(qm_->get_js()) + L"局]\n";
+        dun = "[阳遁" + CZhData::num(qm_->get_js()) + "局]\n";
     }
-    std::wcout << COLOR_YELLOW << dun << COLOR_RESET;
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_YELLOW << dun << COLOR_RESET;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 }
 
 void CCmdPrint::print_other()
 {
-    std::wcout << L"旬空：";
-    std::wstring szXunkong;
-    szXunkong += CZhData::zhi(qm_->get_xk()[0]) + CZhData::zhi(qm_->get_xk()[1]) + L"   ";
-    szXunkong += CZhData::zhi(qm_->get_xk()[2]) + CZhData::zhi(qm_->get_xk()[3]) + L"   ";
-    szXunkong += CZhData::zhi(qm_->get_xk()[4]) + CZhData::zhi(qm_->get_xk()[5]) + L"   ";
-    szXunkong += CZhData::zhi(qm_->get_xk()[6]) + CZhData::zhi(qm_->get_xk()[7]) + L"   \n";
-    std::wcout << COLOR_YELLOW << szXunkong << COLOR_RESET;
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << "旬空：";
+    std::string szXunkong;
+    szXunkong += CZhData::zhi(qm_->get_xk()[0]) + CZhData::zhi(qm_->get_xk()[1]) + "   ";
+    szXunkong += CZhData::zhi(qm_->get_xk()[2]) + CZhData::zhi(qm_->get_xk()[3]) + "   ";
+    szXunkong += CZhData::zhi(qm_->get_xk()[4]) + CZhData::zhi(qm_->get_xk()[5]) + "   ";
+    szXunkong += CZhData::zhi(qm_->get_xk()[6]) + CZhData::zhi(qm_->get_xk()[7]) + "   \n";
+    std::cout << COLOR_YELLOW << szXunkong << COLOR_RESET;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
-    std::wstring szJieName;
+    std::string szJieName;
     const auto& first_jq = qm_->get_cal()->get_jie().jq[2];
     const auto& second_jq = qm_->get_cal()->get_jie().jq[3];
-    szJieName += L"[" + CZhData::jq(first_jq.index_) + L"]：";
-    std::wcout << szJieName;
-    wchar_t szTem[128]{};
-    std::swprintf(szTem, sizeof(szTem), L"%02d-%02d %02d:%02d:%02d", first_jq.dt_.date_.mon_, first_jq.dt_.date_.day_,
+    szJieName += "[" + CZhData::jq(first_jq.index_) + "]：";
+    std::cout << szJieName;
+    char szTem[128]{};
+    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", first_jq.dt_.date_.mon_, first_jq.dt_.date_.day_,
                   first_jq.dt_.time_.h_, first_jq.dt_.time_.m_, first_jq.dt_.time_.s_);
-    std::wcout << COLOR_YELLOW << std::wstring(szTem) << COLOR_RESET;
+    std::cout << COLOR_YELLOW << std::string(szTem) << COLOR_RESET;
     szJieName.clear();
-    szJieName += L"  [" + CZhData::jq(second_jq.index_) + L"]：";
-    std::wcout << szJieName;
-    std::swprintf(szTem, sizeof(szTem), L"%02d-%02d %02d:%02d:%02d", second_jq.dt_.date_.mon_, second_jq.dt_.date_.day_,
+    szJieName += "  [" + CZhData::jq(second_jq.index_) + "]：";
+    std::cout << szJieName;
+    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", second_jq.dt_.date_.mon_, second_jq.dt_.date_.day_,
                   second_jq.dt_.time_.h_, second_jq.dt_.time_.m_, second_jq.dt_.time_.s_);
-    std::wcout << COLOR_YELLOW << std::wstring(szTem) << COLOR_RESET << std::endl;
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
-    std::wcout << COLOR_YELLOW << L"https://github.com/taynpg/csp" << COLOR_RESET << std::endl;
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_YELLOW << std::string(szTem) << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_YELLOW << "https://github.com/taynpg/csp" << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 }
 
 void CCmdPrint::run(cppbox::CQimen* qm, int nType)
@@ -249,79 +249,79 @@ void CCmdPrint::run(cppbox::CQimen* qm, int nType)
     this->qm_ = qm;
 
     print_base();
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(4);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(3);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(2);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
 
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(4);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(3);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(2);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
 
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(4);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(3);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(2);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(5);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(8);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(1);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
 
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(5);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(8);
-    std::wcout << COLOR_GREEN << "|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(1);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
 
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(5);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(8);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(1);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(6);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(7);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_one(0);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
 
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(6);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(7);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_two(0);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
 
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(6);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(7);
-    std::wcout << COLOR_GREEN << L"|" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "|" << COLOR_RESET;
     print_three(0);
-    std::wcout << COLOR_GREEN << L"|\n" << COLOR_RESET;
-    std::wcout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
+    std::cout << COLOR_GREEN << "|\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
     print_other();
 }
