@@ -15,27 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="csp\csp_base.hpp">
+    <ClInclude Include="src\CLI11.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="csp\print_base.h">
+    <ClInclude Include="src\csp_base.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="csp\qm_use.h">
+    <ClInclude Include="src\print_base.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="csp\CLI11.hpp">
+    <ClInclude Include="src\qm_use.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="csp\main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="csp\print_base.cpp">
+    <ClCompile Include="src\print_base.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="csp\qm_use.cpp">
+    <ClCompile Include="src\qm_use.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -18,6 +18,17 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\CLI11.hpp" />
+    <ClInclude Include="src\csp_base.hpp" />
+    <ClInclude Include="src\print_base.h" />
+    <ClInclude Include="src\qm_use.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\print_base.cpp" />
+    <ClCompile Include="src\qm_use.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{3DB9F821-4F7B-4399-B87D-4BEFAEF21A70}</ProjectGuid>
@@ -129,17 +140,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="csp\CLI11.hpp" />
-    <ClInclude Include="csp\csp_base.hpp" />
-    <ClInclude Include="csp\print_base.h" />
-    <ClInclude Include="csp\qm_use.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="csp\main.cpp" />
-    <ClCompile Include="csp\print_base.cpp" />
-    <ClCompile Include="csp\qm_use.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
