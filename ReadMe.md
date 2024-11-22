@@ -75,21 +75,15 @@ v1.3.1 版本及以后已加入寿星万年历，可以支持年跨度`-198~9999
 ## 4.1 依赖：
 
 - 支持C++11语法编译器
-- [CMake](https://cmake.org/download/)
-- [Git](https://git-scm.com/)
 
-## 4.2 通用构建方法（跨平台）：
+## 4.2 构建方法：
 
 拉取项目请保证网络畅通（可访问`github`）。
 
 ```shell
 git clone https://github.com/taynpg/csp
-cd csp
-cmake -Bbuild
-cmake --build build --config release
+项目结构变更为VS，不使用cmake构建了，其编译脚本编写中...
 ```
-
-构建的结果在：`build/bin`下。
 
 ## 4.3 手机端构建
 
