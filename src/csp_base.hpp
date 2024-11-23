@@ -1,7 +1,7 @@
 #ifndef CSP_HEADER_H
 #define CSP_HEADER_H
 
-#define CSP_VERSION "v1.4.2"
+constexpr auto CSP_VERSION = "v1.4.3";
 
 #include "calendar_base.h"
 
