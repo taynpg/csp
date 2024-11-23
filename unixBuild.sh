@@ -1,4 +1,3 @@
-#!/bin/bash
 CC=g++
 CFLAGS="-std=c++14 -O2 -DNDEBUG"
 INCLUDES="-I src -I calendar -I qimen -I swtwl -I yixue -I zhcn"
