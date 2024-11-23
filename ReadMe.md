@@ -81,8 +81,10 @@ v1.3.1 版本及以后已加入寿星万年历，可以支持年跨度`-198~9999
 拉取项目请保证网络畅通（可访问`github`）。
 
 ```shell
-git clone https://github.com/taynpg/csp
-项目结构变更为VS，不使用cmake构建了，其编译脚本编写中...
+$ git clone https://github.com/taynpg/csp
+$ 如果是msvc编译器，打开vs的命令行工具，将项目下的msvcBuild.bat拖入到命令行中执行，结果在build下。
+$ 如果是类Unix系统，执行项目下的unixBuild.sh脚本，结果在build下。
+$ 如果是Mingw编译器，执行项目下的mingwBuild.bat，结果在build下。
 ```
 
 ## 4.3 手机端构建
