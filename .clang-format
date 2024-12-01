@@ -1,4 +1,4 @@
-BasedOnStyle: Google
+BasedOnStyle: LLVM
 IndentWidth: 4
 PointerAlignment: Left
 AccessModifierOffset: -4
@@ -8,11 +8,10 @@ BraceWrapping:
     AfterClass: true
 Cpp11BracedListStyle: true
 ReflowComments: true
-SortIncludes: false
 SpacesBeforeTrailingComments: 3
 TabWidth: 4
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ColumnLimit: 130
-AllowShortBlocksOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: None
 AllowShortEnumsOnASingleLine: false

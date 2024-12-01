@@ -276,15 +276,15 @@ double Day::getJieQiJD()
 		return this->jqjd;
 	}
 
-	long double d2, xn, jd2 = this->d0 + dt_T(this->d0) - (long double)8 / (long double)24;
+	long double d, xn, jd2 = this->d0 + dt_T(this->d0) - (long double)8 / (long double)24;
 	long double w = XL::S_aLon(jd2 / 36525, 3);
 	w = int2((w - 0.13) / pi2 * 24) * pi2 / 24;
 	int D = 0;
 
 	do
 	{
-		d2 = qi_accurate(w);
-		D = int2(d2 + 0.5);
+		d = qi_accurate(w);
+		D = int2(d + 0.5);
 		// 计算出的节令值
 		xn = int2(w / pi2 * 24 + 24000006.01) % 24;
 		w += pi2 / 24;
@@ -294,7 +294,7 @@ double Day::getJieQiJD()
 			continue;
 		if (D == this->d0)
 		{
-			Time t1 = JD::JD2DD(d2);
+			Time t1 = JD::JD2DD(d);
 			Time t2 = JD::JD2DD(D + J2000);
 
 			t2.h = t1.h;
