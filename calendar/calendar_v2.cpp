@@ -12,8 +12,12 @@ CCalenderV2::~CCalenderV2()
 
 bool CCalenderV2::set_datetime(const CDateTime& datetime)
 {
-    dt_ = datetime;
-
+    CDateTime handled = datetime;
+    if (datetime.time_.h_ == 23) {
+        next(handled);
+        handled.time_.h_ = 0;
+    }
+    dt_ = handled;
     if (day_) {
         delete day_;
     }
@@ -104,6 +108,7 @@ bool CCalenderV2::set_datetime(const CDateTime& datetime)
         }
     }
     check_mon_gz();
+    dt_ = datetime;
     return true;
 }
 
