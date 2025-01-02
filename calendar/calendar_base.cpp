@@ -99,29 +99,23 @@ CDateTime& CDateTime::operator=(const CDate& date)
     return *this;
 }
 
-CCalender* CCalenderFactory::creat_instance(CalendarType etype)
+std::shared_ptr<CCalender> CCalenderFactory::create_instance(CalendarType etype)
 {
-    CCalender* pResult = nullptr;
+    std::shared_ptr<CCalender> pResult = nullptr;
 
     switch (etype) {
         case CalendarType::CALENDAR_V1: {
-            pResult = new CCalenderV1();
+            pResult = std::make_shared<CCalenderV1>();
             break;
         }
         case CalendarType::CALENDAR_V2: {
-            pResult = new CCalenderV2();
+            pResult = std::make_shared<CCalenderV2>();
             break;
         }
         default:
             break;
     }
     return pResult;
-}
-
-// 释放内存
-void CCalenderFactory::free(CCalender* pCalender)
-{
-    delete pCalender;
 }
 
 CCalender::CCalender() = default;

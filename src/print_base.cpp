@@ -125,14 +125,22 @@ void CCmdPrint::print_base()
     int oyc = lyear / 10 % 10;
     int oyd = lyear % 10;
 
-    if (oya != 0) add = true;
-    if (add) yearStr.append(CZhData::num(oya));
-    if (oyb != 0) add = true;
-    if (add) yearStr.append(CZhData::num(oyb));
-    if (oyc != 0) add = true;
-    if (add) yearStr.append(CZhData::num(oyc));
-    if (oyd != 0) add = true;
-    if (add) yearStr.append(CZhData::num(oyd));
+    if (oya != 0)
+        add = true;
+    if (add)
+        yearStr.append(CZhData::num(oya));
+    if (oyb != 0)
+        add = true;
+    if (add)
+        yearStr.append(CZhData::num(oyb));
+    if (oyc != 0)
+        add = true;
+    if (add)
+        yearStr.append(CZhData::num(oyc));
+    if (oyd != 0)
+        add = true;
+    if (add)
+        yearStr.append(CZhData::num(oyd));
 
     const CGanZhi& gz = qm_->get_cal()->get_sz();
     std::cout << "阴历：" << COLOR_CYAN << yearStr << COLOR_RESET << "年 ";
@@ -151,25 +159,25 @@ void CCmdPrint::print_base()
     std::cout << CZhData::zhi(gz.hz_) << "      " << COLOR_RESET;
 
     switch (type_) {
-        case 1: {
-            std::cout << COLOR_CYAN << "<时家转盘超接置润法>" << COLOR_RESET << std::endl;
-            break;
-        }
-        case 2: {
-            std::string szYueJiang = CZhData::zhi(12 - qm_->get_cal()->get_lunnar().date_.mon_);
-            std::cout << COLOR_CYAN << " (月将:" << szYueJiang << ")(时家阴盘)" << COLOR_RESET << std::endl;
-            break;
-        }
-        case 3: {
-            std::cout << COLOR_CYAN << "    <时家转盘拆补法>" << COLOR_RESET << std::endl;
-            break;
-        }
-        case 4: {
-            std::cout << COLOR_CYAN << "    <时家转盘茅山法>" << COLOR_RESET << std::endl;
-            break;
-        }
-        default:
-            break;
+    case 1: {
+        std::cout << COLOR_CYAN << "<时家转盘超接置润法>" << COLOR_RESET << std::endl;
+        break;
+    }
+    case 2: {
+        std::string szYueJiang = CZhData::zhi(12 - qm_->get_cal()->get_lunnar().date_.mon_);
+        std::cout << COLOR_CYAN << " (月将:" << szYueJiang << ")(时家阴盘)" << COLOR_RESET << std::endl;
+        break;
+    }
+    case 3: {
+        std::cout << COLOR_CYAN << "    <时家转盘拆补法>" << COLOR_RESET << std::endl;
+        break;
+    }
+    case 4: {
+        std::cout << COLOR_CYAN << "    <时家转盘茅山法>" << COLOR_RESET << std::endl;
+        break;
+    }
+    default:
+        break;
     }
 
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
@@ -179,20 +187,20 @@ void CCmdPrint::print_base()
 
     std::string szYuan;
     switch (qm_->get_yuan()) {
-        case 0:
-            szYuan = "手动定局";
-            break;
-        case 1:
-            szYuan = "下元";
-            break;
-        case 2:
-            szYuan = "中元";
-            break;
-        case 3:
-            szYuan = "上元";
-            break;
-        default:
-            break;
+    case 0:
+        szYuan = "手动定局";
+        break;
+    case 1:
+        szYuan = "下元";
+        break;
+    case 2:
+        szYuan = "中元";
+        break;
+    case 3:
+        szYuan = "上元";
+        break;
+    default:
+        break;
     }
     std::string jieQi = CZhData::jq(qm_->get_jq());
     if (qm_->get_yuan() == 0) {
@@ -243,7 +251,7 @@ void CCmdPrint::print_other()
     std::cout << COLOR_GREEN << SPLIT_LINE << COLOR_RESET << std::endl;
 }
 
-void CCmdPrint::run(cppbox::CQimen* qm, int nType)
+void CCmdPrint::run(const std::shared_ptr<CQimen>& qm, int nType)
 {
     type_ = nType;
     this->qm_ = qm;

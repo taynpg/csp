@@ -27,11 +27,11 @@ struct OneDay {
 };
 
 // V1 : 转盘 时家 超接置润法
-class CQiMenV1 : public CQimen
+class CQimenV1 : public CQimen
 {
 public:
-    CQiMenV1();
-    ~CQiMenV1() override;
+    CQimenV1();
+    ~CQimenV1() override;
 
 public:
     // 传入日期数据
@@ -60,13 +60,13 @@ private:
     void save_day(const CDate& date, int nJie, int& nJiazi);
     void get_cur_jie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff);
     // 在一年的日历中查找当天的信息
-    OneDay* search_day(const CDateTime& datetime);
+    bool search_day(const CDateTime& datetime, OneDay& o);
     // 打印所推演的一年日历
     // void printYearDay();
     // 获取给定甲子的两个寻空
     static void get_xk(int nJiazi, int& nKongA, int& nKongB);
 
-    using OneDay_t = std::vector<OneDay*>;
+    using OneDay_t = std::vector<OneDay>;
 
 protected:
     OneDay_t one_year_;   // 四柱节气的一年推算

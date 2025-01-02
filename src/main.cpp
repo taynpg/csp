@@ -5,14 +5,14 @@
 #include <iostream>
 #include <regex>
 
+#include "CLI11.hpp"
 #include "csp_base.hpp"
 #include "qm_use.h"
-#include "CLI11.hpp"
 
 #ifdef _WIN32
-#include <windows.h>
-#include <io.h>
 #include <fcntl.h>
+#include <io.h>
+#include <windows.h>
 #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
 #endif
@@ -116,20 +116,20 @@ int main(int argc, char** argv)
         return -1;
     }
     switch (param.type_) {
-        case 1:
-        case 2:
-        case 3:
-        case 4: {
-            CQimenUse qmuse;
-            if (param.str_dt_.empty()) {
-                param.is_auto_date_ = true;
-            }
-            qmuse.run(param);
-            break;
+    case 1:
+    case 2:
+    case 3:
+    case 4: {
+        CQimenUse qmuse;
+        if (param.str_dt_.empty()) {
+            param.is_auto_date_ = true;
         }
-        default: {
-            std::wcout << L"未匹配到支持的盘面类型，请使用 --help 查看帮助。";
-        }
+        qmuse.run(param);
+        break;
+    }
+    default: {
+        std::wcout << L"未匹配到支持的盘面类型，请使用 --help 查看帮助。";
+    }
     }
     return 0;
 }

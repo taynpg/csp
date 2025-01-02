@@ -4,7 +4,7 @@
 namespace cppbox {
 
 // V2 : 转盘 时家 阴盘
-class CQimenV2 : public CQiMenV1
+class CQimenV2 : public CQimenV1
 {
 public:
     CQimenV2();

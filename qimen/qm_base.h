@@ -135,7 +135,7 @@ public:
     // 获取旬空信息
     const int* get_xk() const;
     // 获取日历
-    const CCalender* get_cal() const;
+    const std::shared_ptr<CCalender> get_cal() const;
     // 获取值班人员
     int get_duty() const;
     // 获取寄宫
@@ -185,12 +185,12 @@ protected:
     int jz_{};               // 当日六十甲子
 protected:
     CDateTime datetime_;
-    CCalender* pcal_{};       // 日历实例
-    int gua2pos_[g_num]{};    // 卦数转位置
-    int sanhe_[12]{};         // 地支三和
-    int dzc_[12]{};           // 地支相冲
-    int zhi_[12]{};           // 十二地支的位置
-    CalendarType cal_type_;   // 日历的类型
+    std::shared_ptr<CCalender> pcal_{};   // 日历实例
+    int gua2pos_[g_num]{};                // 卦数转位置
+    int sanhe_[12]{};                     // 地支三和
+    int dzc_[12]{};                       // 地支相冲
+    int zhi_[12]{};                       // 十二地支的位置
+    CalendarType cal_type_;               // 日历的类型
     char err_[512]{};
 };
 
@@ -203,9 +203,7 @@ private:
 
 public:
     // 获取实例
-    static CQimen* createInstance(QIMEN_STYLE type);
-    // 释放实例
-    static void freeInstance(CQimen* pQimen);
+    static std::shared_ptr<CQimen> createInstance(QIMEN_STYLE type);
 };
 }   // namespace cppbox
 #endif

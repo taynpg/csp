@@ -6,7 +6,7 @@
 namespace cppbox {
 
 // V4 : 转盘 时家 茅山法
-class CQimenV4 : public CQiMenV1
+class CQimenV4 : public CQimenV1
 {
 public:
     CQimenV4() = default;

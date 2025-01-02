@@ -10,7 +10,7 @@
 namespace cppbox {
 
 // V3 : 转盘 时家 拆补法
-class CQimenV3 : public CQiMenV1
+class CQimenV3 : public CQimenV1
 {
 public:
     CQimenV3() = default;

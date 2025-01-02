@@ -10,34 +10,29 @@
 namespace cppbox {
 
 // 获取实例
-CQimen* CQimenFactory::createInstance(QIMEN_STYLE type)
+std::shared_ptr<CQimen> CQimenFactory::createInstance(QIMEN_STYLE type)
 {
-    CQimen* pQimen = nullptr;
+    std::shared_ptr<CQimen> pQimen = nullptr;
     switch (type) {
-        case QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {   // 时家超接置润法
-            pQimen = new CQiMenV1();
-            break;
-        }
-        case QIMEN_STYLE::SHIJIA_ZHUANPAN_YINPAN: {
-            pQimen = new CQimenV2();
-            break;
-        }
-        case QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAIBU: {
-            pQimen = new CQimenV3();
-            break;
-        }
-        case QIMEN_STYLE::SHIJIA_ZHUANPAN_MAOSHAN: {
-            pQimen = new CQimenV4();
-        }
-        default:
-            break;
+    case QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN: {   // 时家超接置润法
+        pQimen = std::make_shared<CQimenV1>();
+        break;
+    }
+    case QIMEN_STYLE::SHIJIA_ZHUANPAN_YINPAN: {
+        pQimen = std::make_shared<CQimenV2>();
+        break;
+    }
+    case QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAIBU: {
+        pQimen = std::make_shared<CQimenV3>();
+        break;
+    }
+    case QIMEN_STYLE::SHIJIA_ZHUANPAN_MAOSHAN: {
+        pQimen = std::make_shared<CQimenV4>();
+    }
+    default:
+        break;
     }
     return pQimen;
-}
-// 释放实例
-void CQimenFactory::freeInstance(CQimen* pQimen)
-{
-    delete pQimen;
 }
 
 CQimen::CQimen() : pcal_(nullptr), cal_type_(CalendarType::CALENDAR_V1)
@@ -62,11 +57,7 @@ CQimen::CQimen() : pcal_(nullptr), cal_type_(CalendarType::CALENDAR_V1)
     dzc_[11] = 5;
 }
 
-CQimen::~CQimen()
-{
-    CCalenderFactory::free(pcal_);
-}
-
+CQimen::~CQimen() = default;
 // 设置十二地支位置对应
 void CQimen::setDizhi()
 {
@@ -201,9 +192,7 @@ void CQimen::set_jg(int nGong)
 bool CQimen::base_run(const QiParam& info, CalendarType type)
 {
     cal_type_ = type;
-    CCalenderFactory::free(pcal_);
-    pcal_ = CCalenderFactory::creat_instance(cal_type_);
-
+    pcal_ = CCalenderFactory::create_instance(cal_type_);
     if (!pcal_->check_format(info.datetime_)) {
         std::snprintf(err_, sizeof(err_), "%s", "日期不在支持的范围内。");
         return false;
@@ -300,7 +289,7 @@ const int* CQimen::get_kw() const
     return kw_;
 }
 // 获取日历
-const CCalender* CQimen::get_cal() const
+const std::shared_ptr<CCalender> CQimen::get_cal() const
 {
     return pcal_;
 }

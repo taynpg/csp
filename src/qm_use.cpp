@@ -15,26 +15,26 @@ bool CQimenUse::run(const CMDParam& param)
 
     info.ju_ = param.ju_;
 
-    CQimen* qm{};
+    std::shared_ptr<CQimen> qm = nullptr;
     switch (param.type_) {
-        case 1: {
-            qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
-            break;
-        }
-        case 2: {
-            qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_YINPAN);
-            break;
-        }
-        case 3: {
-            qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAIBU);
-            break;
-        }
-        case 4: {
-            qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_MAOSHAN);
-            break;
-        }
-        default:
-            return false;
+    case 1: {
+        qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAOJIE_ZHIRUN);
+        break;
+    }
+    case 2: {
+        qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_YINPAN);
+        break;
+    }
+    case 3: {
+        qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_CHAIBU);
+        break;
+    }
+    case 4: {
+        qm = CQimenFactory::createInstance(QIMEN_STYLE::SHIJIA_ZHUANPAN_MAOSHAN);
+        break;
+    }
+    default:
+        return false;
     }
 
     qm->base_init();
@@ -42,9 +42,8 @@ bool CQimenUse::run(const CMDParam& param)
 
     CDateTime tdt = info.datetime_;
     if (param.zone_ != 0) {
-        CCalender* pt = CCalenderFactory::creat_instance(type);
+        auto pt = CCalenderFactory::create_instance(type);
         pt->get_diff_sec(info.datetime_, tdt, param.zone_ * 3600);
-        CCalenderFactory::free(pt);
     }
     info.datetime_ = tdt;
 
@@ -53,6 +52,5 @@ bool CQimenUse::run(const CMDParam& param)
         return false;
     }
     print_.run(qm, param.type_);
-    CQimenFactory::freeInstance(qm);
     return true;
 }

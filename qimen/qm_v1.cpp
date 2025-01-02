@@ -4,7 +4,7 @@
 
 namespace cppbox {
 
-CQiMenV1::CQiMenV1()
+CQimenV1::CQimenV1()
 {
     pcal_ = nullptr;
     jushu_ = 0;
@@ -48,16 +48,10 @@ CQiMenV1::CQiMenV1()
     wby_[9] = 55;
 }
 
-CQiMenV1::~CQiMenV1()
-{
-    for (auto& item : one_year_) {
-        delete item;
-    }
-    one_year_.clear();
-}
+CQimenV1::~CQimenV1() = default;
 
 // 传入日期数据
-bool CQiMenV1::run(const QiParam& info, CalendarType type)
+bool CQimenV1::run(const QiParam& info, CalendarType type)
 {
     if (!base_run(info, type)) {
         return false;
@@ -67,22 +61,22 @@ bool CQiMenV1::run(const QiParam& info, CalendarType type)
         inference();
         // printYearDay();
 
-        OneDay* pToday = search_day(info.datetime_);
-        if (!pToday) {
+        OneDay o;
+        if (!search_day(info.datetime_, o)) {
             return false;
         }
 
-        jz_ = pToday->gz_index_;
-        jq_ = pToday->jie_index_;
+        jz_ = o.gz_index_;
+        jq_ = o.jie_index_;
 
-        int nResult = ju_qi_[pToday->jie_index_];
+        int nResult = ju_qi_[o.jie_index_];
         if ((nResult % 10) == 1) {
             is_yin_ = false;
         } else {
             is_yin_ = true;
         }
 
-        int num = (pToday->gz_index_ % 15) / 5;
+        int num = (o.gz_index_ % 15) / 5;
         if (num == 0) {
             yuan_ = 3;
             jushu_ = nResult / 1000;
@@ -120,7 +114,7 @@ bool CQiMenV1::run(const QiParam& info, CalendarType type)
     return true;
 }
 
-void CQiMenV1::get_cur_jie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff)
+void CQimenV1::get_cur_jie(const CDateTime& datetime, CDateTime& datetimeJie, int& nJiazi, int& nFutouDiff)
 {
     pcal_->set_datetime(datetime);
     datetimeJie = pcal_->get_jie().jq[2].dt_;
@@ -134,12 +128,14 @@ void CQiMenV1::get_cur_jie(const CDateTime& datetime, CDateTime& datetimeJie, in
 }
 
 // 推算一年的日历
-void CQiMenV1::inference()
+void CQimenV1::inference()
 {
+    one_year_.clear();
+
     int nTem = 0;
     int nStartJie = 22;
     int nJiazi = 0;
-    int nFutouDiff = 0;
+    int di_futou = 0;
 
     CDateTime dateDaxuePreYear(datetime_.date_.year_ - 1, 12, 1, 12, 0, 0);
     CDateTime dateDaxue(datetime_.date_.year_, 12, 1, 12, 0, 0);
@@ -148,16 +144,16 @@ void CQiMenV1::inference()
 
     CDateTime dateJieTime;
     CDateTime cycleDatetime;
-    get_cur_jie(dateDaxuePreYear, dateJieTime, nJiazi, nFutouDiff);
+    get_cur_jie(dateDaxuePreYear, dateJieTime, nJiazi, di_futou);
     cycleDatetime = dateJieTime;
     // 保存大雪的三元
-    save_part(cycleDatetime.date_, nStartJie, nJiazi, -1, 15 - nFutouDiff);
-    if (nFutouDiff < 9) {
+    save_part(cycleDatetime.date_, nStartJie, nJiazi, -1, 15 - di_futou);
+    if (di_futou < 9) {
         nStartJie = cb::remain(24, ++nStartJie);
     }
     // 保存大雪到芒种
     save_part(cycleDatetime.date_, nStartJie, nJiazi, 10, 300);
-    get_cur_jie(dateMangzhong, dateJieTime, nTem, nFutouDiff);
+    get_cur_jie(dateMangzhong, dateJieTime, nTem, di_futou);
 
     // 递增日期此时存的是最后一个日期的下一个日期，所以这里算差值要回退一天
     dateTem = CDateTime(cycleDatetime.date_);
@@ -171,7 +167,7 @@ void CQiMenV1::inference()
     }
     // 保存芒种到大雪
     save_part(cycleDatetime.date_, nStartJie, nJiazi, 22, 300);
-    get_cur_jie(dateDaxue, dateJieTime, nTem, nFutouDiff);
+    get_cur_jie(dateDaxue, dateJieTime, nTem, di_futou);
     dateTem = CDateTime(cycleDatetime.date_);
     // 递增日期此时存的是最后一个日期的下一个日期，所以这里算差值要回退一天
     pcal_->pre(dateTem);
@@ -186,7 +182,7 @@ void CQiMenV1::inference()
     save_part(cycleDatetime.date_, nStartJie, nJiazi, -1, 60);
 }
 
-void CQiMenV1::save_part(CDate& date, int& nUpper, int& nJiazi, int nPur, int nDays)
+void CQimenV1::save_part(CDate& date, int& nUpper, int& nJiazi, int nPur, int nDays)
 {
     int nCycle = 0;
     nUpper = cb::remain(24, nUpper);
@@ -207,27 +203,27 @@ void CQiMenV1::save_part(CDate& date, int& nUpper, int& nJiazi, int nPur, int nD
     }
 }
 
-void CQiMenV1::save_day(const CDate& date, int nJie, int& nJiazi)
+void CQimenV1::save_day(const CDate& date, int nJie, int& nJiazi)
 {
-    auto* pDay = new OneDay();
-    pDay->gz_index_ = nJiazi;
-    pDay->jie_index_ = nJie;
-    pDay->date = date;
-    one_year_.push_back(pDay);
+    OneDay o;
+    o.gz_index_ = nJiazi;
+    o.jie_index_ = nJie;
+    o.date = date;
+    one_year_.push_back(o);
 }
 
 // 在一年的日历中查找当天的信息
-OneDay* CQiMenV1::search_day(const CDateTime& datetime)
+bool CQimenV1::search_day(const CDateTime& datetime, OneDay& o)
 {
-    OneDay* p = nullptr;
-    std::vector<OneDay*>::const_iterator it;
-    for (it = one_year_.begin(); it != one_year_.end(); ++it) {
-        if ((*it)->date == datetime.date_) {
-            p = *it;
+    bool find = false;
+    for (const auto& item : one_year_) {
+        if (item.date == datetime.date_) {
+            o = item;
+            find = true;
             break;
         }
     }
-    return p;
+    return find;
 }
 
 // 打印所推演的一年日历
@@ -243,19 +239,19 @@ OneDay* CQiMenV1::search_day(const CDateTime& datetime)
 }*/
 
 // 获取给定甲子的两个寻空
-void CQiMenV1::get_xk(int nJiazi, int& nKongA, int& nKongB)
+void CQimenV1::get_xk(int nJiazi, int& nKongA, int& nKongB)
 {
     nKongA = ((nJiazi / 10) * 10 + 10) % 12;
     nKongB = ((nJiazi / 10) * 10 + 11) % 12;
 }
 
 // 排地盘
-void CQiMenV1::gen_dipan()
+void CQimenV1::gen_dipan()
 {
     // 所谓的几局，就是甲子戊居于第几宫
-    int nStartIndex = cb::remain(9, jushu_ - 1);
+    int s_index = cb::remain(9, jushu_ - 1);
     // 转成定义位置
-    int nPosition = gua2pos_[nStartIndex];
+    int nPosition = gua2pos_[s_index];
     // 甲子戊
     d_[nPosition] = 4;
     int nk{};
@@ -265,10 +261,10 @@ void CQiMenV1::gen_dipan()
         nk = 1;
     }
     for (int i = 0; i < 5; ++i) {
-        d_[gua2pos_[cb::remain(9, nStartIndex += nk)]] = 5 + i;
+        d_[gua2pos_[cb::remain(9, s_index += nk)]] = 5 + i;
     }
     for (int i = 0; i < 3; ++i) {
-        d_[gua2pos_[cb::remain(9, nStartIndex += nk)]] = 3 - i;
+        d_[gua2pos_[cb::remain(9, s_index += nk)]] = 3 - i;
     }
 
     // 判断是否是 五不遇时
@@ -281,7 +277,7 @@ void CQiMenV1::gen_dipan()
     }
 }
 // 查找值符，值使
-void CQiMenV1::gen_zhi()
+void CQimenV1::gen_zhi()
 {
     // 六十甲子
     int hindex = get_jz(pcal_->get_sz().hg_, pcal_->get_sz().hz_);
@@ -293,7 +289,7 @@ void CQiMenV1::gen_zhi()
     zs_ = zf_;
 }
 // 排九星
-void CQiMenV1::gen_jx()
+void CQimenV1::gen_jx()
 {
     // 先查验当前的局是否为伏吟
     if (pcal_->get_sz().hg_ == 0) {
@@ -322,7 +318,7 @@ void CQiMenV1::gen_jx()
     }
 }
 // 排八门
-void CQiMenV1::gen_bm()
+void CQimenV1::gen_bm()
 {
     // 查看当前旬头六仪
     int nJiazi = get_jz(pcal_->get_sz().hg_, pcal_->get_sz().hz_);
@@ -361,7 +357,7 @@ void CQiMenV1::gen_bm()
     }
 }
 // 排八神
-void CQiMenV1::gen_bs()
+void CQimenV1::gen_bs()
 {
     int nxing = jx_pre_[zf_];
     if (nxing == 4) {
@@ -381,7 +377,7 @@ void CQiMenV1::gen_bs()
     }
 }
 // 排天盘
-void CQiMenV1::gen_tp()
+void CQimenV1::gen_tp()
 {
     // 当前九星宫位的天盘就是：当前星原来宫位中的地盘
     for (int i = 0; i < 8; ++i) {
@@ -389,7 +385,7 @@ void CQiMenV1::gen_tp()
     }
 }
 // 排旬空马星
-void CQiMenV1::gen_other()
+void CQimenV1::gen_other()
 {
     get_xk(get_jz(pcal_->get_sz().yg_, pcal_->get_sz().yz_), xk_[0], xk_[1]);
     get_xk(get_jz(pcal_->get_sz().mg_, pcal_->get_sz().mz_), xk_[2], xk_[3]);

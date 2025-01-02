@@ -1,6 +1,7 @@
 #ifndef BOX_CALENDAR_BASE_H
 #define BOX_CALENDAR_BASE_H
 
+#include <memory>
 namespace cppbox {
 
 // 日历的不同实现版本
@@ -134,9 +135,7 @@ private:
 
 public:
     // 获取日历类指针
-    static CCalender* creat_instance(CalendarType etype);
-    // 释放内存
-    static void free(CCalender* pCalender);
+    static std::shared_ptr<CCalender> create_instance(CalendarType etype);
 };
 }   // namespace cppbox
 #endif

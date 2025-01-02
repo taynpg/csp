@@ -12,7 +12,7 @@ public:
     ~CCmdPrint();
 
 public:
-    void run(cppbox::CQimen* qm, int nType);
+    void run(const std::shared_ptr<CQimen>& qm, int nType);
 
 private:
     void print_one(int nGong);
@@ -22,7 +22,7 @@ private:
     void print_other();
 
 private:
-    cppbox::CQimen* qm_{};
+    std::shared_ptr<CQimen> qm_{};
     int type_{};
 };
 

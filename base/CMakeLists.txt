@@ -9,7 +9,7 @@ if (MSVC)
 endif()
 
 set(SOURCES 
-    box_yxbase.h box_yxbase.cpp
+    yxbase.h yxbase.cpp
 )
 
 add_library(base STATIC ${SOURCES})
