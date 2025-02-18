@@ -8,6 +8,6 @@ if (MSVC)
     add_compile_options(/source-charset:utf-8)
 endif()
 
-set(SOURCES zh_lang.h zh_lang.cpp)
+set(SOURCES zh_lang.h zh_lang.cxx)
 add_library(zhcn STATIC ${SOURCES})
 target_include_directories(zhcn PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

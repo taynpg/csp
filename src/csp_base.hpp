@@ -1,22 +1,23 @@
 #ifndef CSP_HEADER_H
 #define CSP_HEADER_H
 
-constexpr auto CSP_VERSION = "v1.4.4";
-
-#include "calendar_base.h"
+constexpr auto CSP_VERSION = "v1.4.5";
 
 #include <string>
 
-using namespace cppbox;
-
-struct CMDParam {
-    CDateTime dt_{};
-    int ju_{};
-    int type_ = -1;
-    int zone_ = 0;
-    bool is_auto_date_{false};
-    std::string str_dt_{};
-    int cal_type_{1};
+struct CmdParam {
+    int year{};
+    int mon{};
+    int day{};
+    int hour{};
+    int min{};
+    int sec{};
+    int ju{};
+    int type = -1;
+    int zone = 0;
+    bool is_auto{false};
+    std::string str_dt{};
+    int cal_type{1};
 };
 
 #endif

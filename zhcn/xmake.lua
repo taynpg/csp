@@ -1,0 +1,6 @@
+add_rules("mode.debug", "mode.release")
+set_languages("c++11")
+add_includedirs(os.scriptdir(), {public = true})
+target("zhcn")
+    set_kind("static")
+    add_files("*.cxx")

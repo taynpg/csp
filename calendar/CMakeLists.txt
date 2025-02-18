@@ -8,11 +8,13 @@ if (MSVC)
     add_compile_options(/source-charset:utf-8)
 endif()
 
+set(CMAKE_DEBUG_POSTFIX "d")
+include_directories(include)
+include_directories(src)
 set(SOURCES 
-    calendar_v1.h calendar_v1.cpp calendar_v1_data.h calendar_v1_data.cpp
-    calendar_v2.h calendar_v2.cpp
-    calendar_base.h calendar_base.cpp
+    src/calendar.cxx src/cal_table.cxx 
+    src/cal_sx.cxx src/table_data.cxx
 )
 add_library(calendar STATIC ${SOURCES})
 target_link_libraries(calendar PRIVATE sxtwl)
-target_include_directories(calendar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(calendar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
