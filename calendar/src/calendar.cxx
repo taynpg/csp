@@ -3,6 +3,10 @@
 #include "cal_table.h"
 #include <ctime>
 
+#if _WIN32
+#include <windows.h>
+#endif
+
 namespace csp {
 
 Calendar::Calendar()
