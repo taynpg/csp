@@ -180,7 +180,7 @@ void CalendarSxwnl::sx2dt(const Time& t, DateTime& dt)
     dt.mon = ct.getMonth();
     dt.day = ct.getDay();
     dt.hour = static_cast<int>(ct.getHour());
-    dt.mon = static_cast<int>(ct.getMin());
+    dt.min = static_cast<int>(ct.getMin());
     dt.sec = rd(ct.getSec());
 }
 

@@ -180,7 +180,6 @@ protected:
 
     DateTime dt_{};
     std::shared_ptr<Calendar> cal_{};   // 日历实例
-    CSPT gua2pos_[gn]{};                // 卦数转位置
     CSPT sanhe_[12]{};                  // 地支三和
     CSPT dzcong_[12]{};                 // 地支相冲
     CSPT zhi_[12]{};                    // 十二地支的位置

@@ -1,7 +1,0 @@
-add_rules("mode.debug", "mode.release")
-set_languages("c++11")
-add_includedirs(path.join(os.scriptdir(), "include"), {public = true})
-target("qm")
-    set_kind("static")
-    add_files("src/*.cxx")
-    add_deps("calendar")

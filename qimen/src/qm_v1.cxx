@@ -69,14 +69,14 @@ void QimenV1::cal_dipan()
 {
     // 所谓的几局，就是甲子戊居于第几宫
     int s = Calendar::mod(9, data_.ju - 1);
-    data_.dp[gua2pos_[s]] = 4;
+    data_.dp[data_.gua2pos[s]] = 4;
     int nk = data_.is_yin ? -1 : 1;
 
     for (int i = 0; i < 5; ++i) {
-        data_.dp[gua2pos_[Calendar::mod(9, s += nk)]] = 5 + i;
+        data_.dp[data_.gua2pos[Calendar::mod(9, s += nk)]] = 5 + i;
     }
     for (int i = 0; i < 3; ++i) {
-        data_.dp[gua2pos_[Calendar::mod(9, s += nk)]] = 3 - i;
+        data_.dp[data_.gua2pos[Calendar::mod(9, s += nk)]] = 3 - i;
     }
 
     // 判断是否是 五不遇时

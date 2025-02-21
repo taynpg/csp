@@ -24,12 +24,30 @@ Qimen::Qimen()
 
 CSPT Qimen::get_jiazi_index(CSPT t, CSPT d)
 {
-    return CSPT();
+    int n = d;
+    for (int i = 0; i < 5; ++i) {
+        if ((n % 10) == t) {
+            break;
+        }
+        n += 12;
+    }
+    return n;
 }
 
 CSPT Qimen::get_index(const CSPT* d, CSPT size, CSPT value)
 {
-    return CSPT();
+    if (!d) {
+        return -1;
+    }
+
+    int n = -1;
+    for (int i = 0; i < size; ++i) {
+        if (d[i] == value) {
+            n = i;
+            break;
+        }
+    }
+    return n;
 }
 
 std::shared_ptr<Qimen> Qimen::instance(QimenType type)
@@ -182,7 +200,7 @@ void Qimen::set_jigong(CSPT gong)
     // 这里减 1 是取索引
     int n = gong - 1;
     // 这里要把寄宫转成位置
-    data_.jigong = gua2pos_[n];
+    data_.jigong = data_.gua2pos[n];
 }
 
 void Qimen::set_dizhi()
