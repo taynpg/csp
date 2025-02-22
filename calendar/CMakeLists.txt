@@ -25,3 +25,7 @@ set(SOURCES
 add_library(calendar STATIC ${SOURCES})
 target_link_libraries(calendar PRIVATE sxtwl)
 target_include_directories(calendar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    string(REPLACE "/O2" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+    target_compile_options(calendar PRIVATE /O1)
+endif()
