@@ -194,9 +194,9 @@ void QimenV1::cal_other()
     gen(cal_->get_ganzhi().dg, cal_->get_ganzhi().dz, data_.xunkong[4], data_.xunkong[5]);
     gen(cal_->get_ganzhi().hg, cal_->get_ganzhi().hz, data_.xunkong[6], data_.xunkong[7]);
 
-    data_.kongw[0] = zhi_[data_.xunkong[6]];
-    data_.kongw[1] = zhi_[data_.xunkong[7]];
-    data_.maxing = zhi_[dzcong_[sanhe_[cal_->get_ganzhi().hz]]];
+    data_.kongw[0] = data_.zhi[data_.xunkong[6]];
+    data_.kongw[1] = data_.zhi[data_.xunkong[7]];
+    data_.maxing = data_.zhi[dzcong_[sanhe_[cal_->get_ganzhi().hz]]];
 }
 
 bool QimenV1::inference()

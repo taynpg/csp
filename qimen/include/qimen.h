@@ -75,6 +75,7 @@ struct QimenData {
     CSPT duty{};          // 当值
     CSPT jieq{};          // 当日节气
     CSPT jiazi{};         // 当日六十甲子
+    CSPT zhi[12]{};
 };
 
 class Qimen
@@ -182,7 +183,6 @@ protected:
     std::shared_ptr<Calendar> cal_{};   // 日历实例
     CSPT sanhe_[12]{};                  // 地支三和
     CSPT dzcong_[12]{};                 // 地支相冲
-    CSPT zhi_[12]{};                    // 十二地支的位置
     CalendarType ctype_{};              // 日历的类型
     char err_[1024]{};
 };

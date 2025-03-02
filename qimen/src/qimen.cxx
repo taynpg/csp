@@ -205,18 +205,18 @@ void Qimen::set_jigong(CSPT gong)
 
 void Qimen::set_dizhi()
 {
-    zhi_[0] = 7;
-    zhi_[1] = 6;
-    zhi_[2] = 6;
-    zhi_[3] = 5;
-    zhi_[4] = 4;
-    zhi_[5] = 4;
-    zhi_[6] = 3;
-    zhi_[7] = 2;
-    zhi_[8] = 2;
-    zhi_[9] = 1;
-    zhi_[10] = 0;
-    zhi_[11] = 0;
+    data_.zhi[0] = 7;
+    data_.zhi[1] = 6;
+    data_.zhi[2] = 6;
+    data_.zhi[3] = 5;
+    data_.zhi[4] = 4;
+    data_.zhi[5] = 4;
+    data_.zhi[6] = 3;
+    data_.zhi[7] = 2;
+    data_.zhi[8] = 2;
+    data_.zhi[9] = 1;
+    data_.zhi[10] = 0;
+    data_.zhi[11] = 0;
 }
 
 std::shared_ptr<Calendar> Qimen::get_cal() const

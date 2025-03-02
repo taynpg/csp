@@ -22,7 +22,7 @@ public:
 public:
     static const int* zsj();
     // 金水木火土 数字代表 12345
-    WUXING_STATE judge(int me, int other);
+    static WUXING_STATE judge(int me, int other);
 };
 }   // namespace csp
 
