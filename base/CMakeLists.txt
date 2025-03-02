@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(zhcn LANGUAGES CXX)
+project(base LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -9,12 +9,13 @@ if (MSVC)
     add_compile_options(/source-charset:utf-8)
 endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_SYSTEM_NAME MATCHES "Windows")
-    MESSAGE(STATUS "zhcn Add MinGW Param.")
+    MESSAGE(STATUS "base Add MinGW Param.")
     add_compile_options(-finput-charset=utf-8)
     add_compile_options(-fexec-charset=gbk)
 endif()
 endif()
 
-set(SOURCES zh_lang.h zh_lang.cxx)
-add_library(zhcn STATIC ${SOURCES})
-target_include_directories(zhcn PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set(SOURCES base.h base.cxx)
+
+add_library(base STATIC ${SOURCES})
+target_include_directories(base PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
