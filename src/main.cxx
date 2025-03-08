@@ -89,6 +89,11 @@ void set_output_supply()
 
 int main(int argc, char** argv)
 {
+
+#if defined(_WIN32) && defined(USE_UTF8_ALL)
+    system("chcp 65001");
+#endif
+
     CmdParam param;
     set_output_supply();
 
