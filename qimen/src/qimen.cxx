@@ -20,6 +20,25 @@ Qimen::Qimen()
     set_dizhi();
     // 默认寄宫寄 坤二宫
     set_jigong(2);
+
+    data_.sanhe_[0] = 8;
+    data_.sanhe_[1] = 5;
+    data_.sanhe_[2] = 2;
+    data_.sanhe_[3] = 2;
+    data_.sanhe_[4] = 8;
+    data_.sanhe_[5] = 5;
+    data_.sanhe_[6] = 2;
+    data_.sanhe_[7] = 11;
+    data_.sanhe_[8] = 8;
+    data_.sanhe_[9] = 5;
+    data_.sanhe_[10] = 2;
+    data_.sanhe_[11] = 11;
+
+    data_.dzcong_[8] = 2;
+    data_.dzcong_[5] = 11;
+    data_.dzcong_[2] = 8;
+    data_.dzcong_[2] = 8;
+    data_.dzcong_[11] = 5;
 }
 
 CSPT Qimen::get_jiazi_index(CSPT t, CSPT d)

@@ -125,6 +125,7 @@ void QimenV1::cal_jiuxing()
     for (int i = 0; i < 8; ++i) {
         data_.jiuxr[Calendar::mod(8, --s)] = data_.jiuxt[Calendar::mod(8, ++nt)];
     }
+    data_.jiuxr[8] = 4;
 }
 
 void QimenV1::cal_bamen()
@@ -163,7 +164,7 @@ void QimenV1::cal_bashen()
     nx = (nx == 4 ? data_.jiuxp[data_.jigong] : nx);
     // 看看值符被转到哪里了
     int s = get_index(data_.jiuxr, 9, nx);
-    int nk = data_.is_yin ? -1 : 1;
+    int nk = data_.is_yin ? 1 : -1;
     for (int i = 0; i < 9; ++i, s += nk) {
         if (i == 4) {
             ++i;
@@ -178,6 +179,7 @@ void QimenV1::cal_tianpan()
     for (int i = 0; i < 8; ++i) {
         data_.tp[i] = data_.dp[data_.gua2pos[data_.jiuxr[i]]];
     }
+    data_.tp[8] = data_.dp[8];
 }
 
 void QimenV1::cal_other()
@@ -196,7 +198,7 @@ void QimenV1::cal_other()
 
     data_.kongw[0] = data_.zhi[data_.xunkong[6]];
     data_.kongw[1] = data_.zhi[data_.xunkong[7]];
-    data_.maxing = data_.zhi[dzcong_[sanhe_[cal_->get_ganzhi().hz]]];
+    data_.maxing = data_.zhi[data_.dzcong_[data_.sanhe_[cal_->get_ganzhi().hz]]];
 }
 
 bool QimenV1::inference()
