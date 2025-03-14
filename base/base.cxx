@@ -62,7 +62,8 @@ WUXING_STATE CBase::judge(int me, int other)
     if (other < 0 || other > 5) {
         return WUXING_STATE::NUM_ERROR;
     }
-    return sk_[me * 10 + other];
+    auto ret = sk_[me * 10 + other];
+    return ret;
 }
 
 }   // namespace csp
