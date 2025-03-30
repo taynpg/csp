@@ -18,6 +18,26 @@
 #endif
 #endif
 
+void recovery_terminal_color()
+{
+#if defined(_WIN32)
+    HANDLE h_console = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (h_console == NULL) {
+        fprintf(stderr, "[ERROR] Couldn't handle terminal\n");
+        exit(1);
+    }
+    if (SetConsoleTextAttribute(h_console, 7) == 0) {
+        fprintf(stderr, "[ERROR] Couldn't set terminal color\n");
+        exit(1);
+    }
+#else
+    fc_lock_print();
+    printf("\033[0m");
+    fc_enable_cur();
+    fc_unlock_print();
+#endif
+}
+
 bool parse(const std::string& str, CmdParam& param)
 {
     std::regex dateRegex(R"((-?\d{1,4})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2}))");
@@ -93,6 +113,11 @@ int main(int argc, char** argv)
 #if defined(_WIN32) && defined(USE_UTF8_ALL)
     system("chcp 65001");
 #endif
+
+    std::shared_ptr<int> deleter(new int(), [](int* p) {
+        delete p;
+        recovery_terminal_color();
+    });
 
     CmdParam param;
     set_output_supply();

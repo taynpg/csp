@@ -2,6 +2,7 @@
 #define PRINT_BASE_H
 
 #include "qimen.h"
+#include "ColorConsole.hpp"
 
 using namespace csp;
 
