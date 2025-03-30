@@ -36,6 +36,10 @@ add_subdirectory(sxtwl)
 add_subdirectory(base)
 add_executable(csp src/main.cxx src/print.cxx src/qmuse.cxx)
 target_link_libraries(csp PRIVATE zhcn calendar qm sxtwl)
+if(UNAME_OUT MATCHES "alpine" OR UNAME_OUT MATCHES "Alpine")
+message(STATUS "csp on musl static link")
+target_link_libraries(csp PRIVATE -static;-static-libstdc++)
+endif()
 
 install(TARGETS csp DESTINATION bin)
 # ********************************************************** pack infomation
