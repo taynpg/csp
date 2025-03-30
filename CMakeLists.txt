@@ -15,6 +15,13 @@ MESSAGE(STATUS "ofen Add MinGW Param.")
 add_compile_options(-finput-charset=utf-8)
 add_compile_options(-fexec-charset=gbk)
 set(COMPILER_ID "mingw")
+get_filename_component(CXX_COMPILER_PATH ${CMAKE_CXX_COMPILER} DIRECTORY)
+set(MINGW32_DLLS 
+"${CXX_COMPILER_PATH}/libgcc_s_dw2-1.dll"
+"${CXX_COMPILER_PATH}/libstdc++-6.dll"
+"${CXX_COMPILER_PATH}/libwinpthread-1.dll"
+)
+install(FILES ${MINGW32_DLLS} DESTINATION bin)
 endif()
 else()
 add_definitions(-DUSE_UTF8_ALL)
