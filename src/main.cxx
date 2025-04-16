@@ -31,10 +31,7 @@ void recovery_terminal_color()
         exit(1);
     }
 #else
-    fc_lock_print();
     printf("\033[0m");
-    fc_enable_cur();
-    fc_unlock_print();
 #endif
 }
 
