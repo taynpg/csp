@@ -117,23 +117,23 @@ inline std::string GetColorCode(ConsoleColor color)
     case ConsoleColor::None:
         return "\033[0m";
     case ConsoleColor::GreenIntensity:
-        return "\033[32m;1m";
+        return "\033[32;1m";
     case ConsoleColor::BlackIntensity:
-        return "\033[30m;1m";
+        return "\033[30;1m";
     case ConsoleColor::BlueIntensity:
-        return "\033[34m;1m";
+        return "\033[34;1m";
     case ConsoleColor::GrayIntensity:
-        return "\033[37m;1m";
+        return "\033[37;1m";
     case ConsoleColor::PurpleIntensity:
-        return "\033[35m;1m";
+        return "\033[35;1m";
     case ConsoleColor::RedIntensity:
-        return "\033[31m;1m";
+        return "\033[31;1m";
     case ConsoleColor::WhiteIntensity:
-        return "\033[37m;1m";
+        return "\033[37;1m";
     case ConsoleColor::YellowIntensity:
-        return "\033[33m;1m";
+        return "\033[33;1m";
     case ConsoleColor::CyanIntensity:
-        return "\033[36m;1m";
+        return "\033[36;1m";
     default:
         return 0;
     }
