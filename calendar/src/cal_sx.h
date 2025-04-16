@@ -26,19 +26,19 @@ public:
     void next_day(DateTime& dt, unsigned int cnt) override;
 
     // 获取两个时间之间的天数差，计算为 l - r。
-    virtual CSPT days_difference(const DateTime& l, const DateTime& r) override;
+    CSPT days_difference(const DateTime& l, const DateTime& r) override;
 
     // 根据秒差值计算新日期。
-    virtual DateTime cal_new_date(const DateTime& base, CSPLT secs) override;
+    DateTime cal_new_date(const DateTime& base, CSPLT secs) override;
 
     // 获取距离 0点的秒数差。
-    virtual CSPLT cal_zero_secs(const DateTime& dt) override;
+    CSPLT cal_zero_secs(const DateTime& dt) override;
 
     // 获取两个日期时间之间的秒数差（不记入天），计算为 l - r。
-    virtual CSPT calsecs_by_time(const DateTime& l, const DateTime& r);
+    CSPT calsecs_by_time(const DateTime& l, const DateTime& r) override;
 
     // 返回两个时间之间的秒数差（记入天），计算为 l - r。
-    virtual CSPLT calsecs_by_all(const DateTime& l, const DateTime& r);
+    CSPLT calsecs_by_all(const DateTime& l, const DateTime& r) override;
 
 private:
     void sx2dt(const Time& t, DateTime& dt);
