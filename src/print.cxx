@@ -159,7 +159,7 @@ void CCmdPrint::print_base()
         break;
     }
     case 2: {
-        std::string szYueJiang = CZhData::zhi(12 - cal->get_lunar().mon);
+        std::string szYueJiang = CZhData::zhi(qmd.yuejiang_);
         std::cout << ConsoleColor::Cyan << " (月将:" << szYueJiang << ")(时家阴盘)" << std::endl;
         break;
     }
@@ -182,6 +182,10 @@ void CCmdPrint::print_base()
 
     std::string szYuan;
     switch (qmd.yuan) {
+    case -1: {
+        szYuan = "自动定局";
+        break;
+    }
     case 0:
         szYuan = "手动定局";
         break;
@@ -198,7 +202,7 @@ void CCmdPrint::print_base()
         break;
     }
     std::string jieQi = CZhData::jq(qmd.jieq);
-    if (qmd.yuan == 0) {
+    if (qmd.yuan == 0 || qmd.yuan == -1) {
         szYuan = "   [" + szYuan + "]";
     } else {
         szYuan = "   [" + jieQi + szYuan + "]";

@@ -69,7 +69,7 @@ struct QimenData {
     CSPT kongw[2]{};      // 空亡位置
     CSPT xunkong[8]{};    // 寻空位置
     bool is_yin{};        // 是否是阴遁
-    CSPT yuan{};          // 三元 0 手动, 1下，2中，3上
+    CSPT yuan{};          // 三元 -1没有，0 手动, 1下，2中，3上
     bool is_auto{true};   // 是否是自动排局
     bool wubuyu{false};   // 是否是五不遇时
     CSPT duty{};          // 当值
@@ -78,6 +78,7 @@ struct QimenData {
     CSPT zhi[12]{};
     CSPT sanhe_[12]{};    // 地支三和
     CSPT dzcong_[12]{};   // 地支相冲
+    CSPT yuejiang_{};     // 月将（如果有的话）
 };
 
 class Qimen

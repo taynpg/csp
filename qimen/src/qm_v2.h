@@ -17,6 +17,7 @@ public:
 
 private:
     bool cal_ju(const DateTime& dt);
+    void cal_yujiang();
 };
 }   // namespace csp
 

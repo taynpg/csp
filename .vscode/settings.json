@@ -18,7 +18,7 @@
             }
         ],
         "args": [
-            "-t", "3"
+            "-t", "2"
         ]
     },
     "cmake.configureSettings": {
@@ -109,7 +109,16 @@
         "ratio": "cpp",
         "regex": "cpp",
         "iomanip": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "list": "cpp",
+        "locale": "cpp",
+        "thread": "cpp",
+        "xhash": "cpp",
+        "xlocbuf": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xloctime": "cpp",
+        "xtree": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

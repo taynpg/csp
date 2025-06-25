@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(csp VERSION 1.4.5 LANGUAGES CXX)
+project(csp VERSION 1.4.6 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
