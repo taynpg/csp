@@ -1,17 +1,19 @@
-BasedOnStyle: LLVM
+﻿BasedOnStyle: LLVM
 IndentWidth: 4
 PointerAlignment: Left
 AccessModifierOffset: -4
+ReflowComments: true
+SpacesBeforeTrailingComments: 3
+AllowShortFunctionsOnASingleLine: None
 BreakBeforeBraces: Custom
 BraceWrapping:
     AfterFunction: true
     AfterClass: true
-Cpp11BracedListStyle: true
-ReflowComments: true
-SpacesBeforeTrailingComments: 3
 TabWidth: 4
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ColumnLimit: 130
-AllowShortBlocksOnASingleLine: Never
-AllowShortFunctionsOnASingleLine: None
-AllowShortEnumsOnASingleLine: false
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<.*>'
+    Priority: 1
+  - Regex: '^".*"'
+    Priority: 2

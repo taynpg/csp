@@ -1,6 +1,6 @@
 # 一、csp 简介
 
-csp-(cpp shi pan，C++式盘)，一个cmd命令行起盘工具，计划支持排盘奇门遁甲，大六壬，六爻。
+csp-(cpp shi pan，C++式盘)，一个cmd命令行起盘工具，支持排盘奇门遁甲。
 
 ## 特点
 
@@ -57,9 +57,8 @@ v1.3.1 版本及以后已加入寿星万年历，可以支持年跨度`-198~9999
 
 ```shell
 $ git clone https://github.com/taynpg/csp
-$ cs csp
-$ cmake -Bbuild
-$ cmake --build build --config Release
+$ cd csp
+$ xmake
 ```
 
 ## 4.3 手机端构建

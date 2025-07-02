@@ -5,7 +5,6 @@ else
     set_languages("c++11")
 end
 add_includedirs(os.scriptdir(), {public = true})
-target("sxtwl")
+target("base")
     set_kind("static")
-    add_includedirs(".")
-    add_files("*.cpp")
+    add_files("*.cxx")

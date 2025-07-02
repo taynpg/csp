@@ -1,7 +1,7 @@
 #ifndef CSP_HEADER_H
 #define CSP_HEADER_H
 
-constexpr auto CSP_VERSION = "v1.4.5";
+constexpr auto CSP_VERSION = "v1.4.6";
 
 #include <string>
 

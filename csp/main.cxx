@@ -107,7 +107,7 @@ void set_output_supply()
 int main(int argc, char** argv)
 {
 
-#if defined(_WIN32) && defined(USE_UTF8_ALL)
+#ifdef _WIN32
     system("chcp 65001");
 #endif
 
