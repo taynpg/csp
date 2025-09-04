@@ -138,7 +138,7 @@ void CCmdPrint::print_base()
         yearStr.append(CZhData::num(oyd));
 
     const auto& gz = Qimen::jiazi(*cal);
-    std::cout << "阴历：" << ConsoleColor::Cyan << yearStr << "年 ";
+    std::cout << "农历：" << ConsoleColor::Cyan << yearStr << "年 ";
     std::cout << ConsoleColor::Cyan << CZhData::mon(lunar.mon - 1) << "月";
     std::cout << ConsoleColor::Cyan << CZhData::lunar_day(lunar.day - 1) << "日 ";
     std::cout << ConsoleColor::Cyan << CZhData::zhi((lunar.hour + 1) / 2 % 12) << "时\n";
