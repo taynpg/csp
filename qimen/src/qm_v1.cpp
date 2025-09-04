@@ -1,4 +1,6 @@
 #include "qm_v1.h"
+#include <iomanip>
+#include <iostream>
 
 namespace csp {
 
@@ -231,7 +233,7 @@ bool QimenV1::inference()
     }
 
     // 保存大雪到芒种
-    save_part(c, start, jiazi, 10, 300);
+    save_part(c, start, jiazi, 11, 300);
     if (!cur_month_jq(mz, t, tem, dif)) {
         return false;
     }
@@ -263,6 +265,7 @@ bool QimenV1::inference()
         start = Qimen::mod(24, ++start);
     }
     save_part(c, start, jiazi, -1, 60);
+    //print();
     return true;
 }
 
@@ -319,6 +322,16 @@ std::pair<int, int> QimenV1::cal_xunkong(int jiazi)
     int ka = ((jiazi / 10) * 10 + 10) % 12;
     int kb = ((jiazi / 10) * 10 + 11) % 12;
     return std::make_pair(ka, kb);
+}
+
+void QimenV1::print()
+{
+    int i = 0;
+    for (const auto& item : year_datas_) {
+        ++i;
+        std::cout << "=>" << i << " 时间: " << item.dt.year << "-" << item.dt.mon << "-" << item.dt.day;
+        std::cout << "  " << item.ganzhi << " " << item.jq << std::endl;
+    }
 }
 
 bool QimenV1::cal_ju(const DateTime& dt)

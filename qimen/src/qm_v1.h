@@ -75,6 +75,9 @@ private:
     // 获取给定甲子的两个寻空
     std::pair<int, int> cal_xunkong(int jiazi);
 
+    // 打印
+    void print();
+
 private:
     bool cal_ju(const DateTime& dt);
 
