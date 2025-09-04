@@ -187,6 +187,21 @@ void QimenV1::cal_tianpan()
 
 void QimenV1::cal_other()
 {
+    auto gen = [this](int j, int& a, int& b) {
+        const auto& r = cal_xunkong(j);
+        a = r.first;
+        b = r.second;
+    };
+
+    auto jiazi = Qimen::jiazi(*data_.dt_);
+    gen(jiazi.yi, data_.xunkong[0], data_.xunkong[1]);
+    gen(jiazi.mi, data_.xunkong[2], data_.xunkong[3]);
+    gen(jiazi.di, data_.xunkong[4], data_.xunkong[5]);
+    gen(jiazi.hi, data_.xunkong[6], data_.xunkong[7]);
+
+    data_.kongw[0] = data_.zhi[data_.xunkong[6]];
+    data_.kongw[1] = data_.zhi[data_.xunkong[7]];
+    data_.maxing = data_.zhi[data_.dzcong_[data_.sanhe_[jiazi.hi % 12]]];
 }
 
 bool QimenV1::inference()
@@ -301,7 +316,9 @@ void QimenV1::save_part(DateTime& sdt, int& upper, int& jiazi, int pur, int days
 
 std::pair<int, int> QimenV1::cal_xunkong(int jiazi)
 {
-    return std::pair<int, int>();
+    int ka = ((jiazi / 10) * 10 + 10) % 12;
+    int kb = ((jiazi / 10) * 10 + 11) % 12;
+    return std::make_pair(ka, kb);
 }
 
 bool QimenV1::cal_ju(const DateTime& dt)
