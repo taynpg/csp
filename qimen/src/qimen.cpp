@@ -120,6 +120,10 @@ bool Qimen::generate(const DateTime& dt, int ju)
 
 bool Qimen::set_and_check(const DateTime& dt, int ju)
 {
+    if (dt.year < 2 || dt.year > 9998) {
+        std::cout << "Unsupported Year :" << dt.year << std::endl;
+        return false;
+    }
     try {
         data_.dt_ = std::make_shared<tyme::SolarTime>(dt.year, dt.mon, dt.day, dt.hour, dt.min, dt.sec);
         data_.ju = std::abs(ju);

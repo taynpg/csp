@@ -22,6 +22,12 @@ bool CQimenUse::run(const CmdParam& param)
         return false;
     }
 
+    if (param.zone != 0) {
+        auto pt = tyme::SolarTime(dt.year, dt.mon, dt.day, dt.hour, dt.min, dt.sec);
+        pt = pt.next(param.zone * 3600);
+        dt = Qimen::solar(pt);
+    }
+
     auto qm_type = static_cast<QimenType>(param.type);
     auto qm = Qimen::instance(qm_type);
 
