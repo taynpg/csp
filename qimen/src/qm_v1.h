@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace csp {
+
 // V1 : 转盘 时家 超接置润法
 
 /*
@@ -21,10 +22,10 @@ namespace csp {
 
 struct OneDay {
     OneDay() = default;
-    OneDay(const DateTime& adt, CSPT ajq, CSPT agz);
+    OneDay(const DateTime& adt, int ajq, int agz);
     DateTime dt{};
-    CSPT jq{};
-    CSPT ganzhi{};
+    int jq{};
+    int ganzhi{};
 };
 
 class QimenV1 : public Qimen
@@ -35,7 +36,7 @@ public:
 
 public:
     // 排盘
-    bool generate(const DateTime& dt, int ju, CalendarType ct) override;
+    bool generate(const DateTime& dt, int ju) override;
 
     /// @brief 排地盘
     void cal_dipan() override;
@@ -66,19 +67,19 @@ private:
     bool search_day(const DateTime& datetime, OneDay& o);
 
     // 获取当月节气信息
-    bool cur_month_jq(const DateTime& dt, DateTime& jie, CSPT& jiazi, CSPT& dif);
+    bool cur_month_jq(const DateTime& dt, DateTime& jie, int& jiazi, int& dif);
 
     // 保存某段范围的日期信息
-    void save_part(DateTime& sdt, CSPT& upper, CSPT& jiazi, CSPT pur, CSPT days);
+    void save_part(DateTime& sdt, int& upper, int& jiazi, int pur, int days);
 
     // 获取给定甲子的两个寻空
-    std::pair<int, int> cal_xunkong(CSPT jiazi);
+    std::pair<int, int> cal_xunkong(int jiazi);
 
 private:
     bool cal_ju(const DateTime& dt);
 
 protected:
-    CSPT juqi_[24]{};
+    int juqi_[24]{};
 
     std::vector<OneDay> year_datas_{};
     std::unordered_map<int, int> wby_{};

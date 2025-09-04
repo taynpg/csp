@@ -13,7 +13,7 @@ public:
 
 public:
     // 排盘
-    bool generate(const DateTime& dt, int ju, CalendarType ct) override;
+    bool generate(const DateTime& dt, int ju) override;
 
 private:
     bool cal_ju(const DateTime& dt);

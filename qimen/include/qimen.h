@@ -1,7 +1,9 @@
 #ifndef QIMEN_H
 #define QIMEN_H
 
-#include <calendar.h>
+#include <cstdint>
+#include <memory>
+#include <tyme.h>
 
 namespace csp {
 constexpr int gn = 9;
@@ -11,6 +13,18 @@ enum class QimenType {
     QM_TYPE_SJ_YIN,          // 时家转盘，阴盘
     QM_TYPE_SJ_CHAIBU,       // 时家转盘，拆补
     QM_TYPE_SJ_MAOSHAN       // 时家转盘，茅山
+};
+
+struct DateTime {
+    DateTime() = default;
+    DateTime(int y, int m, int d, int h, int mi, int s);
+    int year{};   // 年
+    int mon{};    // 月
+    int day{};    // 日
+    int hour{};   // 时
+    int min{};    // 分
+    int sec{};    // 秒
+    int msec{};   // 毫秒
 };
 
 /*
@@ -48,37 +62,44 @@ enum class QimenType {
  *      为空  值符  腾蛇  太阴   六合  腾蛇  白虎  玄武   九地   九天
  *      为空  坎卦  坤卦  震卦   巽卦  中五  乾卦  兑卦   艮卦   离卦
  */
-
 struct QimenData {
-    CSPT ju{};            // 局数
-    CSPT jiuxr[gn]{};     // 九星的计算结果
-    CSPT jiuxp[gn]{};     // 九星的原始位置
-    CSPT jiuxt[gn]{};     // 九星的旋转位置，不足9个的从后向前留空
-    CSPT pos2gua[gn]{};   // 位置转卦数
-    CSPT gua2pos[gn]{};   // 卦数转位置
-    CSPT bamenp[gn]{};    // 八门的原始位置
-    CSPT bamenr[gn]{};    // 八门的计算结果
-    CSPT bament[gn]{};    // 八门的旋转位置
-    CSPT bashenp[gn]{};   // 八神的原始位置
-    CSPT bashenr[gn]{};   // 八神的计算结果
-    CSPT tp[gn]{};        // 天盘
-    CSPT dp[gn]{};        // 地盘 [定义位置：10天干]
-    CSPT wuxing[gn]{};    // 五行
-    CSPT jigong{};        // 天禽星寄宫
-    CSPT maxing{};        // 马星位置
-    CSPT kongw[2]{};      // 空亡位置
-    CSPT xunkong[8]{};    // 寻空位置
+    int ju{};             // 局数
+    int jiuxr[gn]{};      // 九星的计算结果
+    int jiuxp[gn]{};      // 九星的原始位置
+    int jiuxt[gn]{};      // 九星的旋转位置，不足9个的从后向前留空
+    int pos2gua[gn]{};    // 位置转卦数
+    int gua2pos[gn]{};    // 卦数转位置
+    int bamenp[gn]{};     // 八门的原始位置
+    int bamenr[gn]{};     // 八门的计算结果
+    int bament[gn]{};     // 八门的旋转位置
+    int bashenp[gn]{};    // 八神的原始位置
+    int bashenr[gn]{};    // 八神的计算结果
+    int tp[gn]{};         // 天盘
+    int dp[gn]{};         // 地盘 [定义位置：10天干]
+    int wuxing[gn]{};     // 五行
+    int jigong{};         // 天禽星寄宫
+    int maxing{};         // 马星位置
+    int kongw[2]{};       // 空亡位置
+    int xunkong[8]{};     // 寻空位置
     bool is_yin{};        // 是否是阴遁
-    CSPT yuan{};          // 三元 -1没有，0 手动, 1下，2中，3上
+    int yuan{};           // 三元 -1没有，0 手动, 1下，2中，3上
     bool is_auto{true};   // 是否是自动排局
     bool wubuyu{false};   // 是否是五不遇时
-    CSPT duty{};          // 当值
-    CSPT jieq{};          // 当日节气
-    CSPT jiazi{};         // 当日六十甲子
-    CSPT zhi[12]{};
-    CSPT sanhe_[12]{};    // 地支三和
-    CSPT dzcong_[12]{};   // 地支相冲
-    CSPT yuejiang_{};     // 月将（如果有的话）
+    int duty{};           // 当值
+    int jieq{};           // 当日节气
+    int jiazi{};          // 当日六十甲子
+    int zhi[12]{};
+    int sanhe_[12]{};    // 地支三和
+    int dzcong_[12]{};   // 地支相冲
+    int yuejiang_{};     // 月将（如果有的话）
+    std::shared_ptr<tyme::SolarTime> dt_{};
+};
+
+struct JiaZi {
+    int yi;
+    int mi;
+    int di;
+    int hi;
 };
 
 class Qimen
@@ -88,18 +109,27 @@ public:
     virtual ~Qimen() = default;
 
 public:
+    // ================== 这几个静态函数都是简单处理一些日历接口 ===========================
+    static int mod(int base, int value);
+    static DateTime now_time();
+    static DateTime solar(const tyme::SolarTime& dt);
+    static DateTime lunar(const tyme::SolarTime& dt);
+    static tyme::SolarTime get_jq(const tyme::SolarTime& dt, int& index, bool is_sec);
+    static JiaZi jiazi(const tyme::SolarTime& dt);
+    // ====================================================================================
+
     /// @brief 获取六十甲子的下标
     /// @param t 天盘下标
     /// @param d 地盘下标
     /// @return
-    static CSPT get_jiazi_index(CSPT t, CSPT d);
+    static int get_jiazi_index(int t, int d);
 
     /// @brief 获取某个值的位置
     /// @param d 数组
     /// @param size 数组大小
     /// @param value 要寻找的值
     /// @return
-    static CSPT get_index(const CSPT* d, CSPT size, CSPT value);
+    static int get_index(const int* d, int size, int value);
 
     /// @brief 获取 奇门 实例
     /// @param type
@@ -107,22 +137,18 @@ public:
     static std::shared_ptr<Qimen> instance(QimenType type);
 
 public:
-    /// @brief 当某个函数执行失败时，获取错误信息。
-    /// @return
-    const char* get_error() const;
-
     /// @brief 进行排盘
     /// @param dt 时间日期
     /// @param ju 指定局数。0 为自动，其他需要在 [-9, 9] 的范围。
     /// @param ct 使用日历类型
     /// @return
-    virtual bool generate(const DateTime& dt, int ju, CalendarType ct);
+    virtual bool generate(const DateTime& dt, int ju);
 
     /// @brief 设置信息，并检查。
     /// @param dt 日期
     /// @param ct 日历类型
     /// @return
-    virtual bool set_and_check(const DateTime& dt, int ju, CalendarType ct);
+    virtual bool set_and_check(const DateTime& dt, int ju);
 
     /// @brief 设置各个位置上的五行 (金水木火土 数字代表 12345)
     virtual void set_wuxing();
@@ -147,12 +173,10 @@ public:
 
     /// @brief 设置寄宫[固定位置](这里的寄宫是各家自家的卦数)
     /// @param gong 卦数
-    virtual void set_jigong(CSPT gong);
+    virtual void set_jigong(int gong);
 
     /// @brief 设置十二地支位置对应
     virtual void set_dizhi();
-
-    virtual std::shared_ptr<Calendar> get_cal() const;
 
 public:
     /// @brief 排地盘
@@ -181,11 +205,8 @@ public:
 
 protected:
     QimenData data_{};
-
-    DateTime dt_{};
-    std::shared_ptr<Calendar> cal_{};   // 日历实例
-    CalendarType ctype_{};              // 日历的类型
-    char err_[1024]{};
 };
+
 }   // namespace csp
+
 #endif
