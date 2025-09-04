@@ -185,19 +185,18 @@ void QimenPrint::print_base()
     }
     std::string jieQi = CZhData::jq(qmd.jieq);
     if (qmd.yuan == 0 || qmd.yuan == -1) {
-        szYuan = "   [" + szYuan + "]";
+        szYuan = szYuan;
     } else {
-        szYuan = "   [" + jieQi + szYuan + "]";
+        szYuan = jieQi + szYuan;
     }
-    std::cout << ConsoleColor::Cyan << szYuan;
-
+    std::cout << ConsoleColor::White << "   [" << ConsoleColor::Cyan << szYuan << ConsoleColor::White << "]";
     std::string dun;
     if (qmd.is_yin) {
-        dun = "[阴遁" + CZhData::num(qmd.ju) + "局]\n";
+        dun = "阴遁" + CZhData::num(qmd.ju);
     } else {
-        dun = "[阳遁" + CZhData::num(qmd.ju) + "局]\n";
+        dun = "阳遁" + CZhData::num(qmd.ju);
     }
-    std::cout << ConsoleColor::Cyan << dun;
+    std::cout << ConsoleColor::White << "[" << ConsoleColor::Cyan << dun << "局" << ConsoleColor::White << "]\n";
     std::cout << ConsoleColor::Green << SPLIT_LINE << std::endl;
 }
 

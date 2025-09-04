@@ -6,6 +6,7 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <cmath>
 
 namespace tyme {
 using namespace std;
