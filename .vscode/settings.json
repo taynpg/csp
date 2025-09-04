@@ -6,7 +6,7 @@
     "cmake.debugConfig": {
         "console": "externalTerminal",
         "args": [
-            "-t", "1"
+            "-t", "2"
         ]
     },
     "cmake.configureSettings": {

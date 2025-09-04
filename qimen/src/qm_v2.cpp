@@ -1,18 +1,20 @@
 #include "qm_v2.h"
 
 /*
-星纪（丑）：约 12月7日～1月5日（大雪～冬至～小寒前）
-玄枵（子）：约1月6日～2月3日（小寒～大寒～立春前）
-娵訾（亥）：约2月4日～3月5日（立春～雨水～惊蛰前）
-降娄（戌）：约3月6日～4月4日（惊蛰～春分～清明前）
-大梁（酉）：约4月5日～5月5日（清明～谷雨～立夏前）
-实沈（申）：约5月6日～6月5日（立夏～小满～芒种前）
-鹑首（未）：约6月6日～7月7日（芒种～夏至～小暑前）
-鹑火（午）：约7月8日～8月7日（小暑～大暑～立秋前）
-鹑尾（巳）：约8月8日～9月7日（立秋～处暑～白露前）
-寿星（辰）：约9月8日～10月7日（白露～秋分～寒露前）
-大火（卯）：约10月8日～11月7日（寒露～霜降～立冬前）
-析木（寅）：约11月8日～12月7日（立冬～小雪～大雪前）
+星纪（丑2）：约 12月7日～1月5日（大雪～冬至～小寒前）23, 0(下标) 大雪～冬至
+玄枵（子1）：约1月6日～2月3日（小寒～大寒～立春前）  1, 2 (下标) 小寒～大寒
+娵訾（亥12）：约2月4日～3月5日（立春～雨水～惊蛰前） 3, 4 (下标) 立春～雨水
+降娄（戌11）：约3月6日～4月4日（惊蛰～春分～清明前） 5, 6 (下标) 惊蛰～春分
+大梁（酉10）：约4月5日～5月5日（清明～谷雨～立夏前） 7, 8 (下标) 清明～谷雨
+实沈（申9）：约5月6日～6月5日（立夏～小满～芒种前）  9, 10(下标) 立夏～小满
+鹑首（未8）：约6月6日～7月7日（芒种～夏至～小暑前）  11,12(下标) 芒种～夏至
+鹑火（午7）：约7月8日～8月7日（小暑～大暑～立秋前）  13,14(下标) 小暑～大暑
+鹑尾（巳6）：约8月8日～9月7日（立秋～处暑～白露前）  15,16(下标) 立秋～处暑
+寿星（辰5）：约9月8日～10月7日（白露～秋分～寒露前） 17,18(下标) 白露～秋分
+大火（卯4）：约10月8日～11月7日（寒露～霜降～立冬前）19,20(下标) 寒露～霜降
+析木（寅3）：约11月8日～12月7日（立冬～小雪～大雪前）21,22(下标) 立冬～小雪
+
+const char* gStr_zhi[] = {"子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"};
 */
 
 namespace csp {
@@ -111,27 +113,10 @@ const char* gStr_jq[] = {"冬至", "小寒", "大寒", "立春", "雨水", "惊�
 
 void QimenV2::cal_yujiang()
 {
-    int secIndex{};
-    int thirdIndex{};
-
-    const auto secdt = Qimen::get_jq(*data_.dt_, secIndex, true);
-    auto nextMon = tyme::SolarMonth::from_ym(secdt.get_year(), secdt.get_month());
-    nextMon.next(1);
-    auto thrd = std::make_shared<tyme::SolarTime>(nextMon.get_year(), nextMon.get_month(), secdt.get_day(),
-                                                  secdt.get_hour(), secdt.get_minute(), secdt.get_second());
-    auto thrdt = Qimen::get_jq(*thrd, thirdIndex, false);
-    auto da = data_.dt_->subtract(secdt);
-    auto db = data_.dt_->subtract(thrdt);
-
-    // -- 节气1 --- 节气2 ---
-    int ji = -1;
-    if (da < 0) {
-        ji = secIndex;
-    } else {
-        ji = thirdIndex;
-    }
-    data_.yuejiang_ = 12 - ji / 2;
-    int a = 0;
+    auto f = data_.dt_->get_term();
+    auto after = f.get_index();
+    auto index = mod(12, -((after - 1) / 2));
+    data_.yuejiang_ = index;
 }
 
 }   // namespace csp
