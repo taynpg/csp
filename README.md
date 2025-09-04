@@ -19,7 +19,6 @@ git clone https://github.com/taynpg/csp
 
 # 二、用法
 
-
 ## 2.1 使用
 
 请使用`--help`查看帮助信息。
@@ -29,6 +28,39 @@ git clone https://github.com/taynpg/csp
 下面是一个示例排盘：
 
 ![demo](https://github.com/taynpg/csp/raw/main/images/demo.png)
+
+关于`Python`的使用，本项目支持导出为`whl`模块供python使用，不过仅仅是导出了排盘接口。设定好参数（参数与csp命令行所需参数一致）打印排盘结果与
+使用csp类似，没有开放更多内部接口的使用，鉴于Python版本众多，本项目仅提供一版的`whl`安装包。
+
+```python
+import csp_qm  # 导入安装的包
+
+def test_qimen_pan():
+    
+    print("\n=== 测试 csp-qm 包 ===")
+    
+    # 1. 创建排盘参数
+    param = csp_qm.CmdParam()
+    param.year = 2023
+    param.mon = 10
+    param.day = 7
+    param.hour = 15
+    param.type = 1
+    
+    print("\n执行排盘...")
+    qm = csp_qm.CQimenUse()
+
+    # 这里打印结果
+    qm.run(param)
+    
+    # 4. 检查结果
+    print("\n排盘完成！")
+    print("自动计算 is_auto:", param.is_auto)
+    print("局数 ju:", param.ju)
+
+if __name__ == "__main__":
+    test_qimen_pan()
+```
 
 ## 2.2 支持时间范围
 
