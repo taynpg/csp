@@ -27,6 +27,14 @@ add_subdirectory(tyme4cpp)
 add_subdirectory(qimen)
 add_subdirectory(src)
 
+if (DEFINED CSP_PYTHON_EXPORT)
+message(STATUS "USE CSP_PYTHON_EXPORT ${CSP_PYTHON_EXPORT}")
+add_definitions(-DFMT_HEADER_ONLY)
+add_definitions(-DFMT_UNICODE=0)
+include_directories(export/fmt/include)
+add_subdirectory(export/python3)
+endif()
+
 install(TARGETS csp DESTINATION bin)
 include(config/system.cmake)
 # ********************************************************** pack infomation

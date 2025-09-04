@@ -6,6 +6,8 @@
 *.lo
 *.o
 *.obj
+dist
+csp_qm*
 
 # Precompiled Headers
 *.gch

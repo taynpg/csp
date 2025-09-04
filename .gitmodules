@@ -1,0 +1,6 @@
+[submodule "export/python3/pybind11"]
+	path = export/python3/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "export/fmt"]
+	path = export/fmt
+	url = https://github.com/fmtlib/fmt
