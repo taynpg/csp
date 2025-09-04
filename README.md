@@ -16,6 +16,13 @@ csp-(cpp shi pan，C++式盘)，一个cmd命令行奇门遁甲起盘工具。
 ```shell
 git clone https://github.com/taynpg/csp
 ```
+**如果您还需要制作python包**
+
+同时使用`-DCSP_PYTHON_EXPORT=ON`开启。
+
+```shell
+git clone --recursive https://github.com/taynpg/csp
+```
 
 # 二、用法
 
