@@ -6,7 +6,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(csp, m)
+PYBIND11_MODULE(csp_qm, m)
 {
     // 模块文档
     m.doc() = "奇门遁甲排盘工具 CSP 的 Python 接口";
