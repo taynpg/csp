@@ -15,9 +15,9 @@ public:
     static std::string zs(int index);
     // 获取数字中文(零，一...)
     static std::string num(int index);
-    // 获取阴历月份名称(正, 二, ...)
+    // 获取农历月份名称(正, 二, ...)
     static std::string mon(int index);
-    // 获取阴历月份名称(正月, 二月, ...)
+    // 获取农历月份名称(正月, 二月, ...)
     static std::string mon2(int index);
     // 获取二十四节气名称，下标从公历 1 月的小寒开始
     static std::string jq(int index);
