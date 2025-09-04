@@ -1,6 +1,8 @@
 import csp_qm  # 导入安装的包
 
 def test_qimen_pan():
+    
+    print(dir(csp_qm))
     """测试奇门排盘功能"""
     print("\n=== 测试 csp-qm 包 ===")
     

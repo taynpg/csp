@@ -3,49 +3,61 @@
 #include "pybind11/pybind11.h"
 #include <fmt/format.h>
 #include <iostream>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
+/*
+
+    这里的导出说明注释，之所以没有使用中文是因为 csp 的编码在 Windows 上是 GBK 编码。
+    为什么不用 UTF-8 ，一是为了兼容 Windows XP 系统，二是 UTF-8 编码时，自定义的彩色
+    打印将会失效（这个自定义彩色打印不仅仅是为了支持XP，它还比默认ANSI彩色打印颜色更丰富）。
+
+    经过测试，Python 在导入模块时，不接受 GBK 编码，否则会报错无法导入。
+    但是导入成功之后，是不影响 cpp 内部的 GBK 打印输出的，因此这里使用英文是避免 GBK 中文编码。
+
+*/
+
 PYBIND11_MODULE(csp_qm, m)
 {
-    // 模块文档
-    m.doc() = "奇门遁甲排盘工具 CSP 的 Python 接口";
+    // Module documentation
+    m.doc() = "Python interface for Qimen Dunjia divination tool 'csp'";
 
-    // 绑定 CmdParam 结构体（带详细说明）
-    py::class_<CmdParam>(m, "CmdParam", "奇门排盘参数结构体")
-        .def(py::init<>(), "默认构造函数")
-        // 成员变量（带说明）
-        .def_readwrite("year", &CmdParam::year, "年（如 2023）")
-        .def_readwrite("mon", &CmdParam::mon, "月（1-12）")
-        .def_readwrite("day", &CmdParam::day, "日（1-31）")
-        .def_readwrite("hour", &CmdParam::hour, "时（0-23）")
-        .def_readwrite("min", &CmdParam::min, "分（0-59）")
-        .def_readwrite("sec", &CmdParam::sec, "秒（0-59）")
-        .def_readwrite("ju", &CmdParam::ju, "局数（自动计算时忽略）")
+    // Bind CmdParam struct
+    py::class_<CmdParam>(m, "CmdParam", "Qimen parameter structure")
+        .def(py::init<>(), "Default constructor")
+        // Member variables
+        .def_readwrite("year", &CmdParam::year, "Year (e.g., 2023)")
+        .def_readwrite("mon", &CmdParam::mon, "Month (1-12)")
+        .def_readwrite("day", &CmdParam::day, "Day (1-31)")
+        .def_readwrite("hour", &CmdParam::hour, "Hour (0-23)")
+        .def_readwrite("min", &CmdParam::min, "Minute (0-59)")
+        .def_readwrite("sec", &CmdParam::sec, "Second (0-59)")
+        .def_readwrite("ju", &CmdParam::ju, "Ju number (ignored when auto-calculating)")
         .def_readwrite("type", &CmdParam::type,
-                       "盘式类型（必填项）：\n"
-                       "1=时家转盘超接置润\n"
-                       "2=时家转盘阴盘\n"
-                       "3=时家转盘拆补\n"
-                       "4=时家茅山")
-        .def_readwrite("zone", &CmdParam::zone, "时区偏移（小时，默认为0）")
-        .def_readwrite("is_auto", &CmdParam::is_auto, "是否自动计算时间（true/false）")
-        .def_readwrite("str_dt", &CmdParam::str_dt, "手动日期字符串（格式：YYYY-MM-DD-HH-MM-SS）")
-        // 字符串表示
+                       "Layout type (required):\n"
+                       "1=Hour-based ZhiRun\n"
+                       "2=Hour-based YinPan\n"
+                       "3=Hour-based ChaiBu\n"
+                       "4=Hour-based MaoShan")
+        .def_readwrite("zone", &CmdParam::zone, "Timezone offset (hours, default 0)")
+        .def_readwrite("is_auto", &CmdParam::is_auto, "Auto-calculate time (true/false)")
+        .def_readwrite("str_dt", &CmdParam::str_dt, "Manual date string (format: YYYY-MM-DD-HH-MM-SS)")
+        // String representation
         .def("__repr__", [](const CmdParam& p) {
             return fmt::format("CmdParam(year={}, mon={}, day={}, hour={}, min={}, sec={}, ju={}, type={}, zone={}, "
                                "is_auto={}, str_dt='{}')",
                                p.year, p.mon, p.day, p.hour, p.min, p.sec, p.ju, p.type, p.zone, p.is_auto, p.str_dt);
         });
 
-    // 绑定 CQimenUse 类
-    py::class_<CQimenUse>(m, "CQimenUse", "奇门排盘核心逻辑类")
-        .def(py::init<>(), "构造函数")
+    // Bind CQimenUse class
+    py::class_<CQimenUse>(m, "CQimenUse", "Qimen layout calculation core class")
+        .def(py::init<>(), "Constructor")
         .def("run", &CQimenUse::run,
-             "执行奇门排盘计算\n"
-             "参数:\n"
-             "    param (CmdParam): 排盘参数\n"
-             "返回值:\n"
+             "Execute Qimen layout calculation\n"
+             "Args:\n"
+             "    param (CmdParam): Calculation parameters\n"
+             "Returns:\n"
              "    None",
              py::arg("param"));
 }

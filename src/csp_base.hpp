@@ -4,7 +4,6 @@
 constexpr auto CSP_VERSION = "v1.5.0";
 
 #include <string>
-
 struct CmdParam {
     int year{};
     int mon{};

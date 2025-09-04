@@ -127,6 +127,12 @@
         "regex": "cpp",
         "xtree": "cpp",
         "xmemory0": "cpp",
-        "xstddef": "cpp"
+        "xstddef": "cpp",
+        "barrier": "cpp",
+        "complex": "cpp",
+        "expected": "cpp",
+        "stack": "cpp",
+        "typeindex": "cpp",
+        "valarray": "cpp"
     }
 }

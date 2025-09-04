@@ -231,7 +231,7 @@ void QimenPrint::print_other()
     std::cout << ConsoleColor::BrightGreen << std::string(szTem) << std::endl;
     std::cout << ConsoleColor::Green << SPLIT_LINE << std::endl;
     std::cout << ConsoleColor::Green << "https://github.com/taynpg/csp" << std::endl;
-    std::cout << ConsoleColor::Green << SPLIT_LINE << std::endl;
+    std::cout << ConsoleColor::Green << SPLIT_LINE << ConsoleColor::Default << std::endl;
 }
 
 void QimenPrint::run(const std::shared_ptr<Qimen>& qm, int type)
