@@ -231,22 +231,25 @@ void CCmdPrint::print_other()
     std::cout << ConsoleColor::Yellow << szXunkong;
     std::cout << ConsoleColor::Green << SPLIT_LINE << std::endl;
 
-    // std::string szJieName;
-    // const auto& first_jq = qm_->get_cal()->get_jq_info()[2];
-    // const auto& second_jq = qm_->get_cal()->get_jq_info()[3];
-    // szJieName += "[" + CZhData::jq(first_jq.index) + "]：";
-    // std::cout << szJieName;
-    // char szTem[128]{};
-    // std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", first_jq.dt.mon, first_jq.dt.day,
-    // first_jq.dt.hour,
-    //               first_jq.dt.min, first_jq.dt.sec);
-    // std::cout << ConsoleColor::Yellow << std::string(szTem);
-    // szJieName.clear();
-    // szJieName += "  [" + CZhData::jq(second_jq.index) + "]：";
-    // std::cout << szJieName;
-    // std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", second_jq.dt.mon, second_jq.dt.day,
-    //               second_jq.dt.hour, second_jq.dt.min, second_jq.dt.sec);
-    // std::cout << ConsoleColor::Yellow << std::string(szTem) << std::endl;
+    int firstIndex{};
+    int secondIndex{};
+    auto fq = Qimen::get_jq(*qmd.dt_, firstIndex, false);
+    auto sq = Qimen::get_jq(*qmd.dt_, secondIndex, true);
+    auto fqdt = Qimen::solar(fq);
+    auto sqdt = Qimen::solar(sq);
+
+    std::string szJieName;
+    szJieName += "[" + CZhData::jq(firstIndex) + "]：";
+    std::cout << szJieName;
+    char szTem[128]{};
+    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", fqdt.mon, fqdt.day, fqdt.hour, fqdt.min, fqdt.sec);
+    std::cout << ConsoleColor::Yellow << std::string(szTem);
+    szJieName.clear();
+    szJieName += "  [" + CZhData::jq(secondIndex) + "]：";
+    std::cout << szJieName;
+    std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", sqdt.mon, sqdt.day, sqdt.hour, sqdt.min, sqdt.sec);
+
+    std::cout << ConsoleColor::Yellow << std::string(szTem) << std::endl;
     std::cout << ConsoleColor::Green << SPLIT_LINE << std::endl;
     std::cout << ConsoleColor::Yellow << "https://github.com/taynpg/csp" << std::endl;
     std::cout << ConsoleColor::Green << SPLIT_LINE << std::endl;
