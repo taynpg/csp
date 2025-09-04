@@ -6,11 +6,11 @@
 
 using namespace csp;
 
-class CCmdPrint
+class QimenPrint
 {
 public:
-    CCmdPrint();
-    ~CCmdPrint();
+    QimenPrint();
+    ~QimenPrint();
 
 public:
     void run(const std::shared_ptr<Qimen>& qm, int type);

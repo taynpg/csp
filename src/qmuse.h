@@ -14,7 +14,7 @@ public:
     bool run(const CmdParam& param);
 
 private:
-    CCmdPrint print_;
+    QimenPrint print_;
 };
 
 #endif
