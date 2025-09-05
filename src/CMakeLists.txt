@@ -16,3 +16,14 @@ qmuse.h
 )
 add_executable(csp ${SOURCES})
 target_link_libraries(csp PRIVATE qimen zhcn base tyme4cpp)
+if(UNIX)
+execute_process(
+    COMMAND uname -a
+    OUTPUT_VARIABLE UNAME_OUT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(UNAME_OUT MATCHES "alpine" OR UNAME_OUT MATCHES "Alpine")
+message(STATUS "csp on musl static link")
+target_link_libraries(csp PRIVATE -static;-static-libstdc++)
+endif()
+endif()
