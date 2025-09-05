@@ -2,6 +2,7 @@
 
 #include "util.h"
 #include <regex>
+#include <cmath>
 
 #if defined(_WIN32)
 #if __has_include(<corecrt_math_defines.h>)

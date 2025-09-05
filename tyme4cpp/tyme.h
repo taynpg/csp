@@ -2,11 +2,12 @@
 #define TYME_H
 
 #include "util.h"
+#include <cmath>
 #include <mutex>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <utility>
-#include <cmath>
 
 namespace tyme {
 using namespace std;
@@ -1450,7 +1451,8 @@ public:
 
     string get_name() const override;
 
-    explicit HideHeavenStem(const HeavenStem& heaven_stem, const HideHeavenStemType type) : heaven_stem(heaven_stem), type(type)
+    explicit HideHeavenStem(const HeavenStem& heaven_stem, const HideHeavenStemType type)
+        : heaven_stem(heaven_stem), type(type)
     {
     }
 
@@ -1496,7 +1498,8 @@ class HideHeavenStemDay : public AbstractCulture
 public:
     ~HideHeavenStemDay() override = default;
 
-    explicit HideHeavenStemDay(const HideHeavenStem& hide_heaven_stem, const int day_index) : hide_heaven_stem(hide_heaven_stem), day_index(day_index)
+    explicit HideHeavenStemDay(const HideHeavenStem& hide_heaven_stem, const int day_index)
+        : hide_heaven_stem(hide_heaven_stem), day_index(day_index)
     {
     }
 
@@ -1887,7 +1890,8 @@ class SixtyCycleMonth : public AbstractCulture
 public:
     ~SixtyCycleMonth() override = default;
 
-    explicit SixtyCycleMonth(const SixtyCycleYear& year, const SixtyCycle& month) : AbstractCulture(), year(year), month(month)
+    explicit SixtyCycleMonth(const SixtyCycleYear& year, const SixtyCycle& month)
+        : AbstractCulture(), year(year), month(month)
     {
     }
 
@@ -2058,92 +2062,93 @@ public:
         static once_flag flag;
         call_once(flag, [] {
             string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_@";
-            string months[] = {"080b0r0j0j0j0C0j0j0C0j0j0j0C0j0C0j0C0F0j0V0V0V0u0j0j0C0j0j0j0j0V0C0j1v0u0C0V1v0C0b080u110u0C"
-                               "0j0C1v9K1v2z0j1vmZbl1veN3s1v0V0C2S1v0V0C2S2o0C0j1Z1c2S1v0j1c0j2z1v0j1c0j392H0b2_"
-                               "2S0C0V0j1c0j2z0C0C0j0j1c0j0N250j0C0j0b081n080b0C0C0C1c0j0N",
-                               "0r1v1c1v0V0V0F0V0j0C0j0C0j0V0j0u1O0j0C0V0j0j0j0V0b080u0r0u080b0j0j0C0V0C0V0j0b080V0u080b0j0j"
-                               "0u0j1v0u080b1c0j080b0j0V0j0j0V0C0N1v0j1c0j0j1v2g1v420j1c0j2z1v0j1v5Q9z1v4l0j1vfn1v420j9z4l1v"
-                               "1v2S1c0j1v2S3s1v0V0C2S1v1v2S1c0j1v2S2_0b0j2_2z0j1c0j",
-                               "0z0j0j0j0C0j0j0C0j0j0j0C0j0C0j0j0j0j0m0j0C0j0j0C0j0j0j0j0b0V0j0j0C0j0j0j0j0V0j0j0j0V0b0V0V0C"
-                               "0V0C0j0j0b080u110u0V0C0j0N0j0b080b080b0j0r0b0r0b0j0j0j0j0C0j0b0r0C0j0b0j0C0C0j0j0j0j0j0j0j0j"
-                               "0j0b110j0b0j0j0j0C0j0C0j0j0j0j0b080b080b0V080b080b0j0j0j0j0j0j0V0j0j0u1v0j0j0j0C0j0j0j0V0C0N"
-                               "1c0j0C0C0j0j0j1n080b0j0V0C0j0C0C2g0j1c0j0j1v2g1v0j0j1v7N0j1c0j3L0j0j1v5Q1Z5Q1v4lfn1v420j1v5Q"
-                               "1Z5Q1v4l1v2z1v",
-                               "0H140r0N0r140r0u0r0V171c11140C0j0u110j0u0j1v0j0C0j0j0j0b080V0u080b0C1v0j0j0j0C0j0b080V0j0j0b"
-                               "080b0j0j0j0j0b080b0C080j0b080b0j0j0j0j0j0j0b080j0b080C0b080b080b080b0j0j0j0j080b0j0C0j0j0j0b"
-                               "0j0j080C0b0j0j0j0j0j0j0b08080b0j0C0j0j0j0b0j0j0K0b0j0C0j0j0j0b080b080j0C0b0j080b080b0j0j0j0j"
-                               "080b0j0b0r0j0j0j0b0j0C0r0b0j0j0j0j0j0j0j0b080j0b0r0C0j0b0j0j0j0r0b0j0C0j0j0j0u0r0b0C0j080b0j"
-                               "0j0j0j0j0j0j1c0j0b0j0j0j0C0j0j0j0j0j0j0j0b080j1c0u0j0j0j0C0j1c0j0u0j1c0j0j0j0j0j0j0j0j1c0j0u"
-                               "1v0j0j0V0j0j2g0j0j0j0C1v0C1G0j0j0V0C1Z1O0j0V0j0j2g1v0j0j0V0C2g5x1v4l1v421O7N0V0C4l1v2S1c0j1v"
-                               "2S2_",
-                               "050b080C0j0j0j0C0j0j0C0j0j0j0C0j0C0j0C030j0j0j0j0j0j0j0j0j0C0j0b080u0V080b0j0j0V0j0j0j0j0j0j"
-                               "0j0j0j0V0N0j0C0C0j0j0j0j0j0j0j0j1c0j0u0j1v0j0j0j0j0j0b080b080j0j0j0b080b080b080b080b0j0j0j08"
-                               "0b0j0b080j0j0j0j0b080b0j0j0r0b080b0b080j0j0j0j0b080b080j0b080j0b080b080b080b080b0j0j0r0b0j0b"
-                               "080j0j0j0j0b080b0j0j0C080b0b080j0j0j0j0j0j0j0b080u080j0j0b0j0j0j0C0j0b080j0j0j0j0b080b080b08"
-                               "0b0C080b080b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0j0C0b080b080j0b0j0j0C080b0j0j0j0j0j"
-                               "0j0b0j0j080C0b0j080b0j0j0j0j0j0j0j0C0j0j0j0b0j0j0C080b0j0j0j0j0j0j0b080b080b0K0b080b080b0j0j"
-                               "0j0j0j0j0j0C0j0j0u0j0j0V0j080b0j0C0j0j0j0b0j0r0C0b0j0j0j0j0j0j0j0j0j0C0j0b080b080b0j0C0C0j0C"
-                               "0j0j0j0u110u0j0j0j0j0j0j0j0j0C0j0j0u0j1c0j0j0j0j0j0j0j0j0V0C0u0j0C0C0V0C1Z0j0j0j0C0j0j0j1v0u"
-                               "0j1c0j0j0j0C0j0j2g0j1c1v0C1Z0V0j4l0j0V0j0j2g0j1v0j1v2S1c7N1v",
-                               "0w0j1c0j0V0j0j0V0V0V0j0m0V0j0C1c140j0j0j0C0V0C0j1v0j0N0j0C0j0j0j0V0j0j1v0N0j0j0V0j0j0j0j0j0j"
-                               "080b0j0j0j0j0j0j0j080b0j0C0j0j0j0b0j0j080u080b0j0j0j0j0j0j0b080b080b080C0b0j080b080b0j0j0j0j"
-                               "080b0j0C0j0j0j0b0j0j080u080b0j0j0j0j0j0j0b080b080b080b0r0b0j080b080b0j0j0j0j080b0j0b0r0j0j0b"
-                               "080b0j0j080b0j080b0j080b080b0j0j0j0j0j0b080b0r0C0b080b0j0j0j0j080b0b080b080j0j0j0b080b080b08"
-                               "0b0j0j0j0j080b0j0b080j0j0j0j0b080b0j0j0r0b080b0j0j0j0j0j0b080b080j0b0r0b080j0b080b0j0j0j0j08"
-                               "0b0j0b080j0j0j0j0b080b0j080b0r0b0j080b080b0j0j0j0j0j0b080b0r0C0b080b0j0j0j0j0j0j0b080j0j0j0b"
-                               "080b080b080b0j0j0j0r0b0j0b080j0j0j0j0b080b0r0b0r0b0j080b080b0j0j0j0j0j0j0b0r0j0j0j0b0j0j0j0j"
-                               "080b0j0b080j0j0j0j0b080b080b0j0r0b0j080b0j0j0j0j0j0j0j0b0r0C0b0j0j0j0j0j0j0j080b0j0C0j0j0j0b"
-                               "0j0C0r0b0j0j0j0j0j0j0b080b080u0r0b0j080b0j0j0j0j0j0j0j0b0r0C0u0j0j0j0C0j080b0j0C0j0j0j0u110b"
-                               "0j0j0j0j0j0j0j0j0j0C0j0b080b0j0j0C0C0j0C0j0j0j0b0j1c0j080b0j0j0j0j0j0j0V0j0j0u0j1c0j0j0j0C0j"
-                               "0j2g0j0j0j0C0j0j0V0j0b080b1c0C0V0j0j2g0j0j0V0j0j1c0j1Z0j0j0C0C0j1v",
-                               "160j0j0V0j1c0j0C0j0C0j1f0j0V0C0j0j0C0j0j0j1G080b080u0V080b0j0j0V0j1v0j0u0j1c0j0j0j0C0j0j0j0C"
-                               "0C0j1D0b0j080b0j0j0j0j0C0j0b0r0C0j0b0j0C0C0j0j0j0j0j0j0j0j0j0b0r0b0r0j0b0j0j0j0C0j0b0r0j0j0j"
-                               "0b080b080j0b0C0j080b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0j0j0j0b080b080j0b0C0r0j0b0j"
-                               "0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0j0j0j0C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080b080b080C0b080b"
-                               "080b080b0j0j0j0j0j0b080C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080j0b0C080j0j0b0j0j0j0j0j0j0b080j"
-                               "0b080C0b080b080b080b0j0j0j0j080b0j0C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080j0b080u080j0j0b0j0j"
-                               "0j0j0j0j0b080C0j0j0b080b0j0j0C0j0j080b0j0j0j0j0j0b080b0C0r0b080b0j0j0j0j0j0j0b080j0b080u080b"
-                               "080b080b0j0j0j0C0j0b080j0j0j0j0b0j0j0j0C0j0j080b0j0j0j0j0j0b080b0C0r0b080b0j0j0j0j0j0j0b080j"
-                               "0b0r0b080b080b080b0j0j0j0r0b0j0b0r0j0j0j0b0j0j0j0r0b0j080b0j0j0j0j0j0j0j0b0r0C0b0j0j0j0j0j0j"
-                               "0j0b080j0C0u080b080b0j0j0j0r0b0j0C0C0j0b0j110b0j080b0j0j0j0j0j0j0u0r0C0b0j0j0j0j0j0j0j0j0j0C"
-                               "0j0j0j0b0j1c0j0C0j0j0j0b0j0814080b080b0j0j0j0j0j0j1c0j0u0j0j0V0j0j0j0j0j0j0j0u110u0j0j0j",
-                               "020b0r0C0j0j0j0C0j0j0V0j0j0j0j0j0C0j1f0j0C0j0V1G0j0j0j0j0V0C0j0C1v0u0j0j0j0V0j0j0C0j0j0j1v0N"
-                               "0C0V0j0j0j0K0C250b0C0V0j0j0V0j0j2g0C0V0j0j0C0j0j0b081v0N0j0j0V0V0j0j0u0j1c0j080b0j0j0j0j0j0j"
-                               "0V0j0j0u0j0j0V0j0j0j0C0j0b080b080V0b0j080b0j0j0j0j0j0j0j0b0r0C0j0b0j0j0j0C0j080b0j0j0j0j0j0j"
-                               "0u0r0C0u0j0j0j0j0j0j0b080j0C0j0b080b080b0j0C0j080b0j0j0j0j0j0j0b080b110b0j0j0j0j0j0j0j0j0j0b"
-                               "0r0j0j0j0b0j0j0j0r0b0j0b080j0j0j0j0b080b080b080b0r0b0j080b080b0j0j0j0j0j0j0b0r0C0b080b0j0j0j"
-                               "0j080b0j0b080j0j0j0j0b080b080b0j0j0j0r0b0j0j0j0j0j0j0b080b0j080C0b0j080b080b0j0j0j0j080b0j0b"
-                               "0r0C0b080b0j0j0j0j080b0j0j0j0j0j0b080b080b080b0j0j080b0r0b0j0j0j0j0j0j0b0j0j080C0b0j080b080b"
-                               "0j0j0j0j0j0b080C0j0j0b080b0j0j0C0j0b080j0j0j0j0b080b080b080b0C0C080b0j0j0j0j0j0j0b0C0C080b08"
-                               "0b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0b080j0j0b080b080b080b0C0r0b0j0j0j0j0j0j0b080b"
-                               "0r0b0r0b0j080b080b0j0j0j0j0j0j0b0r0C0j0b0j0j0j0j0j0j0b080j0C0j0b080j0b0j0j0K0b0j0C0j0j0j0b08"
-                               "0b0j0K0b0j080b0j0j0j0j0j0j0V0j0j0b0j0j0j0C0j0j0j0j",
-                               "0l0C0K0N0r0N0j0r1G0V0m0j0V1c0C0j0j0j0j1O0N110u0j0j0j0C0j0j0V0C0j0u110u0j0j0j0C0j0j0j0C0C0j25"
-                               "0j1c2S1v1v0j5x2g0j1c0j0j1c2z0j1c0j0j1c0j0N1v0V0C1v0C0b0C0V0j0j0C0j0C1v0u0j0C0C0j0j0j0C0j0j0j"
-                               "0u110u0j0j0j0C0j0C0C0C0b080b0j0C0j080b0j0C0j0j0j0u110u0j0j0j0C0j0j0j0C0j0j0j0u0C0r0u0j0j0j0j"
-                               "0j0j0b0r0b0V080b080b0j0C0j0j0j0V0j0j0b0j0j0j0C0j0j0j0j0j0j0j0b080j0b0C0r0j0b0j0j0j0C0j0b0r0b"
-                               "0r0j0b080b080b0j0C0j0j0j0j0j0j0j0j0b0j0C0r0b0j0j0j0j0j0j0b080b080j0b0r0b0r0j0b0j0j0j0j080b0j"
-                               "0b0r0j0j0j0b080b080b0j0j0j0j080b0j0j0j0j0j0j0b0j0j0j0r0b0j0j0j0j0j0j0b080b080b080b0r0C0b080b"
-                               "0j0j0j0j0j0b080b0r0C0b080b080b080b0j0j0j0j080b0j0C0j0j0j0b0j0j0C080b0j0j0j0j0j0j0b080j0b0C08"
-                               "0j0j0b0j0j0j0j0j0j0b0r0b080j0j0b080b080b0j0j0j0j0j0j0b080j0j0j0j0b0j0j0j0r0b0j0b080j0j0j0j0j"
-                               "0b080b080b0C0r0b0j0j0j0j0j0j0b080b080j0C0b0j080b080b0j0j0j0j0j0j",
-                               "0a0j0j0j0j0C0j0j0C0j0C0C0j0j0j0j0j0j0j0m0C0j0j0j0j0u080j0j0j1n0j0j0j0j0C0j0j0j0V0j0j0j1c0u0j"
-                               "0C0V0j0j0V0j0j1v0N0C0V2o1v1O2S2o141v0j1v4l0j1c0j1v2S2o0C0u1v0j0C0C2S1v0j1c0j0j1v0N251c0j1v0b"
-                               "1c1v1n1v0j0j0V0j0j1v0N1v0C0V0j0j1v0b0C0j0j0V1c0j0u0j1c0j0j0j0j0j0j0j0j1c0j0u0j0j0V0j0j0j0j0j"
-                               "0j0b080u110u0j0j0j0j0j0j1c0j0b0j080b0j0C0j0j0j0V0j0j0u0C0V0j0j0j0C0j0b080j1c0j0b0j0j0j0C0j0C"
-                               "0j0j0j0b080b080b0j0C0j080b0j0j0j0j0j0j0j0b0C0r0u0j0j0j0j0j0j0b080j0b0r0C0j0b0j0j0j0r0b0j0b0r"
-                               "0j0j0j0b080b080b0j0r0b0j080b0j0j0j0j0j0j0b0j0r0C0b0j0j0j0j0j0j0b080j0j0C0j0j0b080b0j0j0j0j0j"
-                               "0j0j0j0j0j0b080b080b080b0C0j0j080b0j0j0j0j0j0j0b0j0j0C080b0j0j0j0j0j0j0j0j0b0C080j0j0b0j0j0j"
-                               "0j0j",
-                               "0n0Q0j1c14010q0V1c171k0u0r140V0j0j1c0C0N1O0j0V0j0j0j1c0j0u110u0C0j0C0V0C0j0j0b671v0j1v5Q1O2S"
-                               "2o2S1v4l1v0j1v2S2o0C1Z0j0C0C1O141v0j1c0j2z1O0j0V0j0j1v0b2H390j1c0j0V0C2z0j1c0j1v2g0C0V0j1O0b"
-                               "0j0j0V0C1c0j0u0j1c0j0j0j0j0j0j0j0j1c0N0j0j0V0j0j0C0j0j0b081v0u0j0j0j0C0j1c0N0j0j0C0j0j0j0C0j"
-                               "0j0j0u0C0r0u0j0j0j0C0j0b080j1c0j0b0j0C0C0j0C0C0j0b080b080u0C0j080b0j0C0j0j0j0u110u0j0j0j0j0j"
-                               "0j0j0j0C0C0j0b0j0j0j0C0j0C0C0j0b080b080b0j0C0j080b0j0C0j0j0j0b0j110b0j0j0j0j0j",
-                               "0B0j0V0j0j0C0j0j0j0C0j0C0j0j0C0j0m0j0j0j0j0C0j0C0j0j0u0j1c0j0j0C0C0j0j0j0j0j0j0j0j0u110N0j0j"
-                               "0V0C0V0j0b081n080b0CrU1O5e2SbX2_1Z0V2o141v0j0C0C0j2z1v0j1c0j7N1O420j1c0j1v2S1c0j1v2S2_"
-                               "0b0j0V0j0j1v0N1v0j0j1c0j1v140j0V0j0j0C0C0b080u1v0C0V0u110u0j0j0j0C0j0j0j0C0C0N0C0V0j0j0C0j0j"
-                               "0b080u110u0C0j0C0u0r0C0u080b0j0j0C0j0j0j"};
+            string months[] = {
+                "080b0r0j0j0j0C0j0j0C0j0j0j0C0j0C0j0C0F0j0V0V0V0u0j0j0C0j0j0j0j0V0C0j1v0u0C0V1v0C0b080u110u0C"
+                "0j0C1v9K1v2z0j1vmZbl1veN3s1v0V0C2S1v0V0C2S2o0C0j1Z1c2S1v0j1c0j2z1v0j1c0j392H0b2_"
+                "2S0C0V0j1c0j2z0C0C0j0j1c0j0N250j0C0j0b081n080b0C0C0C1c0j0N",
+                "0r1v1c1v0V0V0F0V0j0C0j0C0j0V0j0u1O0j0C0V0j0j0j0V0b080u0r0u080b0j0j0C0V0C0V0j0b080V0u080b0j0j"
+                "0u0j1v0u080b1c0j080b0j0V0j0j0V0C0N1v0j1c0j0j1v2g1v420j1c0j2z1v0j1v5Q9z1v4l0j1vfn1v420j9z4l1v"
+                "1v2S1c0j1v2S3s1v0V0C2S1v1v2S1c0j1v2S2_0b0j2_2z0j1c0j",
+                "0z0j0j0j0C0j0j0C0j0j0j0C0j0C0j0j0j0j0m0j0C0j0j0C0j0j0j0j0b0V0j0j0C0j0j0j0j0V0j0j0j0V0b0V0V0C"
+                "0V0C0j0j0b080u110u0V0C0j0N0j0b080b080b0j0r0b0r0b0j0j0j0j0C0j0b0r0C0j0b0j0C0C0j0j0j0j0j0j0j0j"
+                "0j0b110j0b0j0j0j0C0j0C0j0j0j0j0b080b080b0V080b080b0j0j0j0j0j0j0V0j0j0u1v0j0j0j0C0j0j0j0V0C0N"
+                "1c0j0C0C0j0j0j1n080b0j0V0C0j0C0C2g0j1c0j0j1v2g1v0j0j1v7N0j1c0j3L0j0j1v5Q1Z5Q1v4lfn1v420j1v5Q"
+                "1Z5Q1v4l1v2z1v",
+                "0H140r0N0r140r0u0r0V171c11140C0j0u110j0u0j1v0j0C0j0j0j0b080V0u080b0C1v0j0j0j0C0j0b080V0j0j0b"
+                "080b0j0j0j0j0b080b0C080j0b080b0j0j0j0j0j0j0b080j0b080C0b080b080b080b0j0j0j0j080b0j0C0j0j0j0b"
+                "0j0j080C0b0j0j0j0j0j0j0b08080b0j0C0j0j0j0b0j0j0K0b0j0C0j0j0j0b080b080j0C0b0j080b080b0j0j0j0j"
+                "080b0j0b0r0j0j0j0b0j0C0r0b0j0j0j0j0j0j0j0b080j0b0r0C0j0b0j0j0j0r0b0j0C0j0j0j0u0r0b0C0j080b0j"
+                "0j0j0j0j0j0j1c0j0b0j0j0j0C0j0j0j0j0j0j0j0b080j1c0u0j0j0j0C0j1c0j0u0j1c0j0j0j0j0j0j0j0j1c0j0u"
+                "1v0j0j0V0j0j2g0j0j0j0C1v0C1G0j0j0V0C1Z1O0j0V0j0j2g1v0j0j0V0C2g5x1v4l1v421O7N0V0C4l1v2S1c0j1v"
+                "2S2_",
+                "050b080C0j0j0j0C0j0j0C0j0j0j0C0j0C0j0C030j0j0j0j0j0j0j0j0j0C0j0b080u0V080b0j0j0V0j0j0j0j0j0j"
+                "0j0j0j0V0N0j0C0C0j0j0j0j0j0j0j0j1c0j0u0j1v0j0j0j0j0j0b080b080j0j0j0b080b080b080b080b0j0j0j08"
+                "0b0j0b080j0j0j0j0b080b0j0j0r0b080b0b080j0j0j0j0b080b080j0b080j0b080b080b080b080b0j0j0r0b0j0b"
+                "080j0j0j0j0b080b0j0j0C080b0b080j0j0j0j0j0j0j0b080u080j0j0b0j0j0j0C0j0b080j0j0j0j0b080b080b08"
+                "0b0C080b080b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0j0C0b080b080j0b0j0j0C080b0j0j0j0j0j"
+                "0j0b0j0j080C0b0j080b0j0j0j0j0j0j0j0C0j0j0j0b0j0j0C080b0j0j0j0j0j0j0b080b080b0K0b080b080b0j0j"
+                "0j0j0j0j0j0C0j0j0u0j0j0V0j080b0j0C0j0j0j0b0j0r0C0b0j0j0j0j0j0j0j0j0j0C0j0b080b080b0j0C0C0j0C"
+                "0j0j0j0u110u0j0j0j0j0j0j0j0j0C0j0j0u0j1c0j0j0j0j0j0j0j0j0V0C0u0j0C0C0V0C1Z0j0j0j0C0j0j0j1v0u"
+                "0j1c0j0j0j0C0j0j2g0j1c1v0C1Z0V0j4l0j0V0j0j2g0j1v0j1v2S1c7N1v",
+                "0w0j1c0j0V0j0j0V0V0V0j0m0V0j0C1c140j0j0j0C0V0C0j1v0j0N0j0C0j0j0j0V0j0j1v0N0j0j0V0j0j0j0j0j0j"
+                "080b0j0j0j0j0j0j0j080b0j0C0j0j0j0b0j0j080u080b0j0j0j0j0j0j0b080b080b080C0b0j080b080b0j0j0j0j"
+                "080b0j0C0j0j0j0b0j0j080u080b0j0j0j0j0j0j0b080b080b080b0r0b0j080b080b0j0j0j0j080b0j0b0r0j0j0b"
+                "080b0j0j080b0j080b0j080b080b0j0j0j0j0j0b080b0r0C0b080b0j0j0j0j080b0b080b080j0j0j0b080b080b08"
+                "0b0j0j0j0j080b0j0b080j0j0j0j0b080b0j0j0r0b080b0j0j0j0j0j0b080b080j0b0r0b080j0b080b0j0j0j0j08"
+                "0b0j0b080j0j0j0j0b080b0j080b0r0b0j080b080b0j0j0j0j0j0b080b0r0C0b080b0j0j0j0j0j0j0b080j0j0j0b"
+                "080b080b080b0j0j0j0r0b0j0b080j0j0j0j0b080b0r0b0r0b0j080b080b0j0j0j0j0j0j0b0r0j0j0j0b0j0j0j0j"
+                "080b0j0b080j0j0j0j0b080b080b0j0r0b0j080b0j0j0j0j0j0j0j0b0r0C0b0j0j0j0j0j0j0j080b0j0C0j0j0j0b"
+                "0j0C0r0b0j0j0j0j0j0j0b080b080u0r0b0j080b0j0j0j0j0j0j0j0b0r0C0u0j0j0j0C0j080b0j0C0j0j0j0u110b"
+                "0j0j0j0j0j0j0j0j0j0C0j0b080b0j0j0C0C0j0C0j0j0j0b0j1c0j080b0j0j0j0j0j0j0V0j0j0u0j1c0j0j0j0C0j"
+                "0j2g0j0j0j0C0j0j0V0j0b080b1c0C0V0j0j2g0j0j0V0j0j1c0j1Z0j0j0C0C0j1v",
+                "160j0j0V0j1c0j0C0j0C0j1f0j0V0C0j0j0C0j0j0j1G080b080u0V080b0j0j0V0j1v0j0u0j1c0j0j0j0C0j0j0j0C"
+                "0C0j1D0b0j080b0j0j0j0j0C0j0b0r0C0j0b0j0C0C0j0j0j0j0j0j0j0j0j0b0r0b0r0j0b0j0j0j0C0j0b0r0j0j0j"
+                "0b080b080j0b0C0j080b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0j0j0j0b080b080j0b0C0r0j0b0j"
+                "0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0j0j0j0C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080b080b080C0b080b"
+                "080b080b0j0j0j0j0j0b080C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080j0b0C080j0j0b0j0j0j0j0j0j0b080j"
+                "0b080C0b080b080b080b0j0j0j0j080b0j0C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080j0b080u080j0j0b0j0j"
+                "0j0j0j0j0b080C0j0j0b080b0j0j0C0j0j080b0j0j0j0j0j0b080b0C0r0b080b0j0j0j0j0j0j0b080j0b080u080b"
+                "080b080b0j0j0j0C0j0b080j0j0j0j0b0j0j0j0C0j0j080b0j0j0j0j0j0b080b0C0r0b080b0j0j0j0j0j0j0b080j"
+                "0b0r0b080b080b080b0j0j0j0r0b0j0b0r0j0j0j0b0j0j0j0r0b0j080b0j0j0j0j0j0j0j0b0r0C0b0j0j0j0j0j0j"
+                "0j0b080j0C0u080b080b0j0j0j0r0b0j0C0C0j0b0j110b0j080b0j0j0j0j0j0j0u0r0C0b0j0j0j0j0j0j0j0j0j0C"
+                "0j0j0j0b0j1c0j0C0j0j0j0b0j0814080b080b0j0j0j0j0j0j1c0j0u0j0j0V0j0j0j0j0j0j0j0u110u0j0j0j",
+                "020b0r0C0j0j0j0C0j0j0V0j0j0j0j0j0C0j1f0j0C0j0V1G0j0j0j0j0V0C0j0C1v0u0j0j0j0V0j0j0C0j0j0j1v0N"
+                "0C0V0j0j0j0K0C250b0C0V0j0j0V0j0j2g0C0V0j0j0C0j0j0b081v0N0j0j0V0V0j0j0u0j1c0j080b0j0j0j0j0j0j"
+                "0V0j0j0u0j0j0V0j0j0j0C0j0b080b080V0b0j080b0j0j0j0j0j0j0j0b0r0C0j0b0j0j0j0C0j080b0j0j0j0j0j0j"
+                "0u0r0C0u0j0j0j0j0j0j0b080j0C0j0b080b080b0j0C0j080b0j0j0j0j0j0j0b080b110b0j0j0j0j0j0j0j0j0j0b"
+                "0r0j0j0j0b0j0j0j0r0b0j0b080j0j0j0j0b080b080b080b0r0b0j080b080b0j0j0j0j0j0j0b0r0C0b080b0j0j0j"
+                "0j080b0j0b080j0j0j0j0b080b080b0j0j0j0r0b0j0j0j0j0j0j0b080b0j080C0b0j080b080b0j0j0j0j080b0j0b"
+                "0r0C0b080b0j0j0j0j080b0j0j0j0j0j0b080b080b080b0j0j080b0r0b0j0j0j0j0j0j0b0j0j080C0b0j080b080b"
+                "0j0j0j0j0j0b080C0j0j0b080b0j0j0C0j0b080j0j0j0j0b080b080b080b0C0C080b0j0j0j0j0j0j0b0C0C080b08"
+                "0b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0b080j0j0b080b080b080b0C0r0b0j0j0j0j0j0j0b080b"
+                "0r0b0r0b0j080b080b0j0j0j0j0j0j0b0r0C0j0b0j0j0j0j0j0j0b080j0C0j0b080j0b0j0j0K0b0j0C0j0j0j0b08"
+                "0b0j0K0b0j080b0j0j0j0j0j0j0V0j0j0b0j0j0j0C0j0j0j0j",
+                "0l0C0K0N0r0N0j0r1G0V0m0j0V1c0C0j0j0j0j1O0N110u0j0j0j0C0j0j0V0C0j0u110u0j0j0j0C0j0j0j0C0C0j25"
+                "0j1c2S1v1v0j5x2g0j1c0j0j1c2z0j1c0j0j1c0j0N1v0V0C1v0C0b0C0V0j0j0C0j0C1v0u0j0C0C0j0j0j0C0j0j0j"
+                "0u110u0j0j0j0C0j0C0C0C0b080b0j0C0j080b0j0C0j0j0j0u110u0j0j0j0C0j0j0j0C0j0j0j0u0C0r0u0j0j0j0j"
+                "0j0j0b0r0b0V080b080b0j0C0j0j0j0V0j0j0b0j0j0j0C0j0j0j0j0j0j0j0b080j0b0C0r0j0b0j0j0j0C0j0b0r0b"
+                "0r0j0b080b080b0j0C0j0j0j0j0j0j0j0j0b0j0C0r0b0j0j0j0j0j0j0b080b080j0b0r0b0r0j0b0j0j0j0j080b0j"
+                "0b0r0j0j0j0b080b080b0j0j0j0j080b0j0j0j0j0j0j0b0j0j0j0r0b0j0j0j0j0j0j0b080b080b080b0r0C0b080b"
+                "0j0j0j0j0j0b080b0r0C0b080b080b080b0j0j0j0j080b0j0C0j0j0j0b0j0j0C080b0j0j0j0j0j0j0b080j0b0C08"
+                "0j0j0b0j0j0j0j0j0j0b0r0b080j0j0b080b080b0j0j0j0j0j0j0b080j0j0j0j0b0j0j0j0r0b0j0b080j0j0j0j0j"
+                "0b080b080b0C0r0b0j0j0j0j0j0j0b080b080j0C0b0j080b080b0j0j0j0j0j0j",
+                "0a0j0j0j0j0C0j0j0C0j0C0C0j0j0j0j0j0j0j0m0C0j0j0j0j0u080j0j0j1n0j0j0j0j0C0j0j0j0V0j0j0j1c0u0j"
+                "0C0V0j0j0V0j0j1v0N0C0V2o1v1O2S2o141v0j1v4l0j1c0j1v2S2o0C0u1v0j0C0C2S1v0j1c0j0j1v0N251c0j1v0b"
+                "1c1v1n1v0j0j0V0j0j1v0N1v0C0V0j0j1v0b0C0j0j0V1c0j0u0j1c0j0j0j0j0j0j0j0j1c0j0u0j0j0V0j0j0j0j0j"
+                "0j0b080u110u0j0j0j0j0j0j1c0j0b0j080b0j0C0j0j0j0V0j0j0u0C0V0j0j0j0C0j0b080j1c0j0b0j0j0j0C0j0C"
+                "0j0j0j0b080b080b0j0C0j080b0j0j0j0j0j0j0j0b0C0r0u0j0j0j0j0j0j0b080j0b0r0C0j0b0j0j0j0r0b0j0b0r"
+                "0j0j0j0b080b080b0j0r0b0j080b0j0j0j0j0j0j0b0j0r0C0b0j0j0j0j0j0j0b080j0j0C0j0j0b080b0j0j0j0j0j"
+                "0j0j0j0j0j0b080b080b080b0C0j0j080b0j0j0j0j0j0j0b0j0j0C080b0j0j0j0j0j0j0j0j0b0C080j0j0b0j0j0j"
+                "0j0j",
+                "0n0Q0j1c14010q0V1c171k0u0r140V0j0j1c0C0N1O0j0V0j0j0j1c0j0u110u0C0j0C0V0C0j0j0b671v0j1v5Q1O2S"
+                "2o2S1v4l1v0j1v2S2o0C1Z0j0C0C1O141v0j1c0j2z1O0j0V0j0j1v0b2H390j1c0j0V0C2z0j1c0j1v2g0C0V0j1O0b"
+                "0j0j0V0C1c0j0u0j1c0j0j0j0j0j0j0j0j1c0N0j0j0V0j0j0C0j0j0b081v0u0j0j0j0C0j1c0N0j0j0C0j0j0j0C0j"
+                "0j0j0u0C0r0u0j0j0j0C0j0b080j1c0j0b0j0C0C0j0C0C0j0b080b080u0C0j080b0j0C0j0j0j0u110u0j0j0j0j0j"
+                "0j0j0j0C0C0j0b0j0j0j0C0j0C0C0j0b080b080b0j0C0j080b0j0C0j0j0j0b0j110b0j0j0j0j0j",
+                "0B0j0V0j0j0C0j0j0j0C0j0C0j0j0C0j0m0j0j0j0j0C0j0C0j0j0u0j1c0j0j0C0C0j0j0j0j0j0j0j0j0u110N0j0j"
+                "0V0C0V0j0b081n080b0CrU1O5e2SbX2_1Z0V2o141v0j0C0C0j2z1v0j1c0j7N1O420j1c0j1v2S1c0j1v2S2_"
+                "0b0j0V0j0j1v0N1v0j0j1c0j1v140j0V0j0j0C0C0b080u1v0C0V0u110u0j0j0j0C0j0j0j0C0C0N0C0V0j0j0C0j0j"
+                "0b080u110u0C0j0C0u0r0C0u080b0j0j0C0j0j0j"};
             for (const string& m : months) {
                 int n = 0;
                 const int size = static_cast<int>(m.length()) / 2;
@@ -2379,7 +2384,8 @@ public:
 
     LunarMonth& operator=(const LunarMonth& other);
 
-    explicit LunarMonth(const int year, const int month) : AbstractCulture(), year(LunarYear::from_year(year)), first_julian_day(0)
+    explicit LunarMonth(const int year, const int month)
+        : AbstractCulture(), year(LunarYear::from_year(year)), first_julian_day(0)
     {
         if (month == 0 || month > 12 || month < -12) {
             throw invalid_argument(&"illegal lunar month: "[month]);
@@ -2581,7 +2587,8 @@ public:
             throw invalid_argument("illegal lunar week start: " + std::to_string(start));
         }
         if (index >= this->month.get_week_count(start)) {
-            throw invalid_argument("illegal lunar week index: " + std::to_string(index) + " in month: " + this->month.to_string());
+            throw invalid_argument("illegal lunar week index: " + std::to_string(index) +
+                                   " in month: " + this->month.to_string());
         }
         this->index = index;
     }
@@ -2670,7 +2677,8 @@ public:
 
     static const vector<string> NAMES;
 
-    explicit LunarDay(const int year, const int month, const int day) : AbstractCulture(), month(LunarMonth::from_ym(year, month)), day(day)
+    explicit LunarDay(const int year, const int month, const int day)
+        : AbstractCulture(), month(LunarMonth::from_ym(year, month)), day(day)
     {
         if (day < 1 || day > this->month.get_day_count()) {
             throw invalid_argument("illegal day " + std::to_string(day) + " in " + this->month.to_string());
@@ -2900,7 +2908,8 @@ public:
      */
     static EightCharProvider* provider;
 
-    explicit LunarHour(const int year, const int month, const int day, const int hour, const int minute, const int second)
+    explicit LunarHour(const int year, const int month, const int day, const int hour, const int minute,
+                       const int second)
         : AbstractCulture(), day(LunarDay::from_ymd(year, month, day))
     {
         if (hour < 0 || hour > 23) {
@@ -3071,7 +3080,8 @@ class SolarTermDay : public AbstractCulture
 public:
     ~SolarTermDay() override = default;
 
-    explicit SolarTermDay(const SolarTerm& solar_term, const int day_index) : solar_term(solar_term), day_index(day_index)
+    explicit SolarTermDay(const SolarTerm& solar_term, const int day_index)
+        : solar_term(solar_term), day_index(day_index)
     {
     }
 
@@ -3431,17 +3441,21 @@ public:
 
     static const vector<string> NAMES;
 
-    explicit SolarDay(const int year, const int month, const int day) : AbstractCulture(), month(SolarMonth::from_ym(year, month))
+    explicit SolarDay(const int year, const int month, const int day)
+        : AbstractCulture(), month(SolarMonth::from_ym(year, month))
     {
         if (day < 1) {
-            throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) + "-" + std::to_string(day));
+            throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) + "-" +
+                                   std::to_string(day));
         }
         if (1582 == year && 10 == month) {
             if ((day > 4 && day < 15) || day > 31) {
-                throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) + "-" + std::to_string(day));
+                throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) +
+                                       "-" + std::to_string(day));
             }
         } else if (day > this->month.get_day_count()) {
-            throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) + "-" + std::to_string(day));
+            throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) + "-" +
+                                   std::to_string(day));
         }
         this->day = day;
     }
@@ -3624,7 +3638,8 @@ public:
             throw invalid_argument("illegal solar week start: " + std::to_string(start));
         }
         if (index >= this->month.get_week_count(start)) {
-            throw invalid_argument("illegal solar week index: " + std::to_string(index) + " in month: " + this->month.to_string());
+            throw invalid_argument("illegal solar week index: " + std::to_string(index) +
+                                   " in month: " + this->month.to_string());
         }
         this->index = index;
     }
@@ -3723,7 +3738,8 @@ public:
 
     SolarTime& operator=(const SolarTime& other);
 
-    explicit SolarTime(const int year, const int month, const int day, const int hour, const int minute, const int second)
+    explicit SolarTime(const int year, const int month, const int day, const int hour, const int minute,
+                       const int second)
         : AbstractCulture(), day(SolarDay::from_ymd(year, month, day))
     {
         if (hour < 0 || hour > 23) {
@@ -3879,7 +3895,11 @@ public:
     }
 
     explicit EightChar(const string& year, const string& month, const string& day, const string& hour)
-        : AbstractCulture(), year(SixtyCycle(year)), month(SixtyCycle(month)), day(SixtyCycle(day)), hour(SixtyCycle(hour))
+        : AbstractCulture(),
+          year(SixtyCycle(year)),
+          month(SixtyCycle(month)),
+          day(SixtyCycle(day)),
+          hour(SixtyCycle(hour))
     {
     }
 
@@ -3973,7 +3993,8 @@ public:
 
     static const vector<string> NUMBERS;
 
-    explicit KitchenGodSteed(const int lunar_year) : AbstractCulture(), first_day_sixty_cycle(LunarDay::from_ymd(lunar_year, 1, 1).get_sixty_cycle())
+    explicit KitchenGodSteed(const int lunar_year)
+        : AbstractCulture(), first_day_sixty_cycle(LunarDay::from_ymd(lunar_year, 1, 1).get_sixty_cycle())
     {
     }
 
@@ -4180,8 +4201,9 @@ public:
         if (index < 0 && term.get_julian_day().get_solar_day().is_after(spring_solar_day)) {
             index += 24;
         }
-        this->month = SixtyCycleMonth(SixtyCycleYear::from_year(lunar_year.get_year()),
-                                      LunarMonth::from_ym(solar_year, 1).get_sixty_cycle().next(static_cast<int>(floor(index * 1.0 / 2))));
+        this->month = SixtyCycleMonth(
+            SixtyCycleYear::from_year(lunar_year.get_year()),
+            LunarMonth::from_ym(solar_year, 1).get_sixty_cycle().next(static_cast<int>(floor(index * 1.0 / 2))));
         this->day = lunar_day.get_sixty_cycle();
     }
 
@@ -4332,17 +4354,20 @@ public:
 
         SolarTerm term = solar_time.get_term();
         int index = term.get_index() - 3;
-        if (index < 0 && term.get_julian_day().get_solar_time().is_after(SolarTerm::from_index(solar_year, 3).get_julian_day().get_solar_time())) {
+        if (index < 0 && term.get_julian_day().get_solar_time().is_after(
+                             SolarTerm::from_index(solar_year, 3).get_julian_day().get_solar_time())) {
             index += 24;
         }
         SixtyCycle d = lunar_day.get_sixty_cycle();
         if (solar_time.get_hour() >= 23) {
             d = d.next(1);
         }
-        day = SixtyCycleDay(solar_time.get_solar_day(),
-                            SixtyCycleMonth(SixtyCycleYear::from_year(lunar_year.get_year()),
-                                            LunarMonth::from_ym(solar_year, 1).get_sixty_cycle().next(static_cast<int>(floor(index * 0.5)))),
-                            d);
+        day = SixtyCycleDay(
+            solar_time.get_solar_day(),
+            SixtyCycleMonth(
+                SixtyCycleYear::from_year(lunar_year.get_year()),
+                LunarMonth::from_ym(solar_year, 1).get_sixty_cycle().next(static_cast<int>(floor(index * 0.5)))),
+            d);
         hour = lunar_hour.get_sixty_cycle();
     }
 
@@ -4456,8 +4481,9 @@ public:
           fetus_heaven_stem(FetusHeavenStem(sixty_cycle.get_heaven_stem().get_index() % 5)),
           fetus_earth_branch(FetusEarthBranch(sixty_cycle.get_earth_branch().get_index() % 6))
     {
-        constexpr int indices[] = {3,  3,  8,  8,  8,  8,  8,  1,  1,  1,  1,  1,  1,  6,  6,  6, 6, 6, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, -9,
-                                   -9, -9, -9, -9, -5, -5, -1, -1, -1, -3, -7, -7, -7, -7, -5, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 3, 3, 3, 3};
+        constexpr int indices[] = {3,  3,  8,  8,  8,  8, 8, 1, 1, 1,  1,  1,  1,  6,  6,  6,  6,  6,  5,  5,
+                                   5,  5,  5,  5,  0,  0, 0, 0, 0, -9, -9, -9, -9, -9, -5, -5, -1, -1, -1, -3,
+                                   -7, -7, -7, -7, -5, 7, 7, 7, 7, 7,  7,  2,  2,  2,  2,  2,  3,  3,  3,  3};
         const int index = indices[sixty_cycle.get_index()];
         side = index < 0 ? Side::IN : Side::OUT;
         direction = Direction::from_index(index);
@@ -4615,8 +4641,8 @@ class ChildLimitInfo
 public:
     ~ChildLimitInfo() = default;
 
-    explicit ChildLimitInfo(const SolarTime& start_time, const SolarTime& end_time, const int year_count, const int month_count, const int day_count,
-                            const int hour_count, const int minute_count)
+    explicit ChildLimitInfo(const SolarTime& start_time, const SolarTime& end_time, const int year_count,
+                            const int month_count, const int day_count, const int hour_count, const int minute_count)
         : start_time(start_time),
           end_time(end_time),
           year_count(year_count),
@@ -4729,7 +4755,8 @@ public:
 class AbstractChildLimitProvider : public ChildLimitProvider
 {
 public:
-    ChildLimitInfo next(const SolarTime& birth_time, int add_year, int add_month, int add_day, int add_hour, int add_minute, int add_second) const;
+    ChildLimitInfo next(const SolarTime& birth_time, int add_year, int add_month, int add_day, int add_hour,
+                        int add_minute, int add_second) const;
 };
 
 /**
@@ -5056,7 +5083,10 @@ public:
     static string DATA;
 
     explicit LegalHoliday(const int year, const int month, const int day, const string& data)
-        : day(SolarDay::from_ymd(year, month, day)), name(NAMES[data[9] - '0']), work(data[8] == '0'), target(compute_target(data))
+        : day(SolarDay::from_ymd(year, month, day)),
+          name(NAMES[data[9] - '0']),
+          work(data[8] == '0'),
+          target(compute_target(data))
     {
     }
 
@@ -5171,7 +5201,8 @@ public:
     static const vector<string> NAMES;
     static string DATA;
 
-    explicit LunarFestival(const FestivalType type, const LunarDay& day, optional<SolarTerm> solar_term, const string& data)
+    explicit LunarFestival(const FestivalType type, const LunarDay& day, optional<SolarTerm> solar_term,
+                           const string& data)
         : type(type), index(stoi(data.substr(1, 2))), day(day), name(NAMES[index]), solar_term(std::move(solar_term))
     {
     }
