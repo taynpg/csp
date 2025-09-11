@@ -105,7 +105,8 @@ csp在未来使用`tyme`日历库替换现有日历库以后将发布`1.5`版本
 ```shell
 $ git clone https://github.com/taynpg/csp
 $ cd csp
-$ xmake
+$ cmake -Bbuild -DCMAKE_BUILG_TYPE=Release
+$ cmake --build build --config Release
 ```
 
 ## 4.3 手机端构建
