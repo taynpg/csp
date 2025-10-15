@@ -24,9 +24,9 @@ endif()
 
 add_subdirectory(base)
 add_subdirectory(zhcn)
-add_subdirectory(tyme4cpp)
 add_subdirectory(qimen)
 add_subdirectory(src)
+add_subdirectory(tyme4cpp)
 
 if (DEFINED CSP_PYTHON_EXPORT)
 message(STATUS "USE CSP_PYTHON_EXPORT ${CSP_PYTHON_EXPORT}")

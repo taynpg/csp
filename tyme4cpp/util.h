@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
-namespace tyme::util {
 using namespace std;
+
+namespace tyme::util {
 class ShouXingUtil
 {
 public:

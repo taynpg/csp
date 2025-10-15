@@ -1,17 +1,25 @@
 #ifndef TYME_H
 #define TYME_H
-
+// 取消可能存在的IN和OUT宏定义
+#ifdef IN
+#undef IN
+#endif
+#ifdef OUT
+#undef OUT
+#endif
 #include "util.h"
 #include <cmath>
+#include <map>
 #include <mutex>
 #include <optional>
-#include <stdexcept>
+#include <regex>
+#include <sstream>
 #include <string>
-#include <utility>
 
-namespace tyme {
 using namespace std;
 using namespace tyme::util;
+
+namespace tyme {
 /**
  * @brief 节日类型
  */
@@ -138,6 +146,15 @@ public:
         index = other.get_index();
     }
 
+    LoopTyme& operator=(const LoopTyme& other)
+    {
+        if (this != &other) {
+            names = other.names;
+            index = other.get_index();
+        }
+        return *this;
+    }
+
     /**
      * @brief 索引
      * @return 索引，从0开始
@@ -260,6 +277,7 @@ public:
  * @brief 方位
  */
 class Direction;
+
 /**
  * @brief 五行
  */
@@ -433,31 +451,6 @@ public:
     static Luck from_name(const string& name);
 
     Luck next(int n) const;
-};
-
-/**
- * @brief 月相
- */
-class Phase : public LoopTyme
-{
-public:
-    ~Phase() override = default;
-
-    static const vector<string> NAMES;
-
-    explicit Phase(const int index) : LoopTyme(NAMES, index)
-    {
-    }
-
-    explicit Phase(const string& name) : LoopTyme(NAMES, name)
-    {
-    }
-
-    static Phase from_index(int index);
-
-    static Phase from_name(const string& name);
-
-    Phase next(int n) const;
 };
 
 /**
@@ -683,6 +676,8 @@ public:
     static Zodiac from_name(const string& name);
 
     Zodiac next(int n) const;
+
+    bool equals(const Zodiac& other) const;
 
     /**
      * @brief 地支
@@ -1366,8 +1361,7 @@ public:
     YinYang get_yin_yang() const;
 
     /**
-     * @brief
-     * 十神（生我者，正印偏印。我生者，伤官食神。克我者，正官七杀。我克者，正财偏财。同我者，劫财比肩。）
+     * @brief 十神（生我者，正印偏印。我生者，伤官食神。克我者，正官七杀。我克者，正财偏财。同我者，劫财比肩。）
      * @param target 天干
      * @return 十神
      */
@@ -1386,15 +1380,13 @@ public:
     Direction get_joy_direction() const;
 
     /**
-     * @brief
-     * 阳贵神方位（《阳贵神歌》甲戊坤艮位，乙己是坤坎，庚辛居离艮，丙丁兑与乾，震巽属何日，壬癸贵神安。）
+     * @brief 阳贵神方位（《阳贵神歌》甲戊坤艮位，乙己是坤坎，庚辛居离艮，丙丁兑与乾，震巽属何日，壬癸贵神安。）
      * @return 方位
      */
     Direction get_yang_direction() const;
 
     /**
-     * @brief
-     * 阴贵神方位（《阴贵神歌》甲戊见牛羊，乙己鼠猴乡，丙丁猪鸡位，壬癸蛇兔藏，庚辛逢虎马，此是贵神方。）
+     * @brief 阴贵神方位（《阴贵神歌》甲戊见牛羊，乙己鼠猴乡，丙丁猪鸡位，壬癸蛇兔藏，庚辛逢虎马，此是贵神方。）
      * @return 方位
      */
     Direction get_yin_direction() const;
@@ -1596,8 +1588,7 @@ public:
     Direction get_direction() const;
 
     /**
-     * @brief
-     * 煞（逢巳日、酉日、丑日必煞东；亥日、卯日、未日必煞西；申日、子日、辰日必煞南；寅日、午日、戌日必煞北。）
+     * @brief 煞（逢巳日、酉日、丑日必煞东；亥日、卯日、未日必煞西；申日、子日、辰日必煞南；寅日、午日、戌日必煞北。）
      * @return 方位
      */
     Direction get_ominous() const;
@@ -1799,6 +1790,16 @@ protected:
 private:
     static vector<Taboo> get_taboos(vector<string> data, int sup_index, int sub_index, int index);
 };
+
+/**
+ * @brief 月相第几天
+ */
+class PhaseDay;
+
+/**
+ * @brief 月相
+ */
+class Phase;
 
 /**
  * @brief 干支月
@@ -2063,92 +2064,84 @@ public:
         call_once(flag, [] {
             string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_@";
             string months[] = {
-                "080b0r0j0j0j0C0j0j0C0j0j0j0C0j0C0j0C0F0j0V0V0V0u0j0j0C0j0j0j0j0V0C0j1v0u0C0V1v0C0b080u110u0C"
-                "0j0C1v9K1v2z0j1vmZbl1veN3s1v0V0C2S1v0V0C2S2o0C0j1Z1c2S1v0j1c0j2z1v0j1c0j392H0b2_"
+                "080b0r0j0j0j0C0j0j0C0j0j0j0C0j0C0j0C0F0j0V0V0V0u0j0j0C0j0j0j0j0V0C0j1v0u0C0V1v0C0b080u110u0C0j0C1v9K1v"
+                "2z0j1vmZbl1veN3s1v0V0C2S1v0V0C2S2o0C0j1Z1c2S1v0j1c0j2z1v0j1c0j392H0b2_"
                 "2S0C0V0j1c0j2z0C0C0j0j1c0j0N250j0C0j0b081n080b0C0C0C1c0j0N",
-                "0r1v1c1v0V0V0F0V0j0C0j0C0j0V0j0u1O0j0C0V0j0j0j0V0b080u0r0u080b0j0j0C0V0C0V0j0b080V0u080b0j0j"
-                "0u0j1v0u080b1c0j080b0j0V0j0j0V0C0N1v0j1c0j0j1v2g1v420j1c0j2z1v0j1v5Q9z1v4l0j1vfn1v420j9z4l1v"
-                "1v2S1c0j1v2S3s1v0V0C2S1v1v2S1c0j1v2S2_0b0j2_2z0j1c0j",
-                "0z0j0j0j0C0j0j0C0j0j0j0C0j0C0j0j0j0j0m0j0C0j0j0C0j0j0j0j0b0V0j0j0C0j0j0j0j0V0j0j0j0V0b0V0V0C"
-                "0V0C0j0j0b080u110u0V0C0j0N0j0b080b080b0j0r0b0r0b0j0j0j0j0C0j0b0r0C0j0b0j0C0C0j0j0j0j0j0j0j0j"
-                "0j0b110j0b0j0j0j0C0j0C0j0j0j0j0b080b080b0V080b080b0j0j0j0j0j0j0V0j0j0u1v0j0j0j0C0j0j0j0V0C0N"
-                "1c0j0C0C0j0j0j1n080b0j0V0C0j0C0C2g0j1c0j0j1v2g1v0j0j1v7N0j1c0j3L0j0j1v5Q1Z5Q1v4lfn1v420j1v5Q"
-                "1Z5Q1v4l1v2z1v",
-                "0H140r0N0r140r0u0r0V171c11140C0j0u110j0u0j1v0j0C0j0j0j0b080V0u080b0C1v0j0j0j0C0j0b080V0j0j0b"
-                "080b0j0j0j0j0b080b0C080j0b080b0j0j0j0j0j0j0b080j0b080C0b080b080b080b0j0j0j0j080b0j0C0j0j0j0b"
-                "0j0j080C0b0j0j0j0j0j0j0b08080b0j0C0j0j0j0b0j0j0K0b0j0C0j0j0j0b080b080j0C0b0j080b080b0j0j0j0j"
-                "080b0j0b0r0j0j0j0b0j0C0r0b0j0j0j0j0j0j0j0b080j0b0r0C0j0b0j0j0j0r0b0j0C0j0j0j0u0r0b0C0j080b0j"
-                "0j0j0j0j0j0j1c0j0b0j0j0j0C0j0j0j0j0j0j0j0b080j1c0u0j0j0j0C0j1c0j0u0j1c0j0j0j0j0j0j0j0j1c0j0u"
-                "1v0j0j0V0j0j2g0j0j0j0C1v0C1G0j0j0V0C1Z1O0j0V0j0j2g1v0j0j0V0C2g5x1v4l1v421O7N0V0C4l1v2S1c0j1v"
-                "2S2_",
-                "050b080C0j0j0j0C0j0j0C0j0j0j0C0j0C0j0C030j0j0j0j0j0j0j0j0j0C0j0b080u0V080b0j0j0V0j0j0j0j0j0j"
-                "0j0j0j0V0N0j0C0C0j0j0j0j0j0j0j0j1c0j0u0j1v0j0j0j0j0j0b080b080j0j0j0b080b080b080b080b0j0j0j08"
-                "0b0j0b080j0j0j0j0b080b0j0j0r0b080b0b080j0j0j0j0b080b080j0b080j0b080b080b080b080b0j0j0r0b0j0b"
-                "080j0j0j0j0b080b0j0j0C080b0b080j0j0j0j0j0j0j0b080u080j0j0b0j0j0j0C0j0b080j0j0j0j0b080b080b08"
-                "0b0C080b080b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0j0C0b080b080j0b0j0j0C080b0j0j0j0j0j"
-                "0j0b0j0j080C0b0j080b0j0j0j0j0j0j0j0C0j0j0j0b0j0j0C080b0j0j0j0j0j0j0b080b080b0K0b080b080b0j0j"
-                "0j0j0j0j0j0C0j0j0u0j0j0V0j080b0j0C0j0j0j0b0j0r0C0b0j0j0j0j0j0j0j0j0j0C0j0b080b080b0j0C0C0j0C"
-                "0j0j0j0u110u0j0j0j0j0j0j0j0j0C0j0j0u0j1c0j0j0j0j0j0j0j0j0V0C0u0j0C0C0V0C1Z0j0j0j0C0j0j0j1v0u"
-                "0j1c0j0j0j0C0j0j2g0j1c1v0C1Z0V0j4l0j0V0j0j2g0j1v0j1v2S1c7N1v",
-                "0w0j1c0j0V0j0j0V0V0V0j0m0V0j0C1c140j0j0j0C0V0C0j1v0j0N0j0C0j0j0j0V0j0j1v0N0j0j0V0j0j0j0j0j0j"
-                "080b0j0j0j0j0j0j0j080b0j0C0j0j0j0b0j0j080u080b0j0j0j0j0j0j0b080b080b080C0b0j080b080b0j0j0j0j"
-                "080b0j0C0j0j0j0b0j0j080u080b0j0j0j0j0j0j0b080b080b080b0r0b0j080b080b0j0j0j0j080b0j0b0r0j0j0b"
-                "080b0j0j080b0j080b0j080b080b0j0j0j0j0j0b080b0r0C0b080b0j0j0j0j080b0b080b080j0j0j0b080b080b08"
-                "0b0j0j0j0j080b0j0b080j0j0j0j0b080b0j0j0r0b080b0j0j0j0j0j0b080b080j0b0r0b080j0b080b0j0j0j0j08"
-                "0b0j0b080j0j0j0j0b080b0j080b0r0b0j080b080b0j0j0j0j0j0b080b0r0C0b080b0j0j0j0j0j0j0b080j0j0j0b"
-                "080b080b080b0j0j0j0r0b0j0b080j0j0j0j0b080b0r0b0r0b0j080b080b0j0j0j0j0j0j0b0r0j0j0j0b0j0j0j0j"
-                "080b0j0b080j0j0j0j0b080b080b0j0r0b0j080b0j0j0j0j0j0j0j0b0r0C0b0j0j0j0j0j0j0j080b0j0C0j0j0j0b"
-                "0j0C0r0b0j0j0j0j0j0j0b080b080u0r0b0j080b0j0j0j0j0j0j0j0b0r0C0u0j0j0j0C0j080b0j0C0j0j0j0u110b"
-                "0j0j0j0j0j0j0j0j0j0C0j0b080b0j0j0C0C0j0C0j0j0j0b0j1c0j080b0j0j0j0j0j0j0V0j0j0u0j1c0j0j0j0C0j"
-                "0j2g0j0j0j0C0j0j0V0j0b080b1c0C0V0j0j2g0j0j0V0j0j1c0j1Z0j0j0C0C0j1v",
-                "160j0j0V0j1c0j0C0j0C0j1f0j0V0C0j0j0C0j0j0j1G080b080u0V080b0j0j0V0j1v0j0u0j1c0j0j0j0C0j0j0j0C"
-                "0C0j1D0b0j080b0j0j0j0j0C0j0b0r0C0j0b0j0C0C0j0j0j0j0j0j0j0j0j0b0r0b0r0j0b0j0j0j0C0j0b0r0j0j0j"
-                "0b080b080j0b0C0j080b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0j0j0j0b080b080j0b0C0r0j0b0j"
-                "0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0j0j0j0C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080b080b080C0b080b"
-                "080b080b0j0j0j0j0j0b080C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080j0b0C080j0j0b0j0j0j0j0j0j0b080j"
-                "0b080C0b080b080b080b0j0j0j0j080b0j0C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080j0b080u080j0j0b0j0j"
-                "0j0j0j0j0b080C0j0j0b080b0j0j0C0j0j080b0j0j0j0j0j0b080b0C0r0b080b0j0j0j0j0j0j0b080j0b080u080b"
-                "080b080b0j0j0j0C0j0b080j0j0j0j0b0j0j0j0C0j0j080b0j0j0j0j0j0b080b0C0r0b080b0j0j0j0j0j0j0b080j"
-                "0b0r0b080b080b080b0j0j0j0r0b0j0b0r0j0j0j0b0j0j0j0r0b0j080b0j0j0j0j0j0j0j0b0r0C0b0j0j0j0j0j0j"
-                "0j0b080j0C0u080b080b0j0j0j0r0b0j0C0C0j0b0j110b0j080b0j0j0j0j0j0j0u0r0C0b0j0j0j0j0j0j0j0j0j0C"
-                "0j0j0j0b0j1c0j0C0j0j0j0b0j0814080b080b0j0j0j0j0j0j1c0j0u0j0j0V0j0j0j0j0j0j0j0u110u0j0j0j",
-                "020b0r0C0j0j0j0C0j0j0V0j0j0j0j0j0C0j1f0j0C0j0V1G0j0j0j0j0V0C0j0C1v0u0j0j0j0V0j0j0C0j0j0j1v0N"
-                "0C0V0j0j0j0K0C250b0C0V0j0j0V0j0j2g0C0V0j0j0C0j0j0b081v0N0j0j0V0V0j0j0u0j1c0j080b0j0j0j0j0j0j"
-                "0V0j0j0u0j0j0V0j0j0j0C0j0b080b080V0b0j080b0j0j0j0j0j0j0j0b0r0C0j0b0j0j0j0C0j080b0j0j0j0j0j0j"
-                "0u0r0C0u0j0j0j0j0j0j0b080j0C0j0b080b080b0j0C0j080b0j0j0j0j0j0j0b080b110b0j0j0j0j0j0j0j0j0j0b"
-                "0r0j0j0j0b0j0j0j0r0b0j0b080j0j0j0j0b080b080b080b0r0b0j080b080b0j0j0j0j0j0j0b0r0C0b080b0j0j0j"
-                "0j080b0j0b080j0j0j0j0b080b080b0j0j0j0r0b0j0j0j0j0j0j0b080b0j080C0b0j080b080b0j0j0j0j080b0j0b"
-                "0r0C0b080b0j0j0j0j080b0j0j0j0j0j0b080b080b080b0j0j080b0r0b0j0j0j0j0j0j0b0j0j080C0b0j080b080b"
-                "0j0j0j0j0j0b080C0j0j0b080b0j0j0C0j0b080j0j0j0j0b080b080b080b0C0C080b0j0j0j0j0j0j0b0C0C080b08"
-                "0b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0b080j0j0b080b080b080b0C0r0b0j0j0j0j0j0j0b080b"
-                "0r0b0r0b0j080b080b0j0j0j0j0j0j0b0r0C0j0b0j0j0j0j0j0j0b080j0C0j0b080j0b0j0j0K0b0j0C0j0j0j0b08"
-                "0b0j0K0b0j080b0j0j0j0j0j0j0V0j0j0b0j0j0j0C0j0j0j0j",
-                "0l0C0K0N0r0N0j0r1G0V0m0j0V1c0C0j0j0j0j1O0N110u0j0j0j0C0j0j0V0C0j0u110u0j0j0j0C0j0j0j0C0C0j25"
-                "0j1c2S1v1v0j5x2g0j1c0j0j1c2z0j1c0j0j1c0j0N1v0V0C1v0C0b0C0V0j0j0C0j0C1v0u0j0C0C0j0j0j0C0j0j0j"
-                "0u110u0j0j0j0C0j0C0C0C0b080b0j0C0j080b0j0C0j0j0j0u110u0j0j0j0C0j0j0j0C0j0j0j0u0C0r0u0j0j0j0j"
-                "0j0j0b0r0b0V080b080b0j0C0j0j0j0V0j0j0b0j0j0j0C0j0j0j0j0j0j0j0b080j0b0C0r0j0b0j0j0j0C0j0b0r0b"
-                "0r0j0b080b080b0j0C0j0j0j0j0j0j0j0j0b0j0C0r0b0j0j0j0j0j0j0b080b080j0b0r0b0r0j0b0j0j0j0j080b0j"
-                "0b0r0j0j0j0b080b080b0j0j0j0j080b0j0j0j0j0j0j0b0j0j0j0r0b0j0j0j0j0j0j0b080b080b080b0r0C0b080b"
-                "0j0j0j0j0j0b080b0r0C0b080b080b080b0j0j0j0j080b0j0C0j0j0j0b0j0j0C080b0j0j0j0j0j0j0b080j0b0C08"
-                "0j0j0b0j0j0j0j0j0j0b0r0b080j0j0b080b080b0j0j0j0j0j0j0b080j0j0j0j0b0j0j0j0r0b0j0b080j0j0j0j0j"
-                "0b080b080b0C0r0b0j0j0j0j0j0j0b080b080j0C0b0j080b080b0j0j0j0j0j0j",
-                "0a0j0j0j0j0C0j0j0C0j0C0C0j0j0j0j0j0j0j0m0C0j0j0j0j0u080j0j0j1n0j0j0j0j0C0j0j0j0V0j0j0j1c0u0j"
-                "0C0V0j0j0V0j0j1v0N0C0V2o1v1O2S2o141v0j1v4l0j1c0j1v2S2o0C0u1v0j0C0C2S1v0j1c0j0j1v0N251c0j1v0b"
-                "1c1v1n1v0j0j0V0j0j1v0N1v0C0V0j0j1v0b0C0j0j0V1c0j0u0j1c0j0j0j0j0j0j0j0j1c0j0u0j0j0V0j0j0j0j0j"
-                "0j0b080u110u0j0j0j0j0j0j1c0j0b0j080b0j0C0j0j0j0V0j0j0u0C0V0j0j0j0C0j0b080j1c0j0b0j0j0j0C0j0C"
-                "0j0j0j0b080b080b0j0C0j080b0j0j0j0j0j0j0j0b0C0r0u0j0j0j0j0j0j0b080j0b0r0C0j0b0j0j0j0r0b0j0b0r"
-                "0j0j0j0b080b080b0j0r0b0j080b0j0j0j0j0j0j0b0j0r0C0b0j0j0j0j0j0j0b080j0j0C0j0j0b080b0j0j0j0j0j"
-                "0j0j0j0j0j0b080b080b080b0C0j0j080b0j0j0j0j0j0j0b0j0j0C080b0j0j0j0j0j0j0j0j0b0C080j0j0b0j0j0j"
-                "0j0j",
-                "0n0Q0j1c14010q0V1c171k0u0r140V0j0j1c0C0N1O0j0V0j0j0j1c0j0u110u0C0j0C0V0C0j0j0b671v0j1v5Q1O2S"
-                "2o2S1v4l1v0j1v2S2o0C1Z0j0C0C1O141v0j1c0j2z1O0j0V0j0j1v0b2H390j1c0j0V0C2z0j1c0j1v2g0C0V0j1O0b"
-                "0j0j0V0C1c0j0u0j1c0j0j0j0j0j0j0j0j1c0N0j0j0V0j0j0C0j0j0b081v0u0j0j0j0C0j1c0N0j0j0C0j0j0j0C0j"
-                "0j0j0u0C0r0u0j0j0j0C0j0b080j1c0j0b0j0C0C0j0C0C0j0b080b080u0C0j080b0j0C0j0j0j0u110u0j0j0j0j0j"
-                "0j0j0j0C0C0j0b0j0j0j0C0j0C0C0j0b080b080b0j0C0j080b0j0C0j0j0j0b0j110b0j0j0j0j0j",
-                "0B0j0V0j0j0C0j0j0j0C0j0C0j0j0C0j0m0j0j0j0j0C0j0C0j0j0u0j1c0j0j0C0C0j0j0j0j0j0j0j0j0u110N0j0j"
-                "0V0C0V0j0b081n080b0CrU1O5e2SbX2_1Z0V2o141v0j0C0C0j2z1v0j1c0j7N1O420j1c0j1v2S1c0j1v2S2_"
-                "0b0j0V0j0j1v0N1v0j0j1c0j1v140j0V0j0j0C0C0b080u1v0C0V0u110u0j0j0j0C0j0j0j0C0C0N0C0V0j0j0C0j0j"
-                "0b080u110u0C0j0C0u0r0C0u080b0j0j0C0j0j0j"};
+                "0r1v1c1v0V0V0F0V0j0C0j0C0j0V0j0u1O0j0C0V0j0j0j0V0b080u0r0u080b0j0j0C0V0C0V0j0b080V0u080b0j0j0u0j1v0u08"
+                "0b1c0j080b0j0V0j0j0V0C0N1v0j1c0j0j1v2g1v420j1c0j2z1v0j1v5Q9z1v4l0j1vfn1v420j9z4l1v1v2S1c0j1v2S3s1v0V0C"
+                "2S1v1v2S1c0j1v2S2_0b0j2_2z0j1c0j",
+                "0z0j0j0j0C0j0j0C0j0j0j0C0j0C0j0j0j0j0m0j0C0j0j0C0j0j0j0j0b0V0j0j0C0j0j0j0j0V0j0j0j0V0b0V0V0C0V0C0j0j0b"
+                "080u110u0V0C0j0N0j0b080b080b0j0r0b0r0b0j0j0j0j0C0j0b0r0C0j0b0j0C0C0j0j0j0j0j0j0j0j0j0b110j0b0j0j0j0C0j"
+                "0C0j0j0j0j0b080b080b0V080b080b0j0j0j0j0j0j0V0j0j0u1v0j0j0j0C0j0j0j0V0C0N1c0j0C0C0j0j0j1n080b0j0V0C0j0C"
+                "0C2g0j1c0j0j1v2g1v0j0j1v7N0j1c0j3L0j0j1v5Q1Z5Q1v4lfn1v420j1v5Q1Z5Q1v4l1v2z1v",
+                "0H140r0N0r140r0u0r0V171c11140C0j0u110j0u0j1v0j0C0j0j0j0b080V0u080b0C1v0j0j0j0C0j0b080V0j0j0b080b0j0j0j"
+                "0j0b080b0C080j0b080b0j0j0j0j0j0j0b080j0b080C0b080b080b080b0j0j0j0j080b0j0C0j0j0j0b0j0j080C0b0j0j0j0j0j"
+                "0j0b08080b0j0C0j0j0j0b0j0j0K0b0j0C0j0j0j0b080b080j0C0b0j080b080b0j0j0j0j080b0j0b0r0j0j0j0b0j0C0r0b0j0j"
+                "0j0j0j0j0j0b080j0b0r0C0j0b0j0j0j0r0b0j0C0j0j0j0u0r0b0C0j080b0j0j0j0j0j0j0j1c0j0b0j0j0j0C0j0j0j0j0j0j0j"
+                "0b080j1c0u0j0j0j0C0j1c0j0u0j1c0j0j0j0j0j0j0j0j1c0j0u1v0j0j0V0j0j2g0j0j0j0C1v0C1G0j0j0V0C1Z1O0j0V0j0j2g"
+                "1v0j0j0V0C2g5x1v4l1v421O7N0V0C4l1v2S1c0j1v2S2_",
+                "050b080C0j0j0j0C0j0j0C0j0j0j0C0j0C0j0C030j0j0j0j0j0j0j0j0j0C0j0b080u0V080b0j0j0V0j0j0j0j0j0j0j0j0j0V0N"
+                "0j0C0C0j0j0j0j0j0j0j0j1c0j0u0j1v0j0j0j0j0j0b080b080j0j0j0b080b080b080b080b0j0j0j080b0j0b080j0j0j0j0b08"
+                "0b0j0j0r0b080b0b080j0j0j0j0b080b080j0b080j0b080b080b080b080b0j0j0r0b0j0b080j0j0j0j0b080b0j0j0C080b0b08"
+                "0j0j0j0j0j0j0j0b080u080j0j0b0j0j0j0C0j0b080j0j0j0j0b080b080b080b0C080b080b080b0j0j0j0j0j0j0b0C080j0j0b"
+                "0j0j0j0C0j0b080j0j0C0b080b080j0b0j0j0C080b0j0j0j0j0j0j0b0j0j080C0b0j080b0j0j0j0j0j0j0j0C0j0j0j0b0j0j0C"
+                "080b0j0j0j0j0j0j0b080b080b0K0b080b080b0j0j0j0j0j0j0j0C0j0j0u0j0j0V0j080b0j0C0j0j0j0b0j0r0C0b0j0j0j0j0j"
+                "0j0j0j0j0C0j0b080b080b0j0C0C0j0C0j0j0j0u110u0j0j0j0j0j0j0j0j0C0j0j0u0j1c0j0j0j0j0j0j0j0j0V0C0u0j0C0C0V"
+                "0C1Z0j0j0j0C0j0j0j1v0u0j1c0j0j0j0C0j0j2g0j1c1v0C1Z0V0j4l0j0V0j0j2g0j1v0j1v2S1c7N1v",
+                "0w0j1c0j0V0j0j0V0V0V0j0m0V0j0C1c140j0j0j0C0V0C0j1v0j0N0j0C0j0j0j0V0j0j1v0N0j0j0V0j0j0j0j0j0j080b0j0j0j"
+                "0j0j0j0j080b0j0C0j0j0j0b0j0j080u080b0j0j0j0j0j0j0b080b080b080C0b0j080b080b0j0j0j0j080b0j0C0j0j0j0b0j0j"
+                "080u080b0j0j0j0j0j0j0b080b080b080b0r0b0j080b080b0j0j0j0j080b0j0b0r0j0j0b080b0j0j080b0j080b0j080b080b0j"
+                "0j0j0j0j0b080b0r0C0b080b0j0j0j0j080b0b080b080j0j0j0b080b080b080b0j0j0j0j080b0j0b080j0j0j0j0b080b0j0j0r"
+                "0b080b0j0j0j0j0j0b080b080j0b0r0b080j0b080b0j0j0j0j080b0j0b080j0j0j0j0b080b0j080b0r0b0j080b080b0j0j0j0j"
+                "0j0b080b0r0C0b080b0j0j0j0j0j0j0b080j0j0j0b080b080b080b0j0j0j0r0b0j0b080j0j0j0j0b080b0r0b0r0b0j080b080b"
+                "0j0j0j0j0j0j0b0r0j0j0j0b0j0j0j0j080b0j0b080j0j0j0j0b080b080b0j0r0b0j080b0j0j0j0j0j0j0j0b0r0C0b0j0j0j0j"
+                "0j0j0j080b0j0C0j0j0j0b0j0C0r0b0j0j0j0j0j0j0b080b080u0r0b0j080b0j0j0j0j0j0j0j0b0r0C0u0j0j0j0C0j080b0j0C"
+                "0j0j0j0u110b0j0j0j0j0j0j0j0j0j0C0j0b080b0j0j0C0C0j0C0j0j0j0b0j1c0j080b0j0j0j0j0j0j0V0j0j0u0j1c0j0j0j0C"
+                "0j0j2g0j0j0j0C0j0j0V0j0b080b1c0C0V0j0j2g0j0j0V0j0j1c0j1Z0j0j0C0C0j1v",
+                "160j0j0V0j1c0j0C0j0C0j1f0j0V0C0j0j0C0j0j0j1G080b080u0V080b0j0j0V0j1v0j0u0j1c0j0j0j0C0j0j0j0C0C0j1D0b0j"
+                "080b0j0j0j0j0C0j0b0r0C0j0b0j0C0C0j0j0j0j0j0j0j0j0j0b0r0b0r0j0b0j0j0j0C0j0b0r0j0j0j0b080b080j0b0C0j080b"
+                "080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0j0j0j0b080b080j0b0C0r0j0b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C"
+                "0j0j0j0j0C0j0j0b080b0j0j0C080b0j0j0j0j0j0j0b080b080b080C0b080b080b080b0j0j0j0j0j0b080C0j0j0b080b0j0j0C"
+                "080b0j0j0j0j0j0j0b080j0b0C080j0j0b0j0j0j0j0j0j0b080j0b080C0b080b080b080b0j0j0j0j080b0j0C0j0j0b080b0j0j"
+                "0C080b0j0j0j0j0j0j0b080j0b080u080j0j0b0j0j0j0j0j0j0b080C0j0j0b080b0j0j0C0j0j080b0j0j0j0j0j0b080b0C0r0b"
+                "080b0j0j0j0j0j0j0b080j0b080u080b080b080b0j0j0j0C0j0b080j0j0j0j0b0j0j0j0C0j0j080b0j0j0j0j0j0b080b0C0r0b"
+                "080b0j0j0j0j0j0j0b080j0b0r0b080b080b080b0j0j0j0r0b0j0b0r0j0j0j0b0j0j0j0r0b0j080b0j0j0j0j0j0j0j0b0r0C0b"
+                "0j0j0j0j0j0j0j0b080j0C0u080b080b0j0j0j0r0b0j0C0C0j0b0j110b0j080b0j0j0j0j0j0j0u0r0C0b0j0j0j0j0j0j0j0j0j"
+                "0C0j0j0j0b0j1c0j0C0j0j0j0b0j0814080b080b0j0j0j0j0j0j1c0j0u0j0j0V0j0j0j0j0j0j0j0u110u0j0j0j",
+                "020b0r0C0j0j0j0C0j0j0V0j0j0j0j0j0C0j1f0j0C0j0V1G0j0j0j0j0V0C0j0C1v0u0j0j0j0V0j0j0C0j0j0j1v0N0C0V0j0j0j"
+                "0K0C250b0C0V0j0j0V0j0j2g0C0V0j0j0C0j0j0b081v0N0j0j0V0V0j0j0u0j1c0j080b0j0j0j0j0j0j0V0j0j0u0j0j0V0j0j0j"
+                "0C0j0b080b080V0b0j080b0j0j0j0j0j0j0j0b0r0C0j0b0j0j0j0C0j080b0j0j0j0j0j0j0u0r0C0u0j0j0j0j0j0j0b080j0C0j"
+                "0b080b080b0j0C0j080b0j0j0j0j0j0j0b080b110b0j0j0j0j0j0j0j0j0j0b0r0j0j0j0b0j0j0j0r0b0j0b080j0j0j0j0b080b"
+                "080b080b0r0b0j080b080b0j0j0j0j0j0j0b0r0C0b080b0j0j0j0j080b0j0b080j0j0j0j0b080b080b0j0j0j0r0b0j0j0j0j0j"
+                "0j0b080b0j080C0b0j080b080b0j0j0j0j080b0j0b0r0C0b080b0j0j0j0j080b0j0j0j0j0j0b080b080b080b0j0j080b0r0b0j"
+                "0j0j0j0j0j0b0j0j080C0b0j080b080b0j0j0j0j0j0b080C0j0j0b080b0j0j0C0j0b080j0j0j0j0b080b080b080b0C0C080b0j"
+                "0j0j0j0j0j0b0C0C080b080b080b0j0j0j0j0j0j0b0C080j0j0b0j0j0j0C0j0b080j0b080j0j0b080b080b080b0C0r0b0j0j0j"
+                "0j0j0j0b080b0r0b0r0b0j080b080b0j0j0j0j0j0j0b0r0C0j0b0j0j0j0j0j0j0b080j0C0j0b080j0b0j0j0K0b0j0C0j0j0j0b"
+                "080b0j0K0b0j080b0j0j0j0j0j0j0V0j0j0b0j0j0j0C0j0j0j0j",
+                "0l0C0K0N0r0N0j0r1G0V0m0j0V1c0C0j0j0j0j1O0N110u0j0j0j0C0j0j0V0C0j0u110u0j0j0j0C0j0j0j0C0C0j250j1c2S1v1v"
+                "0j5x2g0j1c0j0j1c2z0j1c0j0j1c0j0N1v0V0C1v0C0b0C0V0j0j0C0j0C1v0u0j0C0C0j0j0j0C0j0j0j0u110u0j0j0j0C0j0C0C"
+                "0C0b080b0j0C0j080b0j0C0j0j0j0u110u0j0j0j0C0j0j0j0C0j0j0j0u0C0r0u0j0j0j0j0j0j0b0r0b0V080b080b0j0C0j0j0j"
+                "0V0j0j0b0j0j0j0C0j0j0j0j0j0j0j0b080j0b0C0r0j0b0j0j0j0C0j0b0r0b0r0j0b080b080b0j0C0j0j0j0j0j0j0j0j0b0j0C"
+                "0r0b0j0j0j0j0j0j0b080b080j0b0r0b0r0j0b0j0j0j0j080b0j0b0r0j0j0j0b080b080b0j0j0j0j080b0j0j0j0j0j0j0b0j0j"
+                "0j0r0b0j0j0j0j0j0j0b080b080b080b0r0C0b080b0j0j0j0j0j0b080b0r0C0b080b080b080b0j0j0j0j080b0j0C0j0j0j0b0j"
+                "0j0C080b0j0j0j0j0j0j0b080j0b0C080j0j0b0j0j0j0j0j0j0b0r0b080j0j0b080b080b0j0j0j0j0j0j0b080j0j0j0j0b0j0j"
+                "0j0r0b0j0b080j0j0j0j0j0b080b080b0C0r0b0j0j0j0j0j0j0b080b080j0C0b0j080b080b0j0j0j0j0j0j",
+                "0a0j0j0j0j0C0j0j0C0j0C0C0j0j0j0j0j0j0j0m0C0j0j0j0j0u080j0j0j1n0j0j0j0j0C0j0j0j0V0j0j0j1c0u0j0C0V0j0j0V"
+                "0j0j1v0N0C0V2o1v1O2S2o141v0j1v4l0j1c0j1v2S2o0C0u1v0j0C0C2S1v0j1c0j0j1v0N251c0j1v0b1c1v1n1v0j0j0V0j0j1v"
+                "0N1v0C0V0j0j1v0b0C0j0j0V1c0j0u0j1c0j0j0j0j0j0j0j0j1c0j0u0j0j0V0j0j0j0j0j0j0b080u110u0j0j0j0j0j0j1c0j0b"
+                "0j080b0j0C0j0j0j0V0j0j0u0C0V0j0j0j0C0j0b080j1c0j0b0j0j0j0C0j0C0j0j0j0b080b080b0j0C0j080b0j0j0j0j0j0j0j"
+                "0b0C0r0u0j0j0j0j0j0j0b080j0b0r0C0j0b0j0j0j0r0b0j0b0r0j0j0j0b080b080b0j0r0b0j080b0j0j0j0j0j0j0b0j0r0C0b"
+                "0j0j0j0j0j0j0b080j0j0C0j0j0b080b0j0j0j0j0j0j0j0j0j0j0b080b080b080b0C0j0j080b0j0j0j0j0j0j0b0j0j0C080b0j"
+                "0j0j0j0j0j0j0j0b0C080j0j0b0j0j0j0j0j",
+                "0n0Q0j1c14010q0V1c171k0u0r140V0j0j1c0C0N1O0j0V0j0j0j1c0j0u110u0C0j0C0V0C0j0j0b671v0j1v5Q1O2S2o2S1v4l1v"
+                "0j1v2S2o0C1Z0j0C0C1O141v0j1c0j2z1O0j0V0j0j1v0b2H390j1c0j0V0C2z0j1c0j1v2g0C0V0j1O0b0j0j0V0C1c0j0u0j1c0j"
+                "0j0j0j0j0j0j0j1c0N0j0j0V0j0j0C0j0j0b081v0u0j0j0j0C0j1c0N0j0j0C0j0j0j0C0j0j0j0u0C0r0u0j0j0j0C0j0b080j1c"
+                "0j0b0j0C0C0j0C0C0j0b080b080u0C0j080b0j0C0j0j0j0u110u0j0j0j0j0j0j0j0j0C0C0j0b0j0j0j0C0j0C0C0j0b080b080b"
+                "0j0C0j080b0j0C0j0j0j0b0j110b0j0j0j0j0j",
+                "0B0j0V0j0j0C0j0j0j0C0j0C0j0j0C0j0m0j0j0j0j0C0j0C0j0j0u0j1c0j0j0C0C0j0j0j0j0j0j0j0j0u110N0j0j0V0C0V0j0b"
+                "081n080b0CrU1O5e2SbX2_1Z0V2o141v0j0C0C0j2z1v0j1c0j7N1O420j1c0j1v2S1c0j1v2S2_"
+                "0b0j0V0j0j1v0N1v0j0j1c0j1v140j0V0j0j0C0C0b080u1v0C0V0u110u0j0j0j0C0j0j0j0C0C0N0C0V0j0j0C0j0j0b080u110u"
+                "0C0j0C0u0r0C0u080b0j0j0C0j0j0j"};
             for (const string& m : months) {
                 int n = 0;
                 const int size = static_cast<int>(m.length()) / 2;
@@ -2668,6 +2661,15 @@ protected:
 class FetusDay;
 
 /**
+ * @brief 公历传统节日
+ */
+class SolarFestival;
+/**
+ * @brief 农历传统节日
+ */
+class LunarFestival;
+
+/**
  * @brief 农历日
  */
 class LunarDay : public AbstractCulture
@@ -2776,6 +2778,12 @@ public:
     FetusDay get_fetus_day() const;
 
     /**
+     * @brief 月相第几天
+     * @return 月相第几天
+     */
+    PhaseDay get_phase_day() const;
+
+    /**
      * @brief 月相
      * @return 月相
      */
@@ -2828,6 +2836,12 @@ public:
      * @return 小六壬
      */
     MinorRen get_minor_ren() const;
+
+    /**
+     * @brief 农历传统节日
+     * @return 农历传统节日，如果没有则返回空
+     */
+    optional<LunarFestival> get_festival() const;
 
 protected:
     /**
@@ -3156,8 +3170,7 @@ public:
     int get_day_count() const;
 
     /**
-     * @brief
-     * 是否闰年(1582年以前，使用儒略历，能被4整除即为闰年。以后采用格里历，四年一闰，百年不闰，四百年再闰。)
+     * @brief 是否闰年(1582年以前，使用儒略历，能被4整除即为闰年。以后采用格里历，四年一闰，百年不闰，四百年再闰。)
      * @return true/false
      */
     bool is_leap() const;
@@ -3432,6 +3445,11 @@ class Phenology;
 class PhenologyDay;
 
 /**
+ * @brief 藏历日，仅支持藏历1950年十二月初一（公历1951年1月8日）至藏历2050年十二月三十（公历2051年2月11日）
+ */
+class RabByungDay;
+
+/**
  * @brief 公历日
  */
 class SolarDay : public AbstractCulture
@@ -3605,6 +3623,30 @@ public:
      * @return 干支日
      */
     SixtyCycleDay get_sixty_cycle_day() const;
+
+    /**
+     * @brief 藏历日
+     * @return 藏历日
+     */
+    RabByungDay get_rab_byung_day() const;
+
+    /**
+     * @brief 公历节日
+     * @return 公历节日
+     */
+    optional<SolarFestival> get_festival() const;
+
+    /**
+     * @brief 月相第几天
+     * @return 月相第几天
+     */
+    PhaseDay get_phase_day() const;
+
+    /**
+     * @brief 月相
+     * @return 月相
+     */
+    Phase get_phase() const;
 
 protected:
     /**
@@ -3859,6 +3901,12 @@ public:
      */
     LunarHour get_lunar_hour() const;
 
+    /**
+     * @brief 月相
+     * @return 月相
+     */
+    Phase get_phase() const;
+
 protected:
     /**
      * @brief 公历日
@@ -3957,7 +4005,7 @@ public:
      * @param end_year 结束年(含)，支持1-9999年
      * @return 公历时刻列表
      */
-    vector<SolarTime> getSolarTimes(int start_year, int end_year) const;
+    vector<SolarTime> get_solar_times(int start_year, int end_year) const;
 
     string get_name() const override;
 
@@ -4203,7 +4251,7 @@ public:
         }
         this->month = SixtyCycleMonth(
             SixtyCycleYear::from_year(lunar_year.get_year()),
-            LunarMonth::from_ym(solar_year, 1).get_sixty_cycle().next(static_cast<int>(floor(index * 1.0 / 2))));
+            LunarMonth::from_ym(solar_year, 1).get_sixty_cycle().next(static_cast<int>(std::floor(index * 1.0 / 2))));
         this->day = lunar_day.get_sixty_cycle();
     }
 
@@ -4366,7 +4414,7 @@ public:
             solar_time.get_solar_day(),
             SixtyCycleMonth(
                 SixtyCycleYear::from_year(lunar_year.get_year()),
-                LunarMonth::from_ym(solar_year, 1).get_sixty_cycle().next(static_cast<int>(floor(index * 0.5)))),
+                LunarMonth::from_ym(solar_year, 1).get_sixty_cycle().next(static_cast<int>(std::floor(index * 0.5)))),
             d);
         hour = lunar_hour.get_sixty_cycle();
     }
@@ -5130,6 +5178,351 @@ private:
 };
 
 /**
+ * @brief 藏历五行
+ */
+class RabByungElement : public Element
+{
+public:
+    ~RabByungElement() override = default;
+
+    explicit RabByungElement(const int index) : Element(index)
+    {
+    }
+
+    explicit RabByungElement(const string& name) : Element(regex_replace(name, regex("铁"), "金"))
+    {
+    }
+
+    static RabByungElement from_index(int index);
+
+    static RabByungElement from_name(const string& name);
+
+    string get_name() const override;
+
+    RabByungElement next(int n) const;
+
+    bool equals(const RabByungElement& other) const;
+
+    /**
+     * @brief 我生者
+     * @return 五行
+     */
+    RabByungElement get_reinforce() const;
+
+    /**
+     * @brief 我克者
+     * @return 五行
+     */
+    RabByungElement get_restrain() const;
+
+    /**
+     * @brief 生我者
+     * @return 五行
+     */
+    RabByungElement get_reinforced() const;
+
+    /**
+     * @brief 克我者
+     * @return 五行
+     */
+    RabByungElement get_restrained() const;
+
+    /**
+     * @brief 方位
+     * @return 方位
+     */
+    Direction get_direction() const;
+};
+
+/**
+ * @brief 藏历月，仅支持藏历1950年十二月至藏历2050年十二月
+ */
+class RabByungMonth;
+
+/**
+ * @brief 藏历年(公历1027年为藏历元年，第一饶迥火兔年）
+ */
+class RabByungYear : public AbstractCulture
+{
+public:
+    ~RabByungYear() override = default;
+
+    explicit RabByungYear(const int rab_byung_index, const SixtyCycle& sixty_cycle)
+        : AbstractCulture(), rab_byung_index(rab_byung_index), sixty_cycle(sixty_cycle)
+    {
+        if (rab_byung_index < 0 || rab_byung_index > 150) {
+            throw invalid_argument("illegal rab-byung index: " + std::to_string(rab_byung_index));
+        }
+    }
+
+    static RabByungYear from_sixty_cycle(int rab_byung_index, const SixtyCycle& sixty_cycle);
+
+    static RabByungYear from_element_zodiac(int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac);
+
+    static RabByungYear from_year(int year);
+
+    /**
+     * @brief 饶迥序号
+     * @return 数字，从0开始
+     */
+    int get_rab_byung_index() const;
+
+    /**
+     * @brief 干支
+     * @return 干支
+     */
+    SixtyCycle get_sixty_cycle() const;
+
+    /**
+     * @brief 生肖
+     * @return 生肖
+     */
+    Zodiac get_zodiac() const;
+
+    /**
+     * @brief 五行
+     * @return 藏历五行
+     */
+    RabByungElement get_element() const;
+
+    string get_name() const override;
+
+    RabByungYear next(int n) const;
+
+    /**
+     * @brief 年
+     * @return 年
+     */
+    int get_year() const;
+
+    /**
+     * @brief 闰月
+     * @return 闰月数字，1代表闰1月，0代表无闰月
+     */
+    int get_leap_month() const;
+
+    /**
+     * @brief 公历年
+     * @return 公历年
+     */
+    SolarYear get_solar_year() const;
+
+    /**
+     * @brief 月份数量
+     * @return 数量
+     */
+    int get_month_count() const;
+
+    /**
+     * @brief 首月
+     * @return 藏历月
+     */
+    RabByungMonth get_first_month() const;
+
+    /**
+     * @brief 藏历月列表
+     * @return 藏历月列表
+     */
+    vector<RabByungMonth> get_months() const;
+
+protected:
+    /**
+     * @brief 饶迥(胜生周)序号，从0开始
+     */
+    int rab_byung_index;
+
+    /**
+     * @brief 干支
+     */
+    SixtyCycle sixty_cycle;
+};
+
+/**
+ * @brief 藏历月，仅支持藏历1950年十二月至藏历2050年十二月
+ */
+class RabByungMonth : public AbstractCulture
+{
+public:
+    ~RabByungMonth() override = default;
+
+    static const vector<string> NAMES;
+    static const vector<string> ALIAS;
+    static std::map<int, vector<int>> DAYS;
+
+    explicit RabByungMonth(const RabByungYear& year, const int month)
+        : AbstractCulture(), year(year), month(month), leap(month < 0)
+    {
+        static once_flag flag;
+        call_once(flag, [] {
+            int y = 1950;
+            int m = 11;
+            std::istringstream years(
+                R"(2c>,182[>1:2TA4ZI=n1E2Bk1J2Ff3Mk503Oc62g=,172^>1:2XA1>2UE2Bo1I2Fj3Lo62Fb3Mf5,03N^72b=1:2]A1>2ZF1B2VI2Em1K2Fe,2Lh1R3Na603P\:172Y>1;2UB2=m2Dq1J2Eh,2Kl1Q3Me603Pa:172^>1;2YA2=p1C2UI,2Dk2Jp3QEc3Mi603Pf:3L[72b?1:2]A1<2UB2XH,2Cn1I2Ei1L2Ie1Q3Na703Q\:2`@1;2XA,4\H;m1B2TI2Em1L2Ij1Q3Nf603Q`903QW:,2[@1;2TB2XI1E4TMAh2Io3RFe3Mj603Pc803Q[;,2^?1;2WA2>q1E2Bm1I2Fi1M2Hc3Of70,3P^82a>1:2[A1>2WE1B2TI2Fm1L2Hf3Ni6,03Oa703PZ:3`A62V>4]F;q1B4YJ>l2Eq1L2Gi3Ml5,03Nd603Q_9172[>1;2XB2>p1E2VK2Fl,1K2Fc3Mh603Pc9172`>1;2\B1>2UD2=j2En,1J2Fg3Mm62Ib3Pj;3M_703R[:2`B1=2YB2=n,1C2TI2Fk1L2Ig1P3Nd703Q_:152X<2[A,2<q1B2WI2Ep1L2Il1Q3Ni703Qc9152[:2^@,1;2WB2>o1E2Bk1I2Fh1M2Ib3Pf803R^9,2a?1;2ZA1>2UE2Bp1I2Fl1M2If3Oi80,3Pa803QY:2^A1>2ZE1B4WJ>j2Fp1M2Hi1N2H`,3Od703Q]:162Y>1;2VB2?o1E4VM@h2Gl1M,2Hd3Ng603Qa9172^>1;2ZB1?2UE2@l2Fo1L,2Gg3Mk62H`3Pf:172c?3QY;2_B1>2YD2?o1E,2TK2Fj1M2Ie1P3Mb703R^;172X=2\C1>,2TD2WJ2Fn1L2Ij1P3Ng703Rb:162[<2_B1=,2VC2>m1E4TMAh2Io3QFe3Nl82Ja3Qf:152_;0,3RU<2ZB1>2TE2Bn1I2Fj1M2Je3Pk:2K^3Ra:,03RY;2]A1>2XE1B2TI2Fo1M2Ii1P2Ka3Qd8,03R]:3bB62W>4]F:q1B2?n1F4VNAh2Il1O2Jd,3Pg803Q`:162\=1;2XB1?2TF2Bl2Ho1N,2Ig3Nk703Qd9162`>1;2]B1?2XE2Ao1G2TM,2Hj1M2Id1P3M_603R\;172W>2\E1@2TE,2?i2Gm1M2Ih1P3Md603Ra;172[=28q1?2WD,2?m2Fq1M2Il1P3Mi72I^3Re:162_<172W=,2ZC2?q1E2Bk1I2Fh1M2Jd1Q3M^52b;16,2Y<2]B1>2VE2Bp1I2Fm1M2Jh1Q2Lb3Re:15,2\;3aC62U>2[E1B4WJ>k1F4TNBg2Jl1P2Le3Qh9,03R`:172Z=1:2VB2?q1F2Bk2Ip1P2Jg,1P2J_3Qc:162^=1;2[B1?2WF2Bo1H2Bg2Ij,1O2Jc3Qg:3L\62c>3QY;3aC72V?2[F1A2TG2Bj,2Hm1N2Jg1P3Mb603R_;182Z>1:2T@2WF2Am,2Gp1M2Ik1P3Mg603Rc;172^>192W?2ZE,2@p1F2Bj2Io3QEe1M2Jb1Q3M]72b=182Z>,2]D1?2VE2Bn1I2Fk1M2Jg1Q3Ma62e<172]=,172U>2YE1B2UI2Fp1N2Jk1Q3Me503M\6,2`<172Y>3_F:2TB2?n1F2Cj2Jo3QDc2Lh1R,3L_52c;172]=1:2XB1?2UF2Cn1I2Eg2Kk1P,2Lb3Rf;162a=1:2]B1?2ZF1B2TH2Dj2Jm,1O2Kf1Q3M`603Q\;182Y?2;q1A2WH2Cm,2Hq1O2Ji1P3Me603Qa;182]>1:2WA2[G2Ap,1G2Bi2Im1P3Mi72I_3Qf;3N\72Eh1:2Z?29o,1@2UF2Bm1I2Fh1M2Je1Q3N`72f?3PY92]>19,2U?2YF2Bq1I2Fm1M2Jj1Q3Nd603O]72`=,182X?4]F:o1B4WI=k1F4UNCi2Jn3REc3Mh503N`6,2c<182\>1:2VA2?q1F2Cm1J2Fg2Lk1R3Mc5,2f<172`=1:2[A1?2XF2Cq1I2Ek2Kn1R,2Lf1R3N_62d>3PZ:3aC72W?2;p1B2WI2Dn1J,2De2Ki1Q3Mc603Q_:182\?1;2VB2<m2Cq1I,2Dh2Jl1P3Mg603Qd;182`?1;2ZA2<p1B,2UH2Cl1I2Ef3Mm82Jc1Q3N_703QY:2]@1;2UA,2XG2Bp1I2Fk1M2Jh1Q3Nc703Q]92`?1:,2X@4\G:n1B2VI2Fp1M2Jl1R3Ng603P`82d>,192[?1;2UA2>o1F2Ck1J2Gg3Mk603Oc70,3OZ82_>1:2YA1?2VF2Cp1J2Fj1M2Gc3Nf5,03O^72b>1:2^B1?4[G;n1C2VJ2Fn1L2Gf,3Mi503Nb603Q]:172Y?1<2UB2>m2Eq1K2Fi,2Kl1R3Mf603Qa:182^?1;2YB2>q1D2VJ,2Dl1J2Fe3Mj603Qg;3N]72c@3QX;2]A1=2VB,2YI2Co1J2Fi1M2Je1Q3Nb703R]:2aA1<2XA,2<n1C2UI2Fn1M2Jj1Q3Nf703Q`903RX:,2[@1<2TB4YJ>l1E4UNBi1J2Ge3Mk703Pc803Q[9,2^?1;2XB2>q1E2Cn1J2Gj1M2Ic3Of70,3P^82b?1;2\A1>2XF1C2UJ2Fm1M2Hf3Ni6,03Oa703Q[:3aB72W>1<2TC2?m2Fq1L2Gi3Ml5,03Ne703Q_:172\>1<2XB2?q1E2WL2Fl,1L2Gd3Ni603Qd:172a?1;2\B1>2VD2>k,2Eo1K2Gh1M2Ic1Q3N`703R\;3aC62U=2YC2>o,1D2TJ2Fl1M2Jh1Q3Ne703R`:162Y<2\B,1=2TC4XJ=j2Fp1M2Jm3QFc3Ni803Qc:152\;2_A,1<2WB2>o1E2Bl1J2Gh1N2Jc3Qg903R^:,2b@1;2[B1>2VE2Cq1J2Gl1N2Jf3Pj80,3Qa803RZ;2_B1>4[F:o1C4XK?k2Fp1M2Ii1O2Ia,3Pd703R^:172Y>1<2VC2?p1F2Ai2Hl1M,2Hd3Oh703Qb:172^>1<2[C1?2UE2Al2Go,1L2Hg3Nl82Ia3Qg;3M]72e@3RZ;3`C72T>2YD2@o1E,2TK2Gk1M2Jf1Q3Nb703R^;172Y=2\D1>,2TD4XK>i2Fo1M2Jj1Q3Ng703Rb;172\<2`C1=,2WC2?n1F4VNBi1J2Gf1N2Kb3Rf:162_;15,2V<2ZB1?2TE2Bn1J2Gk1N2Kf1Q2L^3Rb:,152Z;2^B1>2YE1B2UJ2Go1N2Ji1P2Kb3Qd9,03R];172X>1;2TC2@n1G2Bi2Im1O2Jd,3Ph803Ra:172\>1;2YC1@2UF2Bl2Hp1N,2Ig3Ol82J`3Qe:172a>1;4^C7q1?2XF2Ao1G2UN,2Hj1N2Jd1Q3N`703R];182X>2]F1@2TF,2@j2Gn1M2Jq1Q3Ne703Ra;172\>192T?,2WE2@m1F4TMAf2Im3QEc3Nj82J`3Rf;172_=182W>,2ZD2?q1F2Bl1I2Gj1N2Ke1R3M_62b<17,2Z=2]C1?2WE2Bq1I2Gn1N2Ki1Q3Mb52e;16,2]<172V>4[F:o1B4XK?l1G4UOCh2Jl1Q2Le3Rh:,152`;172Z>1;2WB2@q1G2Cl2Ip1P2K_)");
+            string ys;
+            while (getline(years, ys, ',')) {
+                while (!ys.empty()) {
+                    const int len = ys[0] - '0';
+                    auto data = vector<int>();
+                    for (int i = 0; i < len; i++) {
+                        data.push_back(ys[i + 1] - '5' - 30);
+                    }
+                    DAYS[y * 13 + m] = data;
+                    m++;
+                    ys = ys.substr(len + 1);
+                }
+                y++;
+                m = 0;
+            }
+        });
+        if (month == 0 || month > 12 || month < -12) {
+            throw invalid_argument("illegal rab-byung month: " + std::to_string(month));
+        }
+        const int y = year.get_year();
+        if (y < 1950 || y > 2050) {
+            throw invalid_argument("rab-byung year " + std::to_string(month) + " must between 1950 and 2050");
+        }
+        const int m = abs(month);
+        if (y == 1950 && m < 12) {
+            throw invalid_argument("month " + std::to_string(month) + " must be 12 in rab-byung year " +
+                                   std::to_string(y));
+        }
+        const int leap_month = year.get_leap_month();
+        if (leap && m != leap_month) {
+            throw invalid_argument("illegal leap month " + std::to_string(m) + " in rab-byung year " +
+                                   std::to_string(y));
+        }
+        // 位于当年的索引
+        int index = m - 1;
+        if (leap || (0 < leap_month && leap_month < m)) {
+            index += 1;
+        }
+        index_in_year = index;
+    }
+
+    explicit RabByungMonth(const int year, const int month) : RabByungMonth(RabByungYear::from_year(year), month)
+    {
+    }
+
+    explicit RabByungMonth(const int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac,
+                           const int month)
+        : RabByungMonth(RabByungYear::from_element_zodiac(rab_byung_index, element, zodiac), month)
+    {
+    }
+
+    static RabByungMonth from_ym(int year, int month);
+
+    static RabByungMonth from_element_zodiac(int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac,
+                                             int month);
+
+    /**
+     * @brief 藏历年
+     * @return 藏历年
+     */
+    RabByungYear get_rab_byung_year() const;
+
+    /**
+     * @brief 年
+     * @return 年
+     */
+    int get_year() const;
+
+    /**
+     * @brief 月
+     * @return 月
+     */
+    int get_month() const;
+
+    /**
+     * @brief 月
+     * @return 月，当月为闰月时，返回负数
+     */
+    int get_month_with_leap() const;
+
+    /**
+     * @brief 位于当年的索引
+     * @return 索引(0-12)
+     */
+    int get_index_in_year() const;
+
+    /**
+     * @brief 是否闰月
+     * @return true/false
+     */
+    bool is_leap() const;
+
+    string get_name() const override;
+
+    /**
+     * @brief 别名
+     * @return 别名
+     */
+    string get_alias() const;
+
+    string to_string() const override;
+
+    RabByungMonth next(int n) const;
+
+    bool equals(const RabByungMonth& other) const;
+
+    /**
+     * @brief
+     * @return
+     */
+    int get_day_count() const;
+
+    /**
+     * @brief 特殊日子列表
+     * @return 特殊日子列表，闰日为正，缺日为负
+     */
+    vector<int> get_special_days() const;
+
+    /**
+     * @brief 闰日列表
+     * @return 闰日列表
+     */
+    vector<int> get_leap_days() const;
+
+    /**
+     * @brief 缺日列表
+     * @return 缺日列表
+     */
+    vector<int> get_miss_days() const;
+
+    /**
+     * @brief 首日
+     * @return 藏历日
+     */
+    RabByungDay get_first_day() const;
+
+    /**
+     * @brief 本月的藏历日列表
+     * @return 藏历日列表
+     */
+    vector<RabByungDay> get_days() const;
+
+protected:
+    /**
+     * @brief 藏历年
+     */
+    RabByungYear year;
+
+    /**
+     * @brief 月
+     */
+    int month;
+
+    /**
+     * @brief 是否闰月
+     */
+    bool leap;
+
+    /**
+     * @brief 位于当年的索引，0-12
+     */
+    int index_in_year;
+};
+
+/**
  * @brief 公历现代节日
  */
 class SolarFestival : public AbstractCulture
@@ -5141,7 +5534,7 @@ public:
     static string DATA;
 
     explicit SolarFestival(const FestivalType type, const SolarDay& day, const int start_year, const string& data)
-        : type(type), index(stoi(data.substr(1, 2))), day(day), name(NAMES[index]), start_year(start_year)
+        : _type(type), index(stoi(data.substr(1, 2))), day(day), name(NAMES[index]), start_year(start_year)
     {
     }
 
@@ -5167,7 +5560,7 @@ protected:
     /**
      * @brief 类型
      */
-    FestivalType type;
+    FestivalType _type;
 
     /**
      * @brief 索引
@@ -5203,7 +5596,7 @@ public:
 
     explicit LunarFestival(const FestivalType type, const LunarDay& day, optional<SolarTerm> solar_term,
                            const string& data)
-        : type(type), index(stoi(data.substr(1, 2))), day(day), name(NAMES[index]), solar_term(std::move(solar_term))
+        : _type(type), index(stoi(data.substr(1, 2))), day(day), name(NAMES[index]), solar_term(std::move(solar_term))
     {
     }
 
@@ -5229,7 +5622,7 @@ protected:
     /**
      * @brief 类型
      */
-    FestivalType type;
+    FestivalType _type;
 
     /**
      * @brief 索引
@@ -5250,6 +5643,210 @@ protected:
      * @brief 节气
      */
     optional<SolarTerm> solar_term;
+};
+
+/**
+ * @brief 藏历日，仅支持藏历1950年十二月初一（公历1951年1月8日）至藏历2050年十二月三十（公历2051年2月11日）
+ */
+class RabByungDay : public AbstractCulture
+{
+public:
+    ~RabByungDay() override = default;
+
+    static const vector<string> NAMES;
+
+    explicit RabByungDay(const RabByungMonth& month, const int day)
+        : AbstractCulture(), month(month), day(day), leap(day < 0)
+    {
+        if (day == 0 || day < -30 || day > 30) {
+            throw invalid_argument("illegal day " + std::to_string(day) + " in " + month.to_string());
+        }
+        const int d = abs(day);
+        if (leap) {
+            if (vector<int> l = month.get_leap_days(); find(l.begin(), l.end(), d) != l.end()) {
+                throw invalid_argument("illegal leap day " + std::to_string(d) + " in " + month.to_string());
+            }
+        }
+        if (!leap) {
+            if (vector<int> l = month.get_miss_days(); find(l.begin(), l.end(), d) != l.end()) {
+                throw invalid_argument("illegal day " + std::to_string(d) + " in " + month.to_string());
+            }
+        }
+    }
+
+    explicit RabByungDay(const int year, const int month, const int day) : RabByungDay(RabByungMonth(year, month), day)
+    {
+    }
+
+    explicit RabByungDay(const int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac,
+                         const int month, const int day)
+        : RabByungDay(RabByungMonth(rab_byung_index, element, zodiac, month), day)
+    {
+    }
+
+    static RabByungDay from_ymd(int year, int month, int day);
+
+    static RabByungDay from_element_zodiac(int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac,
+                                           int month, int day);
+
+    static RabByungDay from_solar_day(const SolarDay& solar_day);
+
+    /**
+     * @brief 藏历月
+     * @return 藏历月
+     */
+    RabByungMonth get_rab_byung_month() const;
+
+    /**
+     * @brief 年
+     * @return 年
+     */
+    int get_year() const;
+
+    /**
+     * @brief 月
+     * @return 月
+     */
+    int get_month() const;
+
+    /**
+     * @brief 日
+     * @return 日
+     */
+    int get_day() const;
+
+    /**
+     * @brief 是否闰日
+     * @return true/false
+     */
+    bool is_leap() const;
+
+    /**
+     * @brief 日
+     * @return 日，当日为闰日时，返回负数
+     */
+    int get_day_with_leap() const;
+
+    string get_name() const override;
+
+    string to_string() const override;
+
+    /**
+     * @brief 藏历日相减
+     * @param target 藏历日
+     * @return 相差天数
+     */
+    int subtract(const RabByungDay& target) const;
+
+    /**
+     * @brief 公历日
+     * @return 公历日
+     */
+    SolarDay get_solar_day() const;
+
+    RabByungDay next(int n) const;
+
+protected:
+    /**
+     * @brief 藏历月
+     */
+    RabByungMonth month;
+
+    /**
+     * @brief 日
+     */
+    int day;
+
+    /**
+     * @brief 是否闰日
+     */
+    bool leap;
+};
+
+/**
+ * @brief 月相
+ */
+class Phase : public LoopTyme
+{
+public:
+    ~Phase() override = default;
+
+    static const vector<string> NAMES;
+
+    explicit Phase(const int lunar_year, const int lunar_month, const int index) : LoopTyme(NAMES, index)
+    {
+        const LunarMonth m = LunarMonth::from_ym(lunar_year, lunar_month).next(index / static_cast<int>(NAMES.size()));
+        this->lunar_year = m.get_year();
+        this->lunar_month = m.get_month_with_leap();
+    }
+
+    explicit Phase(const int lunar_year, const int lunar_month, const string& name)
+        : LoopTyme(NAMES, name), lunar_year(lunar_year), lunar_month(lunar_month)
+    {
+    }
+
+    static Phase from_index(int lunar_year, int lunar_month, int index);
+
+    static Phase from_name(int lunar_year, int lunar_month, const string& name);
+
+    Phase next(int n) const;
+
+    /**
+     * @brief 公历时刻
+     * @return 公历时刻
+     */
+    SolarTime get_solar_time() const;
+
+    /**
+     * @brief 公历日
+     * @return 公历日
+     */
+    SolarDay get_solar_day() const;
+
+protected:
+    /**
+     * @brief 农历年
+     */
+    int lunar_year;
+
+    /**
+     * @brief 农历月
+     */
+    int lunar_month;
+
+    SolarTime get_start_solar_time() const;
+};
+
+/**
+ * @brief 月相第几天
+ */
+class PhaseDay : public AbstractCulture
+{
+public:
+    ~PhaseDay() override = default;
+
+    explicit PhaseDay(const Phase& phase, const int day_index) : phase(phase), day_index(day_index)
+    {
+    }
+
+    Phase get_phase() const;
+
+    int get_day_index() const;
+
+    string to_string() const override;
+
+    string get_name() const override;
+
+protected:
+    /**
+     * @brief 月相
+     */
+    Phase phase;
+
+    /**
+     * @brief 天索引
+     */
+    int day_index;
 };
 }   // namespace tyme
 #endif

@@ -1,8 +1,11 @@
 #ifndef PRINT_BASE_H
 #define PRINT_BASE_H
 
-#include "qimen.h"
+#ifndef WHAT_FUCK
 #include "ColorConsole.hpp"
+#endif
+
+#include "qimen.h"
 
 using namespace csp;
 

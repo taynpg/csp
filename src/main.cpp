@@ -130,7 +130,7 @@ int main(int argc, char** argv)
         break;
     }
     default: {
-        std::wcout << L"未匹配到支持的盘面类型，请使用 --help 查看帮助。";
+        std::cout << "未匹配到支持的盘面类型，请使用 --help 查看帮助。" << std::endl;
     }
     }
     return 0;
