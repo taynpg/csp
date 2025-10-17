@@ -14,7 +14,7 @@
     },
     "cmake.configureArgs": [
         "-Wno-dev",
-        "-DCSP_PYTHON_EXPORT=ON"
+        //"-DCSP_PYTHON_EXPORT=ON"
     ],
     "cmake.options.statusBarVisibility": "visible",
     "cmake.generator": "Ninja",
