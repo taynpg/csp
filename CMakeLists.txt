@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(csp-project VERSION 1.5.1 LANGUAGES CXX)
+project(csp-project VERSION 1.5.2 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 set(COMPILER_ID ${CMAKE_CXX_COMPILER_ID})

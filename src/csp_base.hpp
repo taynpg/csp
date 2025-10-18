@@ -1,7 +1,7 @@
 #ifndef CSP_HEADER_H
 #define CSP_HEADER_H
 
-constexpr auto CSP_VERSION = "v1.5.1";
+constexpr auto CSP_VERSION = "v1.5.2";
 
 #include <string>
 struct CmdParam {

@@ -297,6 +297,17 @@ JiaZi Qimen::jiazi(const tyme::SolarTime& dt)
     return re;
 }
 
+JiaZi Qimen::jiaziNoHour(const tyme::SolarTime& dt)
+{
+    JiaZi re;
+    tyme::SolarDay day(dt.get_year(), dt.get_month(), dt.get_day());
+    re.yi = day.get_sixty_cycle_day().get_sixty_cycle_month().get_sixty_cycle_year().get_sixty_cycle().get_index();
+    re.mi = day.get_sixty_cycle_day().get_sixty_cycle_month().get_sixty_cycle().get_index();
+    re.di = day.get_sixty_cycle_day().get_sixty_cycle().get_index();
+    re.hi = 0;
+    return re;
+}
+
 tyme::SolarTime Qimen::get_jq(const tyme::SolarTime& dt, int& index, bool is_sec)
 {
     int mon = dt.get_month();

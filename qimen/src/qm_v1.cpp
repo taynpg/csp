@@ -288,7 +288,7 @@ bool QimenV1::cur_month_jq(const DateTime& dt, DateTime& jie, int& jiazi, int& d
     int first{};
     const auto fq = Qimen::get_jq(*s, first, false);
     jie = Qimen::solar(fq);
-    auto jz = Qimen::jiazi(fq);
+    auto jz = Qimen::jiaziNoHour(fq);
     jiazi = jz.di;
     int ft = (jiazi / 15) * 15;
     dif = jiazi - ft;

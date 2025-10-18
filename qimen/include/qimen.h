@@ -116,6 +116,7 @@ public:
     static DateTime lunar(const tyme::SolarTime& dt);
     static tyme::SolarTime get_jq(const tyme::SolarTime& dt, int& index, bool is_sec);
     static JiaZi jiazi(const tyme::SolarTime& dt);
+    static JiaZi jiaziNoHour(const tyme::SolarTime& dt);
     // ====================================================================================
 
     /// @brief 获取六十甲子的下标
