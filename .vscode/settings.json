@@ -1,12 +1,12 @@
 {
     "files.autoSave": "onFocusChange",
-    "editor.fontSize": 15,
+    "editor.fontSize": 14,
     "cmake.configureOnOpen": true,
-    "editor.fontFamily": "Consolas",
+    "editor.fontFamily": "'Maple Mono NL NF CN Light', 'Maple Mono NL NF CN Light', 'Maple Mono NL NF CN Light'",
     "cmake.debugConfig": {
         "console": "externalTerminal",
         "args": [
-            "-t", "1", "-d", "2025-10-16-2-29-0"
+            "-t", "1", "-d", "2025-12-31-14-29-0"
         ]
     },
     "cmake.configureSettings": {

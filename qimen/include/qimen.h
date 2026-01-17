@@ -117,6 +117,10 @@ public:
     static tyme::SolarTime get_jq(const tyme::SolarTime& dt, int& index, bool is_sec);
     static JiaZi jiazi(const tyme::SolarTime& dt);
     static JiaZi jiaziNoHour(const tyme::SolarTime& dt);
+    static tyme::SolarTime from(const DateTime& dt);
+    static int between_days(const DateTime& dt1, const DateTime& dt2);
+    static int between_secs(const DateTime& dt1, const DateTime& dt2);
+    static DateTime next(const DateTime& dt, int seconds);
     // ====================================================================================
 
     /// @brief 获取六十甲子的下标

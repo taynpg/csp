@@ -216,55 +216,35 @@ bool QimenV1::inference()
     DateTime pdx(data_.dt_->get_year() - 1, 12, 1, 12, 0, 0);
     DateTime dx(data_.dt_->get_year(), 12, 1, 12, 0, 0);
     DateTime mz(data_.dt_->get_year(), 6, 6, 12, 0, 0);
-    DateTime dt{};
 
-    DateTime t;
-    DateTime c;
+    DateTime cycleDt;
+    DateTime tempDt;
 
-    if (!cur_month_jq(pdx, t, jiazi, dif)) {
-        return false;
-    }
-    c = t;
-    // 保存大雪的三元
-    save_part(c, start, jiazi, -1, 15 - dif);
-
-    if (dif < 9) {
-        start = Qimen::mod(24, ++start);
-    }
-
-    // 保存大雪到芒种
-    save_part(c, start, jiazi, 11, 300);
-    if (!cur_month_jq(mz, t, tem, dif)) {
+    if (!cur_month_jq(pdx, cycleDt, jiazi, dif)) {
         return false;
     }
 
-    dt = c;
-    auto temp_cal = std::make_shared<tyme::SolarTime>(dt.year, dt.mon, dt.day, dt.hour, dt.min, dt.sec);
-    auto next_day = temp_cal->next(-1 * 3600 * 24);
-    dt = Qimen::solar(next_day);
-    dif = std::abs(
-        tyme::SolarDay::from_ymd(dt.year, dt.mon, dt.day).subtract(tyme::SolarDay::from_ymd(t.year, t.mon, t.day)));
-    save_part(c, start, jiazi, -1, 14);
-    if (dif < 9) {
-        start = Qimen::mod(24, ++start);
-    }
+    jiazi = Qimen::mod(60, jiazi - dif);
+    cycleDt = Qimen::next(cycleDt, 3600 * 24 * (-dif));
+    save_part(cycleDt, start, jiazi, -1, 15, std::abs(dif) < 9);
 
-    save_part(c, start, jiazi, 22, 300);
-    if (!cur_month_jq(dx, t, tem, dif)) {
+    // ===========================================
+    save_part(cycleDt, start, jiazi, 11, 300);
+    if (!cur_month_jq(mz, tempDt, tem, dif)) {
         return false;
     }
 
-    dt = c;
-    temp_cal = std::make_shared<tyme::SolarTime>(dt.year, dt.mon, dt.day, dt.hour, dt.min, dt.sec);
-    next_day = temp_cal->next(-1 * 3600 * 24);
-    dt = Qimen::solar(next_day);
-    dif = std::abs(
-        tyme::SolarDay::from_ymd(dt.year, dt.mon, dt.day).subtract(tyme::SolarDay::from_ymd(t.year, t.mon, t.day)));
-    save_part(c, start, jiazi, -1, 14);
-    if (dif < 9) {
-        start = Qimen::mod(24, ++start);
+    dif = std::abs(Qimen::between_days(cycleDt, tempDt));
+    save_part(cycleDt, start, jiazi, -1, 15, std::abs(dif) < 9);
+    // ===========================================
+    save_part(cycleDt, start, jiazi, 23, 300);
+    if (!cur_month_jq(dx, tempDt, tem, dif)) {
+        return false;
     }
-    save_part(c, start, jiazi, -1, 60);
+
+    dif = std::abs(Qimen::between_days(cycleDt, tempDt));
+    save_part(cycleDt, start, jiazi, -1, 15, std::abs(dif) < 9);
+    save_part(cycleDt, start, jiazi, -1, 60);
     //print();
     return true;
 }
@@ -284,31 +264,30 @@ bool QimenV1::search_day(const DateTime& datetime, OneDay& o)
 
 bool QimenV1::cur_month_jq(const DateTime& dt, DateTime& jie, int& jiazi, int& dif)
 {
-    auto s = std::make_shared<tyme::SolarTime>(dt.year, dt.mon, dt.day, dt.hour, dt.min, dt.sec);
+    auto s = Qimen::from(dt);
     int first{};
-    const auto fq = Qimen::get_jq(*s, first, false);
+    const auto fq = Qimen::get_jq(s, first, false);
     jie = Qimen::solar(fq);
     auto jz = Qimen::jiaziNoHour(fq);
     jiazi = jz.di;
     int ft = (jiazi / 15) * 15;
     dif = jiazi - ft;
-    if (dif < 0) {
-        dif = -dif;
-    }
     return true;
 }
 
-void QimenV1::save_part(DateTime& sdt, int& upper, int& jiazi, int pur, int days)
+void QimenV1::save_part(DateTime& sdt, int& upper, int& jiazi, int pur, int days, bool addJie)
 {
     int cy = 0;
     upper = mod(24, upper);
-    for (int i = 0; i < days; ++i, ++cy) {
+    for (int i = 0; i < days; ++i) {
         year_datas_.emplace_back(OneDay{sdt, upper, jiazi});
-        sdt = Qimen::solar(
-            tyme::SolarTime::from_ymd_hms(sdt.year, sdt.mon, sdt.day, sdt.hour, sdt.min, sdt.sec).next(1 * 3600 * 24));
+        sdt = Qimen::next(sdt, 3600 * 24);
+        ++cy;
         jiazi = mod(60, ++jiazi);
         if (cy == 15) {
-            upper = mod(24, ++upper);
+            if (addJie) {
+                upper = mod(24, ++upper);
+            }
             if (upper == pur) {
                 break;
             }

@@ -308,6 +308,42 @@ JiaZi Qimen::jiaziNoHour(const tyme::SolarTime& dt)
     return re;
 }
 
+tyme::SolarTime Qimen::from(const DateTime& dt)
+{
+    tyme::SolarTime re(dt.year, dt.mon, dt.day, dt.hour, dt.min, dt.sec);
+    return re;
+}
+
+int Qimen::between_days(const DateTime& dt1, const DateTime& dt2)
+{
+    DateTime ct1 = dt1;
+    DateTime ct2 = dt2;
+    ct1.hour = ct2.hour;
+    ct1.min = ct2.min;
+    ct1.sec = ct2.sec;
+
+    auto c1 = from(ct1);
+    auto c2 = from(ct2);
+    auto dif = c2.subtract(c1);
+    auto days = dif / (24 * 60 * 60);
+    return days;
+}
+
+int Qimen::between_secs(const DateTime& dt1, const DateTime& dt2)
+{
+    auto c1 = from(dt1);
+    auto c2 = from(dt2);
+    auto dif = c2.subtract(c1);
+    return dif;
+}
+
+DateTime Qimen::next(const DateTime& dt, int seconds)
+{
+    auto c = from(dt);
+    auto r = c.next(seconds);
+    return solar(r);
+}
+
 tyme::SolarTime Qimen::get_jq(const tyme::SolarTime& dt, int& index, bool is_sec)
 {
     int mon = dt.get_month();

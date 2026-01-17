@@ -70,7 +70,7 @@ private:
     bool cur_month_jq(const DateTime& dt, DateTime& jie, int& jiazi, int& dif);
 
     // 保存某段范围的日期信息
-    void save_part(DateTime& sdt, int& upper, int& jiazi, int pur, int days);
+    void save_part(DateTime& sdt, int& upper, int& jiazi, int pur, int days, bool addJie = true);
 
     // 获取给定甲子的两个寻空
     std::pair<int, int> cal_xunkong(int jiazi);

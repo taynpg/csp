@@ -2439,7 +2439,7 @@ Direction SixtyCycleMonth::get_jupiter_direction() const
 SixtyCycleDay SixtyCycleMonth::get_first_day() const
 {
     return SixtyCycleDay::from_solar_day(
-        SolarTerm::from_index(year.get_year(), 3 + get_index_in_year() * 2).get_julian_day().get_solar_day());
+        SolarTerm::from_index(year.get_year(), 3 + get_index_in_year() * 2).get_solar_day());
 }
 
 vector<SixtyCycleDay> SixtyCycleMonth::get_days() const
@@ -2516,9 +2516,9 @@ TwelveStar SixtyCycleDay::get_twelve_star() const
 NineStar SixtyCycleDay::get_nine_star() const
 {
     const SolarTerm dong_zhi = SolarTerm::from_index(solar_day.get_year(), 0);
-    const SolarDay dong_zhi_solar = dong_zhi.get_julian_day().get_solar_day();
-    const SolarDay xia_zhi_solar = dong_zhi.next(12).get_julian_day().get_solar_day();
-    const SolarDay dong_zhi_solar2 = dong_zhi.next(24).get_julian_day().get_solar_day();
+    const SolarDay dong_zhi_solar = dong_zhi.get_solar_day();
+    const SolarDay xia_zhi_solar = dong_zhi.next(12).get_solar_day();
+    const SolarDay dong_zhi_solar2 = dong_zhi.next(24).get_solar_day();
     const int dong_zhi_index = dong_zhi_solar.get_lunar_day().get_sixty_cycle().get_index();
     const int xia_zhi_index = xia_zhi_solar.get_lunar_day().get_sixty_cycle().get_index();
     const int dong_zhi_index2 = dong_zhi_solar2.get_lunar_day().get_sixty_cycle().get_index();
@@ -2591,6 +2591,11 @@ vector<SixtyCycleHour> SixtyCycleDay::get_hours() const
         l.push_back(h);
     }
     return l;
+}
+
+ThreePillars SixtyCycleDay::get_three_pillars() const
+{
+    return ThreePillars(get_year(), get_month(), get_sixty_cycle());
 }
 
 SixtyCycleHour SixtyCycleHour::from_solar_time(const SolarTime& solar_time)
@@ -3160,9 +3165,9 @@ NineStar LunarDay::get_nine_star() const
 {
     const SolarDay d = get_solar_day();
     const SolarTerm dong_zhi = SolarTerm::from_index(d.get_year(), 0);
-    const SolarDay dong_zhi_solar = dong_zhi.get_julian_day().get_solar_day();
-    const SolarDay xia_zhi_solar = dong_zhi.next(12).get_julian_day().get_solar_day();
-    const SolarDay dong_zhi_solar2 = dong_zhi.next(24).get_julian_day().get_solar_day();
+    const SolarDay dong_zhi_solar = dong_zhi.get_solar_day();
+    const SolarDay xia_zhi_solar = dong_zhi.next(12).get_solar_day();
+    const SolarDay dong_zhi_solar2 = dong_zhi.next(24).get_solar_day();
     const int dong_zhi_index = dong_zhi_solar.get_lunar_day().get_sixty_cycle().get_index();
     const int xia_zhi_index = xia_zhi_solar.get_lunar_day().get_sixty_cycle().get_index();
     const int dong_zhi_index2 = dong_zhi_solar2.get_lunar_day().get_sixty_cycle().get_index();
@@ -3259,6 +3264,11 @@ MinorRen LunarDay::get_minor_ren() const
 optional<LunarFestival> LunarDay::get_festival() const
 {
     return LunarFestival::from_ymd(get_year(), get_month(), day);
+}
+
+ThreePillars LunarDay::get_three_pillars() const
+{
+    return get_sixty_cycle_day().get_three_pillars();
 }
 
 LunarHour LunarHour::from_ymd_hms(const int year, const int month, int day, int hour, const int minute, int second)
@@ -3478,6 +3488,11 @@ bool SolarTerm::is_qi() const
 JulianDay SolarTerm::get_julian_day() const
 {
     return JulianDay::from_julian_day(ShouXingUtil::qi_accurate2(cursory_julian_day) + JulianDay::J2000);
+}
+
+SolarDay SolarTerm::get_solar_day() const
+{
+    return JulianDay::from_julian_day(cursory_julian_day + JulianDay::J2000).get_solar_day();
 }
 
 int SolarTerm::get_year() const
@@ -4006,10 +4021,10 @@ SolarTermDay SolarDay::get_term_day() const
         i = 0;
     }
     SolarTerm term = SolarTerm::from_index(y, i);
-    SolarDay day = term.get_julian_day().get_solar_day();
+    SolarDay day = term.get_solar_day();
     while (is_before(day)) {
         term = term.next(-1);
-        day = term.get_julian_day().get_solar_day();
+        day = term.get_solar_day();
     }
     return SolarTermDay(term, subtract(day));
 }
@@ -4044,7 +4059,7 @@ optional<DogDay> SolarDay::get_dog_day() const
 {
     // 夏至
     const SolarTerm xia_zhi = SolarTerm::from_index(get_year(), 12);
-    SolarDay start = xia_zhi.get_julian_day().get_solar_day();
+    SolarDay start = xia_zhi.get_solar_day();
     // 第3个庚日，即初伏第1天
     start = start.next(start.get_lunar_day().get_sixty_cycle().get_heaven_stem().steps_to(6) + 20);
     int days = subtract(start);
@@ -4067,7 +4082,7 @@ optional<DogDay> SolarDay::get_dog_day() const
     start = start.next(10);
     days = subtract(start);
     // 立秋
-    if (xia_zhi.next(3).get_julian_day().get_solar_day().is_after(start)) {
+    if (xia_zhi.next(3).get_solar_day().is_after(start)) {
         if (days < 10) {
             Dog d = Dog::from_index(1);
             return DogDay(d, days + 10);
@@ -4085,9 +4100,9 @@ optional<DogDay> SolarDay::get_dog_day() const
 optional<NineDay> SolarDay::get_nine_day() const
 {
     const int year = get_year();
-    SolarDay start = SolarTerm::from_index(year + 1, 0).get_julian_day().get_solar_day();
+    SolarDay start = SolarTerm::from_index(year + 1, 0).get_solar_day();
     if (is_before(start)) {
-        start = SolarTerm::from_index(year, 0).get_julian_day().get_solar_day();
+        start = SolarTerm::from_index(year, 0).get_solar_day();
     }
     if (const SolarDay end = start.next(81); is_before(start) || !is_before(end)) {
         return nullopt;
@@ -4101,12 +4116,12 @@ optional<PlumRainDay> SolarDay::get_plum_rain_day() const
 {
     // 芒种
     const SolarTerm grain_in_ear = SolarTerm::from_index(get_year(), 11);
-    SolarDay start = grain_in_ear.get_julian_day().get_solar_day();
+    SolarDay start = grain_in_ear.get_solar_day();
     // 芒种后的第1个丙日
     start = start.next(start.get_lunar_day().get_sixty_cycle().get_heaven_stem().steps_to(2));
 
     // 小暑
-    SolarDay end = grain_in_ear.next(2).get_julian_day().get_solar_day();
+    SolarDay end = grain_in_ear.next(2).get_solar_day();
     // 小暑后的第1个未日
     end = end.next(end.get_lunar_day().get_sixty_cycle().get_earth_branch().steps_to(7));
 
@@ -4128,7 +4143,7 @@ HideHeavenStemDay SolarDay::get_hide_heaven_stem_day() const
     if (term.is_qi()) {
         term = term.next(-1);
     }
-    int day_index = subtract(term.get_julian_day().get_solar_day());
+    int day_index = subtract(term.get_solar_day());
     const int start_index = (term.get_index() - 1) * 3;
     string data = "93705542220504xx1513904541632524533533105544806564xx7573304542018584xx95";
     data = data.substr(start_index, 6);
@@ -4404,19 +4419,79 @@ Phase SolarTime::get_phase() const
     return p;
 }
 
-SixtyCycle EightChar::get_year() const
+SixtyCycle ThreePillars::get_year() const
 {
     return year;
 }
 
-SixtyCycle EightChar::get_month() const
+SixtyCycle ThreePillars::get_month() const
 {
     return month;
 }
 
-SixtyCycle EightChar::get_day() const
+SixtyCycle ThreePillars::get_day() const
 {
     return day;
+}
+
+vector<SolarDay> ThreePillars::get_solar_days(const int start_year, const int end_year) const
+{
+    auto l = vector<SolarDay>();
+    // 月地支距寅月的偏移值
+    int m = month.get_earth_branch().next(-2).get_index();
+    // 月天干要一致
+    if (!HeavenStem::from_index((year.get_heaven_stem().get_index() + 1) * 2 + m).equals(month.get_heaven_stem())) {
+        return l;
+    }
+    // 1年的立春是辛酉，序号57
+    int y = year.next(-57).get_index() + 1;
+    // 节令偏移值
+    m *= 2;
+    if (const int base_year = start_year - 1; base_year > y) {
+        y += 60 * static_cast<int>(ceil((base_year - y) / 60.0));
+    }
+    while (y <= end_year) {
+        // 立春为寅月的开始
+        SolarTerm term = SolarTerm::from_index(y, 3);
+        // 节令推移，年干支和月干支就都匹配上了
+        if (m > 0) {
+            term = term.next(m);
+        }
+        if (SolarDay solar_day = term.get_solar_day(); solar_day.get_year() >= start_year) {
+            // 日干支和节令干支的偏移值
+            int d = day.next(-solar_day.get_lunar_day().get_sixty_cycle().get_index()).get_index();
+            if (d > 0) {
+                // 从节令推移天数
+                solar_day = solar_day.next(d);
+            }
+            // 验证一下
+            if (solar_day.get_sixty_cycle_day().get_three_pillars().equals(this)) {
+                l.push_back(solar_day);
+            }
+        }
+        y += 60;
+    }
+    return l;
+}
+
+string ThreePillars::get_name() const
+{
+    return year.to_string() + " " + month.to_string() + " " + day.to_string();
+}
+
+SixtyCycle EightChar::get_year() const
+{
+    return three_pillars.get_year();
+}
+
+SixtyCycle EightChar::get_month() const
+{
+    return three_pillars.get_month();
+}
+
+SixtyCycle EightChar::get_day() const
+{
+    return three_pillars.get_day();
 }
 
 SixtyCycle EightChar::get_hour() const
@@ -4426,19 +4501,20 @@ SixtyCycle EightChar::get_hour() const
 
 SixtyCycle EightChar::get_fetal_origin() const
 {
-    return SixtyCycle::from_name(month.get_heaven_stem().next(1).get_name() +
-                                 month.get_earth_branch().next(3).get_name());
+    const SixtyCycle m = get_month();
+    return SixtyCycle::from_name(m.get_heaven_stem().next(1).get_name() + m.get_earth_branch().next(3).get_name());
 }
 
 SixtyCycle EightChar::get_fetal_breath() const
 {
-    return SixtyCycle::from_name(day.get_heaven_stem().next(5).get_name() +
-                                 EarthBranch::from_index(13 - day.get_earth_branch().get_index()).get_name());
+    const SixtyCycle d = get_day();
+    return SixtyCycle::from_name(d.get_heaven_stem().next(5).get_name() +
+                                 EarthBranch::from_index(13 - d.get_earth_branch().get_index()).get_name());
 }
 
 SixtyCycle EightChar::get_own_sign() const
 {
-    int m = month.get_earth_branch().get_index() - 1;
+    int m = get_month().get_earth_branch().get_index() - 1;
     if (m < 1) {
         m += 12;
     }
@@ -4449,13 +4525,13 @@ SixtyCycle EightChar::get_own_sign() const
     int offset = m + h;
     offset = (offset >= 14 ? 26 : 14) - offset;
     return SixtyCycle::from_name(
-        HeavenStem::from_index((year.get_heaven_stem().get_index() + 1) * 2 + offset - 1).get_name() +
+        HeavenStem::from_index((get_year().get_heaven_stem().get_index() + 1) * 2 + offset - 1).get_name() +
         EarthBranch::from_index(offset + 1).get_name());
 }
 
 SixtyCycle EightChar::get_body_sign() const
 {
-    int offset = month.get_earth_branch().get_index() - 1;
+    int offset = get_month().get_earth_branch().get_index() - 1;
     if (offset < 1) {
         offset += 12;
     }
@@ -4464,12 +4540,15 @@ SixtyCycle EightChar::get_body_sign() const
         offset -= 12;
     }
     return SixtyCycle::from_name(
-        HeavenStem::from_index((year.get_heaven_stem().get_index() + 1) * 2 + offset - 1).get_name() +
+        HeavenStem::from_index((get_year().get_heaven_stem().get_index() + 1) * 2 + offset - 1).get_name() +
         EarthBranch::from_index(offset + 1).get_name());
 }
 
 vector<SolarTime> EightChar::get_solar_times(const int start_year, const int end_year) const
 {
+    const SixtyCycle year = get_year();
+    const SixtyCycle month = get_year();
+    const SixtyCycle day = get_year();
     auto l = vector<SolarTime>();
     // 月地支距寅月的偏移值
     int m = month.get_earth_branch().next(-2).get_index();
@@ -4533,7 +4612,7 @@ vector<SolarTime> EightChar::get_solar_times(const int start_year, const int end
 
 string EightChar::get_name() const
 {
-    return year.to_string() + " " + month.to_string() + " " + day.to_string() + " " + hour.to_string();
+    return three_pillars.to_string() + " " + hour.to_string();
 }
 
 EightChar DefaultEightCharProvider::get_eight_char(const LunarHour hour) const
@@ -4988,7 +5067,12 @@ string LegalHoliday::DATA =
     "002025013011-012025013111-022025020111-032025020211-032025020311-042025020411-052025020801-092025040412+"
     "002025040512-012025040612-022025042703+042025050113+002025050213-012025050313-022025050413-032025050513-"
     "042025053114+002025060114-012025060214-022025092807+032025100117+002025100217-012025100317-022025100417-"
-    "032025100517-042025100617-052025100717-062025100817-072025101107-10";
+    "032025100517-042025100617-052025100717-062025100817-072025101107-102026010110+002026010210-012026010310-"
+    "022026010400-032026021401+032026021511+022026021611+012026021711+002026021811-012026021911-022026022011-"
+    "032026022111-042026022211-052026022311-062026022801-112026040412+012026040512+002026040612-012026050113+"
+    "002026050213-012026050313-022026050413-032026050513-042026050903-082026061914+002026062014-012026062114-"
+    "022026092006+052026092515+002026092615-012026092715-022026100116+002026100216-012026100316-022026100416-"
+    "032026100516-042026100616-052026100716-062026101006-09";
 
 SolarDay LegalHoliday::compute_target(const string& data) const
 {
@@ -5219,8 +5303,7 @@ optional<LunarFestival> LunarFestival::from_index(const int year, const int inde
         }
         if ('1' == d) {
             SolarTerm solar_term = SolarTerm::from_index(year, stoi(data.substr(4)));
-            return LunarFestival(FestivalType::TERM, solar_term.get_julian_day().get_solar_day().get_lunar_day(),
-                                 solar_term, data);
+            return LunarFestival(FestivalType::TERM, solar_term.get_solar_day().get_lunar_day(), solar_term, data);
         }
         if ('2' == d) {
             return LunarFestival(FestivalType::EVE, LunarDay::from_ymd(year + 1, 1, 1).next(-1), nullopt, data);
@@ -5233,7 +5316,7 @@ optional<LunarFestival> LunarFestival::from_ymd(int year, int month, int day)
 {
     char buffer[15];
     snprintf(buffer, sizeof(buffer), "@\\d{2}0%02d%02d", month, day);
-    const string pattern = string(buffer);
+    const auto pattern = string(buffer);
     const regex re(pattern);
     smatch match;
     if (regex_search(DATA, match, re)) {
@@ -5245,7 +5328,7 @@ optional<LunarFestival> LunarFestival::from_ymd(int year, int month, int day)
     while (regex_search(start, DATA.cend(), match, re1)) {
         const string data = match[0];
         SolarTerm solar_term = SolarTerm::from_index(year, stoi(data.substr(4)));
-        if (LunarDay lunar_day = solar_term.get_julian_day().get_solar_day().get_lunar_day();
+        if (LunarDay lunar_day = solar_term.get_solar_day().get_lunar_day();
             lunar_day.get_year() == year && lunar_day.get_month() == month && lunar_day.get_day() == day) {
             return LunarFestival(FestivalType::TERM, lunar_day, solar_term, data);
         }
