@@ -76,7 +76,7 @@ bool cmd(int argc, char** argv, CmdParam& param)
     app.add_option("-j,--ju", param.ju, "局数(默认自动局数)");
     app.add_option("-z,--zone", param.zone, "与现在的时间差值(单位为小时，默认为0)");
     app.add_option("-a,--angan", param.angan,
-                   "暗干排法（默认0）："
+                   "暗干排法（默认0）：\n"
                    "[0,门原宫位地盘]\n"
                    "[1,入值使门]");
 

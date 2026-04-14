@@ -32,7 +32,7 @@ git clone --recursive https://github.com/taynpg/csp
 
 ![help](https://github.com/taynpg/csp/raw/main/images/help.png)
 
-下面是一个示例排盘：
+下面是一个示例排盘（暗干目前支持2种排法）：
 
 ![demo](https://github.com/taynpg/csp/raw/main/images/demo.png)
 
