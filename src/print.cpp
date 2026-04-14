@@ -109,7 +109,7 @@ void QimenPrint::print_base()
     std::cout << ConsoleColor::White << std::setw(2) << std::setfill('0') << solar.day << "日 ";
     std::cout << ConsoleColor::White << std::setw(2) << std::setfill('0') << solar.hour << "时";
     std::cout << ConsoleColor::White << std::setw(2) << std::setfill('0') << solar.min << "分";
-    std::cout << ConsoleColor::White << std::setw(2) << std::setfill('0') << solar.sec << "秒       ";
+    std::cout << ConsoleColor::White << std::setw(2) << std::setfill('0') << solar.sec << "秒                ";
     std::cout << ConsoleColor::Cyan << CSP_VERSION << std::endl;
 
     std::cout << ConsoleColor::Green << SPLIT_LINE << std::endl;
@@ -126,10 +126,10 @@ void QimenPrint::print_base()
     };
 
     const auto& gz = Qimen::jiazi(*cal);
-    std::cout << "农历：" << ConsoleColor::BrightGreen << yearToChinese(lunar.year) << "年 ";
-    std::cout << ConsoleColor::BrightGreen << CZhData::mon(lunar.mon - 1) << "月";
-    std::cout << ConsoleColor::BrightGreen << CZhData::lunar_day(lunar.day - 1) << "日 ";
-    std::cout << ConsoleColor::BrightGreen << CZhData::zhi((lunar.hour + 1) / 2 % 12) << "时\n";
+    std::cout << "农历：" << ConsoleColor::White << yearToChinese(lunar.year) << "年 ";
+    std::cout << ConsoleColor::White << CZhData::mon(lunar.mon - 1) << "月";
+    std::cout << ConsoleColor::White << CZhData::lunar_day(lunar.day - 1) << "日 ";
+    std::cout << ConsoleColor::BrightGreen << CZhData::zhi((lunar.hour + 1) / 2 % 12) << ConsoleColor::White << "时\n";
 
     // std::cout << ConsoleColor::Green << SPLIT_LINE  << std::endl;
     std::cout << ConsoleColor::Green << "干支：" << ConsoleColor::BrightGreen << CZhData::gan(gz.yi % 10) << "  ";
@@ -143,20 +143,20 @@ void QimenPrint::print_base()
 
     switch (type_) {
     case 1: {
-        std::cout << ConsoleColor::Green << "<时家转盘超接置润法>" << std::endl;
+        std::cout << ConsoleColor::Green << "         <时家转盘超接置润法>" << std::endl;
         break;
     }
     case 2: {
         std::string szYueJiang = CZhData::zhi(qmd.yuejiang_);
-        std::cout << ConsoleColor::Green << " (月将:" << szYueJiang << ")(时家阴盘)" << std::endl;
+        std::cout << ConsoleColor::Green << "          (月将:" << szYueJiang << ")(时家阴盘)" << std::endl;
         break;
     }
     case 3: {
-        std::cout << ConsoleColor::Green << "    <时家转盘拆补法>" << std::endl;
+        std::cout << ConsoleColor::Green << "             <时家转盘拆补法>" << std::endl;
         break;
     }
     case 4: {
-        std::cout << ConsoleColor::Green << "    <时家转盘茅山法>" << std::endl;
+        std::cout << ConsoleColor::Green << "             <时家转盘茅山法>" << std::endl;
         break;
     }
     default:
@@ -195,7 +195,7 @@ void QimenPrint::print_base()
     } else {
         szYuan = jieQi + szYuan;
     }
-    std::cout << ConsoleColor::White << "   [" << ConsoleColor::Cyan << szYuan << ConsoleColor::White << "]";
+    std::cout << ConsoleColor::White << "            [" << ConsoleColor::BrightWhite << szYuan << ConsoleColor::White << "]";
     std::string dun;
     if (qmd.is_yin) {
         dun = "阴遁" + CZhData::num(qmd.ju);
@@ -231,7 +231,7 @@ void QimenPrint::print_other()
     std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", fqdt.mon, fqdt.day, fqdt.hour, fqdt.min, fqdt.sec);
     std::cout << ConsoleColor::BrightGreen << std::string(szTem);
 
-    std::cout << ConsoleColor::White << "  [" << ConsoleColor::Green << CZhData::jq(secondIndex) << ConsoleColor::White
+    std::cout << ConsoleColor::White << "           [" << ConsoleColor::Green << CZhData::jq(secondIndex) << ConsoleColor::White
               << "]：";
     std::snprintf(szTem, sizeof(szTem), "%02d-%02d %02d:%02d:%02d", sqdt.mon, sqdt.day, sqdt.hour, sqdt.min, sqdt.sec);
     std::cout << ConsoleColor::BrightGreen << std::string(szTem) << std::endl;
