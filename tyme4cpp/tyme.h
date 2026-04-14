@@ -8,6 +8,7 @@
 #undef OUT
 #endif
 #include "util.h"
+#include <array>
 #include <cmath>
 #include <map>
 #include <mutex>
@@ -15,6 +16,7 @@
 #include <regex>
 #include <sstream>
 #include <string>
+#include <utility>
 
 using namespace std;
 using namespace tyme::util;
@@ -60,6 +62,18 @@ enum class Side {
 enum class YinYang {
     YIN = 0,
     YANG = 1
+};
+
+/**
+ * @brief 事件类型
+ */
+enum class EventType {
+    SOLAR_DAY = 0,
+    SOLAR_WEEK = 1,
+    LUNAR_DAY = 2,
+    TERM_DAY = 3,
+    TERM_HS = 4,
+    TERM_EB = 5
 };
 
 /**
@@ -112,6 +126,178 @@ public:
      * @return 索引，从0开始
      */
     static int index_of(int index, int size);
+};
+
+/**
+ * @brief 年
+ */
+class YearUnit : public AbstractCulture
+{
+public:
+    ~YearUnit() override = default;
+
+    explicit YearUnit(const int year) : AbstractCulture()
+    {
+        this->year = year;
+    }
+
+    /**
+     * @brief 年
+     * @return 年
+     */
+    int get_year() const;
+
+protected:
+    /**
+     * @brief 年
+     */
+    int year;
+};
+
+/**
+ * @brief 月
+ */
+class MonthUnit : public YearUnit
+{
+public:
+    ~MonthUnit() override = default;
+
+    explicit MonthUnit(const int year, const int month) : YearUnit(year)
+    {
+        this->month = month;
+    }
+
+    /**
+     * @brief 月
+     * @return 月
+     */
+    int get_month() const;
+
+protected:
+    /**
+     * @brief 月
+     */
+    int month;
+};
+
+/**
+ * @brief 日
+ */
+class DayUnit : public MonthUnit
+{
+public:
+    ~DayUnit() override = default;
+
+    explicit DayUnit(const int year, const int month, const int day) : MonthUnit(year, month)
+    {
+        this->day = day;
+    }
+
+    /**
+     * @brief 日
+     * @return 日
+     */
+    int get_day() const;
+
+protected:
+    /**
+     * @brief 日
+     */
+    int day;
+};
+
+/**
+ * @brief 周
+ */
+class WeekUnit : public MonthUnit
+{
+public:
+    ~WeekUnit() override = default;
+
+    explicit WeekUnit(const int year, const int month, const int index, const int start) : MonthUnit(year, month)
+    {
+        this->index = index;
+        this->start = start;
+    }
+
+    static void validate(int index, int start);
+
+    /**
+     * @brief 索引
+     * @return 索引，0-5
+     */
+    int get_index() const;
+
+    /**
+     * @brief 起始星期
+     * @return 起始星期，1234560分别代表星期一至星期天
+     */
+    int get_start() const;
+
+protected:
+    /**
+     * @brief 索引，0-5
+     */
+    int index;
+
+    /**
+     * @brief 起始星期，1234560分别代表星期一至星期天
+     */
+    int start;
+};
+
+/**
+ * @brief 秒
+ */
+class SecondUnit : public DayUnit
+{
+public:
+    ~SecondUnit() override = default;
+
+    explicit SecondUnit(const int year, const int month, const int day, const int hour, const int minute,
+                        const int second)
+        : DayUnit(year, month, day)
+    {
+        this->hour = hour;
+        this->minute = minute;
+        this->second = second;
+    }
+
+    static void validate(int hour, int minute, int second);
+
+    /**
+     * @brief 时
+     * @return 时
+     */
+    int get_hour() const;
+
+    /**
+     * @brief 分
+     * @return 分
+     */
+    int get_minute() const;
+
+    /**
+     * @brief 秒
+     * @return 秒
+     */
+    int get_second() const;
+
+protected:
+    /**
+     * @brief 时
+     */
+    int hour;
+
+    /**
+     * @brief 分
+     */
+    int minute;
+
+    /**
+     * @brief 秒
+     */
+    int second;
 };
 
 /**
@@ -182,10 +368,10 @@ public:
 
     /**
      * @brief 转换为不超范围的索引
-     * @param index 索引
+     * @param i 索引
      * @return 索引，从0开始
      */
-    int index_of(int index) const;
+    int index_of(int i) const;
 
     /**
      * @brief 推移后的索引
@@ -195,11 +381,25 @@ public:
     int next_index(int n) const;
 
     /**
-     * @brief 到目标索引的步数
+     * @brief 到目标索引的步数（从左往右顺序）
      * @param target_index 目标索引
-     * @return 步数
+     * @return 步数（>=0）
      */
     int steps_to(int target_index) const;
+
+    /**
+     * @brief 到目标索引的步数（从右往左逆序）
+     * @param target_index 目标索引
+     * @return 步数（<=0）
+     */
+    int steps_back_to(int target_index) const;
+
+    /**
+     * @brief 到目标索引的最少步数
+     * @param target_index 目标索引
+     * @return 步数（从左往右顺序>=0，从右往左逆序<=0）
+     */
+    int steps_close_to(int target_index) const;
 
 protected:
     /**
@@ -587,6 +787,7 @@ public:
  * @brief 七曜（七政、七纬、七耀）
  */
 class SevenStar;
+
 /**
  * @brief 星期
  */
@@ -653,6 +854,7 @@ public:
  * @brief 地支
  */
 class EarthBranch;
+
 /**
  * @brief 生肖
  */
@@ -690,6 +892,7 @@ public:
  * @brief 神兽
  */
 class Beast;
+
 /**
  * @brief 宫
  */
@@ -2044,21 +2247,31 @@ protected:
 class KitchenGodSteed;
 
 /**
+ * @brief 农历日
+ */
+class LunarDay;
+
+/**
  * @brief 农历月
  */
 class LunarMonth;
 
 /**
+ * @brief 农历周
+ */
+class LunarWeek;
+
+/**
  * @brief 农历年
  */
-class LunarYear : public AbstractCulture
+class LunarYear : public YearUnit
 {
 public:
     ~LunarYear() override = default;
 
     static vector<vector<int>> LEAP;
 
-    explicit LunarYear(const int year) : AbstractCulture()
+    explicit LunarYear(const int year) : YearUnit(year)
     {
         static once_flag flag;
         call_once(flag, [] {
@@ -2160,26 +2373,18 @@ public:
                 LEAP.push_back(l);
             }
         });
-        if (year < -1 || year > 9999) {
-            throw invalid_argument("illegal lunar year: " + std::to_string(year));
-        }
-        this->year = year;
+        validate(year);
     }
 
-    LunarYear(const LunarYear& other)
+    LunarYear(const LunarYear& other) : YearUnit(other.year)
     {
-        year = other.year;
     }
 
     LunarYear& operator=(const LunarYear& other);
 
-    static LunarYear from_year(int year);
+    static void validate(int year);
 
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
+    static LunarYear from_year(int year);
 
     /**
      * @brief 干支
@@ -2244,12 +2449,6 @@ public:
      * @return 农历月列表
      */
     vector<LunarMonth> get_months() const;
-
-protected:
-    /**
-     * @brief 年
-     */
-    int year;
 };
 
 /**
@@ -2358,77 +2557,31 @@ protected:
      */
     double cursory_julian_day = 0;
 
-    void init_by_year(int year, int offset);
+    void init_by_year(int y, int offset);
 };
 
 /**
  * @brief 农历月
  */
-class LunarMonth : public AbstractCulture
+class LunarMonth : public MonthUnit
 {
 public:
     ~LunarMonth() override = default;
 
     static const vector<string> NAMES;
 
-    LunarMonth(const LunarMonth& other)
-        : year(other.year),
-          month(other.month),
-          leap(other.leap),
-          day_count(other.day_count),
-          index_in_year(other.index_in_year),
-          first_julian_day(other.first_julian_day)
+    LunarMonth(const LunarMonth& other) : MonthUnit(other.year, other.month), leap(other.leap)
     {
     }
 
     LunarMonth& operator=(const LunarMonth& other);
 
-    explicit LunarMonth(const int year, const int month)
-        : AbstractCulture(), year(LunarYear::from_year(year)), first_julian_day(0)
+    explicit LunarMonth(const int year, const int month) : MonthUnit(year, abs(month)), leap(month < 0)
     {
-        if (month == 0 || month > 12 || month < -12) {
-            throw invalid_argument(&"illegal lunar month: "[month]);
-        }
-        const int m = abs(month);
-        const bool leap = month < 0;
-        const int current_leap_month = this->year.get_leap_month();
-        if (leap && m != current_leap_month) {
-            throw invalid_argument("illegal leap month " + std::to_string(m) + " in lunar year" + std::to_string(year));
-        }
-
-        // 冬至
-        const double dong_zhi_jd = SolarTerm::from_index(year, 0).get_cursory_julian_day();
-
-        // 冬至前的初一，今年首朔的日月黄经差
-        double w = ShouXingUtil::calc_shuo(dong_zhi_jd);
-        if (w > dong_zhi_jd) {
-            w -= 29.53;
-        }
-
-        // 正常情况正月初一为第3个朔日，但有些特殊的
-        int offset = 2;
-        if (year > 8 && year < 24) {
-            offset = 1;
-        } else if (LunarYear::from_year(year - 1).get_leap_month() > 10 && year != 239 && year != 240) {
-            offset = 3;
-        }
-
-        // 位于当年的索引
-        int index = m - 1;
-        if (leap || (current_leap_month > 0 && m > current_leap_month)) {
-            index += 1;
-        }
-        this->index_in_year = index;
-
-        // 本月初一
-        w += 29.5306 * (offset + index);
-        const double first_day = ShouXingUtil::calc_shuo(w);
-        this->first_julian_day = JulianDay::from_julian_day(JulianDay::J2000 + first_day);
-        // 本月天数 = 下月初一 - 本月初一
-        this->day_count = static_cast<int>(ShouXingUtil::calc_shuo(w + 29.5306) - first_day);
-        this->month = m;
-        this->leap = leap;
+        validate(year, month);
     }
+
+    static void validate(int year, int month);
 
     static LunarMonth from_ym(int year, int month);
 
@@ -2437,18 +2590,6 @@ public:
      * @return 农历年
      */
     LunarYear get_lunar_year() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
 
     /**
      * @brief 月
@@ -2529,47 +2670,38 @@ public:
      */
     MinorRen get_minor_ren() const;
 
+    /**
+     * @brief 本月的农历周列表
+     * @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
+     * @return 农历周列表
+     */
+    vector<LunarWeek> get_weeks(int start) const;
+
+    /**
+     * @brief 本月的农历日列表
+     * @return 农历日列表
+     */
+    vector<LunarDay> get_days() const;
+
+    /**
+     * @brief 初一
+     * @return 农历日
+     */
+    LunarDay get_first_day() const;
+
 protected:
-    /**
-     * @brief 农历年
-     */
-    LunarYear year;
-
-    /**
-     * @brief 月
-     */
-    int month;
-
     /**
      * @brief 是否闰月
      */
     bool leap;
 
-    /**
-     * @brief 天数
-     */
-    int day_count;
-
-    /**
-     * @brief 位于当年的索引，0-12
-     */
-    int index_in_year;
-
-    /**
-     * @brief 初一的儒略日
-     */
-    JulianDay first_julian_day;
+    double get_new_moon() const;
 };
-
-/**
- * @brief 农历日
- */
-class LunarDay;
 
 /**
  * @brief 农历周
  */
-class LunarWeek : public AbstractCulture
+class LunarWeek : public WeekUnit
 {
 public:
     ~LunarWeek() override = default;
@@ -2577,20 +2709,12 @@ public:
     static const vector<string> NAMES;
 
     explicit LunarWeek(const int year, const int month, const int index, const int start)
-        : AbstractCulture(), month(LunarMonth::from_ym(year, month)), start(Week::from_index(start))
+        : WeekUnit(year, month, index, start)
     {
-        if (index < 0 || index > 5) {
-            throw invalid_argument("illegal lunar week index: " + std::to_string(index));
-        }
-        if (start < 0 || start > 6) {
-            throw invalid_argument("illegal lunar week start: " + std::to_string(start));
-        }
-        if (index >= this->month.get_week_count(start)) {
-            throw invalid_argument("illegal lunar week index: " + std::to_string(index) +
-                                   " in month: " + this->month.to_string());
-        }
-        this->index = index;
+        validate(year, month, index, start);
     }
+
+    static void validate(int year, int month, int index, int start);
 
     static LunarWeek from_ym(int year, int month, int index, int start);
 
@@ -2599,30 +2723,6 @@ public:
      * @return 农历月
      */
     LunarMonth get_lunar_month() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
-
-    /**
-     * @brief 索引，0-5
-     * @return 索引
-     */
-    int get_index() const;
-
-    /**
-     * @brief 起始星期
-     * @return 星期
-     */
-    Week get_start() const;
 
     string get_name() const override;
 
@@ -2643,22 +2743,6 @@ public:
      * @return 农历日列表
      */
     vector<LunarDay> get_days() const;
-
-protected:
-    /**
-     * @brief 公历月
-     */
-    LunarMonth month;
-
-    /**
-     * @brief 索引，0-5
-     */
-    int index;
-
-    /**
-     * @brief 起始星期
-     */
-    Week start;
 };
 
 /**
@@ -2683,20 +2767,19 @@ class ThreePillars;
 /**
  * @brief 农历日
  */
-class LunarDay : public AbstractCulture
+class LunarDay : public DayUnit
 {
 public:
     ~LunarDay() override = default;
 
     static const vector<string> NAMES;
 
-    explicit LunarDay(const int year, const int month, const int day)
-        : AbstractCulture(), month(LunarMonth::from_ym(year, month)), day(day)
+    explicit LunarDay(const int year, const int month, const int day) : DayUnit(year, month, day)
     {
-        if (day < 1 || day > this->month.get_day_count()) {
-            throw invalid_argument("illegal day " + std::to_string(day) + " in " + this->month.to_string());
-        }
+        validate(year, month, day);
     }
+
+    static void validate(int year, int month, int day);
 
     static LunarDay from_ymd(int year, int month, int day);
 
@@ -2705,24 +2788,6 @@ public:
      * @return 农历月
      */
     LunarMonth get_lunar_month() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
-
-    /**
-     * @brief 日
-     * @return 日
-     */
-    int get_day() const;
 
     string get_name() const override;
 
@@ -2859,23 +2924,7 @@ public:
      * @return 三柱
      */
     ThreePillars get_three_pillars() const;
-
-protected:
-    /**
-     * @brief 农历月
-     */
-    LunarMonth month;
-
-    /**
-     * @brief 日
-     */
-    int day;
 };
-
-/**
- * @brief 公历时刻
- */
-class SolarTime;
 
 /**
  * @brief 干支时辰
@@ -2929,7 +2978,7 @@ public:
 /**
  * @brief 农历时辰
  */
-class LunarHour : public AbstractCulture
+class LunarHour : public SecondUnit
 {
 public:
     ~LunarHour() override = default;
@@ -2941,21 +2990,12 @@ public:
 
     explicit LunarHour(const int year, const int month, const int day, const int hour, const int minute,
                        const int second)
-        : AbstractCulture(), day(LunarDay::from_ymd(year, month, day))
+        : SecondUnit(year, month, day, hour, minute, second)
     {
-        if (hour < 0 || hour > 23) {
-            throw invalid_argument("illegal hour: " + std::to_string(hour));
-        }
-        if (minute < 0 || minute > 59) {
-            throw invalid_argument("illegal minute: " + std::to_string(minute));
-        }
-        if (second < 0 || second > 59) {
-            throw invalid_argument("illegal second: " + std::to_string(second));
-        }
-        this->hour = hour;
-        this->minute = minute;
-        this->second = second;
+        validate(year, month, day, hour, minute, second);
     }
+
+    static void validate(int year, int month, int day, int hour, int minute, int second);
 
     static LunarHour from_ymd_hms(int year, int month, int day, int hour, int minute, int second);
 
@@ -2964,42 +3004,6 @@ public:
      * @return 农历日
      */
     LunarDay get_lunar_day() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
-
-    /**
-     * @brief 日
-     * @return 日
-     */
-    int get_day() const;
-
-    /**
-     * @brief 时
-     * @return 时
-     */
-    int get_hour() const;
-
-    /**
-     * @brief 分
-     * @return 分
-     */
-    int get_minute() const;
-
-    /**
-     * @brief 秒
-     * @return 秒
-     */
-    int get_second() const;
 
     string get_name() const override;
 
@@ -3080,27 +3084,6 @@ public:
      * @return 八字
      */
     EightChar get_eight_char() const;
-
-protected:
-    /**
-     * @brief 农历日
-     */
-    LunarDay day;
-
-    /**
-     * @brief 时
-     */
-    int hour;
-
-    /**
-     * @brief 分
-     */
-    int minute;
-
-    /**
-     * @brief 秒
-     */
-    int second;
 };
 
 /**
@@ -3159,26 +3142,19 @@ class SolarHalfYear;
 /**
  * @brief 公历年
  */
-class SolarYear : public AbstractCulture
+class SolarYear : public YearUnit
 {
 public:
     ~SolarYear() override = default;
 
-    explicit SolarYear(const int year) : AbstractCulture()
+    explicit SolarYear(const int year) : YearUnit(year)
     {
-        if (year < 1 || year > 9999) {
-            throw invalid_argument("illegal solar year: " + std::to_string(year));
-        }
-        this->year = year;
+        validate(year);
     }
 
-    static SolarYear from_year(int year);
+    static void validate(int year);
 
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
+    static SolarYear from_year(int year);
 
     /**
      * @brief 天数（1582年355天，平年365天，闰年366天）
@@ -3213,31 +3189,25 @@ public:
      * @return 半年列表
      */
     vector<SolarHalfYear> get_half_years() const;
-
-protected:
-    /**
-     * @brief 年
-     */
-    int year;
 };
 
 /**
  * @brief 公历半年
  */
-class SolarHalfYear : public AbstractCulture
+class SolarHalfYear : public YearUnit
 {
 public:
     ~SolarHalfYear() override = default;
 
     static const vector<string> NAMES;
 
-    explicit SolarHalfYear(const int year, const int index) : AbstractCulture(), year(SolarYear::from_year(year))
+    explicit SolarHalfYear(const int year, const int index) : YearUnit(year)
     {
-        if (index < 0 || index > 1) {
-            throw invalid_argument("illegal solar half year index: " + std::to_string(index));
-        }
+        validate(year, index);
         this->index = index;
     }
+
+    static void validate(int year, int index);
 
     static SolarHalfYear from_index(int year, int index);
 
@@ -3246,12 +3216,6 @@ public:
      * @return 公历年
      */
     SolarYear get_solar_year() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
 
     /**
      * @brief 索引
@@ -3279,11 +3243,6 @@ public:
 
 protected:
     /**
-     * @brief 年
-     */
-    SolarYear year;
-
-    /**
      * @brief 索引，0-1
      */
     int index;
@@ -3292,20 +3251,20 @@ protected:
 /**
  * @brief 公历季度
  */
-class SolarSeason : public AbstractCulture
+class SolarSeason : public YearUnit
 {
 public:
     ~SolarSeason() override = default;
 
     static const vector<string> NAMES;
 
-    explicit SolarSeason(const int year, const int index) : AbstractCulture(), year(SolarYear::from_year(year))
+    explicit SolarSeason(const int year, const int index) : YearUnit(year)
     {
-        if (index < 0 || index > 3) {
-            throw invalid_argument("illegal solar season index: " + std::to_string(index));
-        }
+        validate(year, index);
         this->index = index;
     }
+
+    static void validate(int year, int index);
 
     static SolarSeason from_index(int year, int index);
 
@@ -3314,12 +3273,6 @@ public:
      * @return 公历年
      */
     SolarYear get_solar_year() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
 
     /**
      * @brief 索引
@@ -3341,25 +3294,15 @@ public:
 
 protected:
     /**
-     * @brief 年
-     */
-    SolarYear year;
-
-    /**
      * @brief 索引，0-3
      */
     int index;
 };
 
 /**
- * @brief 公历日
- */
-class SolarDay;
-
-/**
  * @brief 公历月
  */
-class SolarMonth : public AbstractCulture
+class SolarMonth : public MonthUnit
 {
 public:
     ~SolarMonth() override = default;
@@ -3367,13 +3310,12 @@ public:
     static const vector<string> NAMES;
     static const int DAYS[];
 
-    explicit SolarMonth(const int year, const int month) : AbstractCulture(), year(SolarYear::from_year(year))
+    explicit SolarMonth(const int year, const int month) : MonthUnit(year, month)
     {
-        if (month < 1 || month > 12) {
-            throw invalid_argument("illegal solar month: " + std::to_string(month));
-        }
-        this->month = month;
+        validate(year, month);
     }
+
+    static void validate(int year, int month);
 
     static SolarMonth from_ym(int year, int month);
 
@@ -3382,18 +3324,6 @@ public:
      * @return 公历年
      */
     SolarYear get_solar_year() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
 
     /**
      * @brief 天数（1582年10月只有21天)
@@ -3439,16 +3369,11 @@ public:
      */
     vector<SolarDay> get_days() const;
 
-protected:
     /**
-     * @brief 年
+     * @brief 本月第1天
+     * @return 公历日
      */
-    SolarYear year;
-
-    /**
-     * @brief 月
-     */
-    int month;
+    SolarDay get_first_day() const;
 };
 
 /**
@@ -3469,31 +3394,19 @@ class RabByungDay;
 /**
  * @brief 公历日
  */
-class SolarDay : public AbstractCulture
+class SolarDay : public DayUnit
 {
 public:
     ~SolarDay() override = default;
 
     static const vector<string> NAMES;
 
-    explicit SolarDay(const int year, const int month, const int day)
-        : AbstractCulture(), month(SolarMonth::from_ym(year, month))
+    explicit SolarDay(const int year, const int month, const int day) : DayUnit(year, month, day)
     {
-        if (day < 1) {
-            throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) + "-" +
-                                   std::to_string(day));
-        }
-        if (1582 == year && 10 == month) {
-            if ((day > 4 && day < 15) || day > 31) {
-                throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) +
-                                       "-" + std::to_string(day));
-            }
-        } else if (day > this->month.get_day_count()) {
-            throw invalid_argument("illegal solar day: " + std::to_string(year) + "-" + std::to_string(month) + "-" +
-                                   std::to_string(day));
-        }
-        this->day = day;
+        validate(year, month, day);
     }
+
+    static void validate(int year, int month, int day);
 
     static SolarDay from_ymd(int year, int month, int day);
 
@@ -3502,24 +3415,6 @@ public:
      * @return 公历月
      */
     SolarMonth get_solar_month() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
-
-    /**
-     * @brief 日
-     * @return 日
-     */
-    int get_day() const;
 
     /**
      * @brief 星期
@@ -3664,23 +3559,12 @@ public:
      * @return 月相
      */
     Phase get_phase() const;
-
-protected:
-    /**
-     * @brief 公历月
-     */
-    SolarMonth month;
-
-    /**
-     * @brief 日
-     */
-    int day;
 };
 
 /**
  * @brief 公历周
  */
-class SolarWeek : public AbstractCulture
+class SolarWeek : public WeekUnit
 {
 public:
     ~SolarWeek() override = default;
@@ -3688,20 +3572,12 @@ public:
     static const vector<string> NAMES;
 
     explicit SolarWeek(const int year, const int month, const int index, const int start)
-        : AbstractCulture(), month(SolarMonth::from_ym(year, month)), start(Week::from_index(start))
+        : WeekUnit(year, month, index, start)
     {
-        if (index < 0 || index > 5) {
-            throw invalid_argument("illegal solar week index: " + std::to_string(index));
-        }
-        if (start < 0 || start > 6) {
-            throw invalid_argument("illegal solar week start: " + std::to_string(start));
-        }
-        if (index >= this->month.get_week_count(start)) {
-            throw invalid_argument("illegal solar week index: " + std::to_string(index) +
-                                   " in month: " + this->month.to_string());
-        }
-        this->index = index;
+        validate(year, month, index, start);
     }
+
+    static void validate(int year, int month, int index, int start);
 
     static SolarWeek from_ym(int year, int month, int index, int start);
 
@@ -3712,34 +3588,10 @@ public:
     SolarMonth get_solar_month() const;
 
     /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
-
-    /**
-     * @brief 索引，0-5
-     * @return 索引
-     */
-    int get_index() const;
-
-    /**
      * @brief 位于当年的索引
      * @return 索引
      */
     int get_index_in_year() const;
-
-    /**
-     * @brief 起始星期
-     * @return 星期
-     */
-    Week get_start() const;
 
     string get_name() const override;
 
@@ -3760,38 +3612,18 @@ public:
      * @return 公历日列表
      */
     vector<SolarDay> get_days() const;
-
-protected:
-    /**
-     * @brief 公历月
-     */
-    SolarMonth month;
-
-    /**
-     * @brief 索引，0-5
-     */
-    int index;
-
-    /**
-     * @brief 起始星期
-     */
-    Week start;
 };
-
-/**
- * @brief 干支时辰
- */
-class SixtyCycleHour;
 
 /**
  * @brief 公历时刻
  */
-class SolarTime : public AbstractCulture
+class SolarTime : public SecondUnit
 {
 public:
     ~SolarTime() override = default;
 
-    SolarTime(const SolarTime& other) : day(other.day), hour(other.hour), minute(other.minute), second(other.second)
+    SolarTime(const SolarTime& other)
+        : SecondUnit(other.year, other.month, other.day, other.hour, other.minute, other.second)
     {
     }
 
@@ -3799,21 +3631,12 @@ public:
 
     explicit SolarTime(const int year, const int month, const int day, const int hour, const int minute,
                        const int second)
-        : AbstractCulture(), day(SolarDay::from_ymd(year, month, day))
+        : SecondUnit(year, month, day, hour, minute, second)
     {
-        if (hour < 0 || hour > 23) {
-            throw invalid_argument("illegal hour: " + std::to_string(hour));
-        }
-        if (minute < 0 || minute > 59) {
-            throw invalid_argument("illegal minute: " + std::to_string(minute));
-        }
-        if (second < 0 || second > 59) {
-            throw invalid_argument("illegal second: " + std::to_string(second));
-        }
-        this->hour = hour;
-        this->minute = minute;
-        this->second = second;
+        validate(year, month, day, hour, minute, second);
     }
+
+    static void validate(int year, int month, int day, int hour, int minute, int second);
 
     static SolarTime from_ymd_hms(int year, int month, int day, int hour, int minute, int second);
 
@@ -3822,42 +3645,6 @@ public:
      * @return 公历日
      */
     SolarDay get_solar_day() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
-
-    /**
-     * @brief 日
-     * @return 日
-     */
-    int get_day() const;
-
-    /**
-     * @brief 时
-     * @return 时
-     */
-    int get_hour() const;
-
-    /**
-     * @brief 分
-     * @return 分
-     */
-    int get_minute() const;
-
-    /**
-     * @brief 秒
-     * @return 秒
-     */
-    int get_second() const;
 
     string get_name() const override;
 
@@ -3923,27 +3710,6 @@ public:
      * @return 月相
      */
     Phase get_phase() const;
-
-protected:
-    /**
-     * @brief 公历日
-     */
-    SolarDay day;
-
-    /**
-     * @brief 时
-     */
-    int hour;
-
-    /**
-     * @brief 分
-     */
-    int minute;
-
-    /**
-     * @brief 秒
-     */
-    int second;
 };
 
 /**
@@ -4272,10 +4038,6 @@ protected:
     PengZuEarthBranch peng_zu_earth_branch;
 };
 
-/**
- * @brief 干支时辰
- */
-class SixtyCycleHour;
 /**
  * @brief 干支日（立春换年，节令换月）
  */
@@ -5072,9 +4834,9 @@ protected:
     ChildLimitInfo info;
 
 private:
-    bool get_forward(const EightChar& eight_char, Gender gender);
+    bool get_forward(const EightChar& ec, Gender g);
 
-    ChildLimitInfo get_info(const SolarTime& birth_time, bool forward);
+    ChildLimitInfo get_info(const SolarTime& birth_time, bool f);
 };
 
 /**
@@ -5319,13 +5081,21 @@ class RabByungYear : public AbstractCulture
 public:
     ~RabByungYear() override = default;
 
-    explicit RabByungYear(const int rab_byung_index, const SixtyCycle& sixty_cycle)
-        : AbstractCulture(), rab_byung_index(rab_byung_index), sixty_cycle(sixty_cycle)
+    explicit RabByungYear(const int rab_byung_index, const int element_index, const int zodiac_index)
+        : AbstractCulture(), rab_byung_index(rab_byung_index), element_index(element_index), zodiac_index(zodiac_index)
     {
         if (rab_byung_index < 0 || rab_byung_index > 150) {
             throw invalid_argument("illegal rab-byung index: " + std::to_string(rab_byung_index));
         }
+        if (element_index < 0 || element_index >= RabByungElement::NAMES.size()) {
+            throw invalid_argument("illegal element index: " + std::to_string(element_index));
+        }
+        if (zodiac_index < 0 || zodiac_index >= Zodiac::NAMES.size()) {
+            throw invalid_argument("illegal zodiac index: " + std::to_string(zodiac_index));
+        }
     }
+
+    static void validate(int year);
 
     static RabByungYear from_sixty_cycle(int rab_byung_index, const SixtyCycle& sixty_cycle);
 
@@ -5404,15 +5174,20 @@ protected:
     int rab_byung_index;
 
     /**
-     * @brief 干支
+     * @brief 五行索引，从0开始
      */
-    SixtyCycle sixty_cycle;
+    int element_index;
+
+    /**
+     * @brief 生肖索引，从0开始
+     */
+    int zodiac_index;
 };
 
 /**
  * @brief 藏历月，仅支持藏历1950年十二月至藏历2050年十二月
  */
-class RabByungMonth : public AbstractCulture
+class RabByungMonth : public MonthUnit
 {
 public:
     ~RabByungMonth() override = default;
@@ -5421,14 +5196,13 @@ public:
     static const vector<string> ALIAS;
     static std::map<int, vector<int>> DAYS;
 
-    explicit RabByungMonth(const RabByungYear& year, const int month)
-        : AbstractCulture(), year(year), month(month), leap(month < 0)
+    explicit RabByungMonth(const int year, const int month) : MonthUnit(year, abs(month)), leap(month < 0)
     {
         static once_flag flag;
         call_once(flag, [] {
             int y = 1950;
             int m = 11;
-            std::istringstream years(
+            istringstream years(
                 R"(2c>,182[>1:2TA4ZI=n1E2Bk1J2Ff3Mk503Oc62g=,172^>1:2XA1>2UE2Bo1I2Fj3Lo62Fb3Mf5,03N^72b=1:2]A1>2ZF1B2VI2Em1K2Fe,2Lh1R3Na603P\:172Y>1;2UB2=m2Dq1J2Eh,2Kl1Q3Me603Pa:172^>1;2YA2=p1C2UI,2Dk2Jp3QEc3Mi603Pf:3L[72b?1:2]A1<2UB2XH,2Cn1I2Ei1L2Ie1Q3Na703Q\:2`@1;2XA,4\H;m1B2TI2Em1L2Ij1Q3Nf603Q`903QW:,2[@1;2TB2XI1E4TMAh2Io3RFe3Mj603Pc803Q[;,2^?1;2WA2>q1E2Bm1I2Fi1M2Hc3Of70,3P^82a>1:2[A1>2WE1B2TI2Fm1L2Hf3Ni6,03Oa703PZ:3`A62V>4]F;q1B4YJ>l2Eq1L2Gi3Ml5,03Nd603Q_9172[>1;2XB2>p1E2VK2Fl,1K2Fc3Mh603Pc9172`>1;2\B1>2UD2=j2En,1J2Fg3Mm62Ib3Pj;3M_703R[:2`B1=2YB2=n,1C2TI2Fk1L2Ig1P3Nd703Q_:152X<2[A,2<q1B2WI2Ep1L2Il1Q3Ni703Qc9152[:2^@,1;2WB2>o1E2Bk1I2Fh1M2Ib3Pf803R^9,2a?1;2ZA1>2UE2Bp1I2Fl1M2If3Oi80,3Pa803QY:2^A1>2ZE1B4WJ>j2Fp1M2Hi1N2H`,3Od703Q]:162Y>1;2VB2?o1E4VM@h2Gl1M,2Hd3Ng603Qa9172^>1;2ZB1?2UE2@l2Fo1L,2Gg3Mk62H`3Pf:172c?3QY;2_B1>2YD2?o1E,2TK2Fj1M2Ie1P3Mb703R^;172X=2\C1>,2TD2WJ2Fn1L2Ij1P3Ng703Rb:162[<2_B1=,2VC2>m1E4TMAh2Io3QFe3Nl82Ja3Qf:152_;0,3RU<2ZB1>2TE2Bn1I2Fj1M2Je3Pk:2K^3Ra:,03RY;2]A1>2XE1B2TI2Fo1M2Ii1P2Ka3Qd8,03R]:3bB62W>4]F:q1B2?n1F4VNAh2Il1O2Jd,3Pg803Q`:162\=1;2XB1?2TF2Bl2Ho1N,2Ig3Nk703Qd9162`>1;2]B1?2XE2Ao1G2TM,2Hj1M2Id1P3M_603R\;172W>2\E1@2TE,2?i2Gm1M2Ih1P3Md603Ra;172[=28q1?2WD,2?m2Fq1M2Il1P3Mi72I^3Re:162_<172W=,2ZC2?q1E2Bk1I2Fh1M2Jd1Q3M^52b;16,2Y<2]B1>2VE2Bp1I2Fm1M2Jh1Q2Lb3Re:15,2\;3aC62U>2[E1B4WJ>k1F4TNBg2Jl1P2Le3Qh9,03R`:172Z=1:2VB2?q1F2Bk2Ip1P2Jg,1P2J_3Qc:162^=1;2[B1?2WF2Bo1H2Bg2Ij,1O2Jc3Qg:3L\62c>3QY;3aC72V?2[F1A2TG2Bj,2Hm1N2Jg1P3Mb603R_;182Z>1:2T@2WF2Am,2Gp1M2Ik1P3Mg603Rc;172^>192W?2ZE,2@p1F2Bj2Io3QEe1M2Jb1Q3M]72b=182Z>,2]D1?2VE2Bn1I2Fk1M2Jg1Q3Ma62e<172]=,172U>2YE1B2UI2Fp1N2Jk1Q3Me503M\6,2`<172Y>3_F:2TB2?n1F2Cj2Jo3QDc2Lh1R,3L_52c;172]=1:2XB1?2UF2Cn1I2Eg2Kk1P,2Lb3Rf;162a=1:2]B1?2ZF1B2TH2Dj2Jm,1O2Kf1Q3M`603Q\;182Y?2;q1A2WH2Cm,2Hq1O2Ji1P3Me603Qa;182]>1:2WA2[G2Ap,1G2Bi2Im1P3Mi72I_3Qf;3N\72Eh1:2Z?29o,1@2UF2Bm1I2Fh1M2Je1Q3N`72f?3PY92]>19,2U?2YF2Bq1I2Fm1M2Jj1Q3Nd603O]72`=,182X?4]F:o1B4WI=k1F4UNCi2Jn3REc3Mh503N`6,2c<182\>1:2VA2?q1F2Cm1J2Fg2Lk1R3Mc5,2f<172`=1:2[A1?2XF2Cq1I2Ek2Kn1R,2Lf1R3N_62d>3PZ:3aC72W?2;p1B2WI2Dn1J,2De2Ki1Q3Mc603Q_:182\?1;2VB2<m2Cq1I,2Dh2Jl1P3Mg603Qd;182`?1;2ZA2<p1B,2UH2Cl1I2Ef3Mm82Jc1Q3N_703QY:2]@1;2UA,2XG2Bp1I2Fk1M2Jh1Q3Nc703Q]92`?1:,2X@4\G:n1B2VI2Fp1M2Jl1R3Ng603P`82d>,192[?1;2UA2>o1F2Ck1J2Gg3Mk603Oc70,3OZ82_>1:2YA1?2VF2Cp1J2Fj1M2Gc3Nf5,03O^72b>1:2^B1?4[G;n1C2VJ2Fn1L2Gf,3Mi503Nb603Q]:172Y?1<2UB2>m2Eq1K2Fi,2Kl1R3Mf603Qa:182^?1;2YB2>q1D2VJ,2Dl1J2Fe3Mj603Qg;3N]72c@3QX;2]A1=2VB,2YI2Co1J2Fi1M2Je1Q3Nb703R]:2aA1<2XA,2<n1C2UI2Fn1M2Jj1Q3Nf703Q`903RX:,2[@1<2TB4YJ>l1E4UNBi1J2Ge3Mk703Pc803Q[9,2^?1;2XB2>q1E2Cn1J2Gj1M2Ic3Of70,3P^82b?1;2\A1>2XF1C2UJ2Fm1M2Hf3Ni6,03Oa703Q[:3aB72W>1<2TC2?m2Fq1L2Gi3Ml5,03Ne703Q_:172\>1<2XB2?q1E2WL2Fl,1L2Gd3Ni603Qd:172a?1;2\B1>2VD2>k,2Eo1K2Gh1M2Ic1Q3N`703R\;3aC62U=2YC2>o,1D2TJ2Fl1M2Jh1Q3Ne703R`:162Y<2\B,1=2TC4XJ=j2Fp1M2Jm3QFc3Ni803Qc:152\;2_A,1<2WB2>o1E2Bl1J2Gh1N2Jc3Qg903R^:,2b@1;2[B1>2VE2Cq1J2Gl1N2Jf3Pj80,3Qa803RZ;2_B1>4[F:o1C4XK?k2Fp1M2Ii1O2Ia,3Pd703R^:172Y>1<2VC2?p1F2Ai2Hl1M,2Hd3Oh703Qb:172^>1<2[C1?2UE2Al2Go,1L2Hg3Nl82Ia3Qg;3M]72e@3RZ;3`C72T>2YD2@o1E,2TK2Gk1M2Jf1Q3Nb703R^;172Y=2\D1>,2TD4XK>i2Fo1M2Jj1Q3Ng703Rb;172\<2`C1=,2WC2?n1F4VNBi1J2Gf1N2Kb3Rf:162_;15,2V<2ZB1?2TE2Bn1J2Gk1N2Kf1Q2L^3Rb:,152Z;2^B1>2YE1B2UJ2Go1N2Ji1P2Kb3Qd9,03R];172X>1;2TC2@n1G2Bi2Im1O2Jd,3Ph803Ra:172\>1;2YC1@2UF2Bl2Hp1N,2Ig3Ol82J`3Qe:172a>1;4^C7q1?2XF2Ao1G2UN,2Hj1N2Jd1Q3N`703R];182X>2]F1@2TF,2@j2Gn1M2Jq1Q3Ne703Ra;172\>192T?,2WE2@m1F4TMAf2Im3QEc3Nj82J`3Rf;172_=182W>,2ZD2?q1F2Bl1I2Gj1N2Ke1R3M_62b<17,2Z=2]C1?2WE2Bq1I2Gn1N2Ki1Q3Mb52e;16,2]<172V>4[F:o1B4XK?l1G4UOCh2Jl1Q2Le3Rh:,152`;172Z>1;2WB2@q1G2Cl2Ip1P2K_)");
             string ys;
             while (getline(years, ys, ',')) {
@@ -5446,63 +5220,18 @@ public:
                 m = 0;
             }
         });
-        if (month == 0 || month > 12 || month < -12) {
-            throw invalid_argument("illegal rab-byung month: " + std::to_string(month));
-        }
-        const int y = year.get_year();
-        if (y < 1950 || y > 2050) {
-            throw invalid_argument("rab-byung year " + std::to_string(month) + " must between 1950 and 2050");
-        }
-        const int m = abs(month);
-        if (y == 1950 && m < 12) {
-            throw invalid_argument("month " + std::to_string(month) + " must be 12 in rab-byung year " +
-                                   std::to_string(y));
-        }
-        const int leap_month = year.get_leap_month();
-        if (leap && m != leap_month) {
-            throw invalid_argument("illegal leap month " + std::to_string(m) + " in rab-byung year " +
-                                   std::to_string(y));
-        }
-        // 位于当年的索引
-        int index = m - 1;
-        if (leap || (0 < leap_month && leap_month < m)) {
-            index += 1;
-        }
-        index_in_year = index;
+        validate(year, month);
     }
 
-    explicit RabByungMonth(const int year, const int month) : RabByungMonth(RabByungYear::from_year(year), month)
-    {
-    }
-
-    explicit RabByungMonth(const int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac,
-                           const int month)
-        : RabByungMonth(RabByungYear::from_element_zodiac(rab_byung_index, element, zodiac), month)
-    {
-    }
+    static void validate(int year, int month);
 
     static RabByungMonth from_ym(int year, int month);
-
-    static RabByungMonth from_element_zodiac(int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac,
-                                             int month);
 
     /**
      * @brief 藏历年
      * @return 藏历年
      */
     RabByungYear get_rab_byung_year() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
 
     /**
      * @brief 月
@@ -5574,24 +5303,9 @@ public:
 
 protected:
     /**
-     * @brief 藏历年
-     */
-    RabByungYear year;
-
-    /**
-     * @brief 月
-     */
-    int month;
-
-    /**
      * @brief 是否闰月
      */
     bool leap;
-
-    /**
-     * @brief 位于当年的索引，0-12
-     */
-    int index_in_year;
 };
 
 /**
@@ -5720,46 +5434,21 @@ protected:
 /**
  * @brief 藏历日，仅支持藏历1950年十二月初一（公历1951年1月8日）至藏历2050年十二月三十（公历2051年2月11日）
  */
-class RabByungDay : public AbstractCulture
+class RabByungDay : public DayUnit
 {
 public:
     ~RabByungDay() override = default;
 
     static const vector<string> NAMES;
 
-    explicit RabByungDay(const RabByungMonth& month, const int day)
-        : AbstractCulture(), month(month), day(day), leap(day < 0)
+    explicit RabByungDay(const int year, const int month, const int day) : DayUnit(year, month, abs(day)), leap(day < 0)
     {
-        if (day == 0 || day < -30 || day > 30) {
-            throw invalid_argument("illegal day " + std::to_string(day) + " in " + month.to_string());
-        }
-        const int d = abs(day);
-        if (leap) {
-            if (vector<int> l = month.get_leap_days(); find(l.begin(), l.end(), d) != l.end()) {
-                throw invalid_argument("illegal leap day " + std::to_string(d) + " in " + month.to_string());
-            }
-        }
-        if (!leap) {
-            if (vector<int> l = month.get_miss_days(); find(l.begin(), l.end(), d) != l.end()) {
-                throw invalid_argument("illegal day " + std::to_string(d) + " in " + month.to_string());
-            }
-        }
+        validate(year, month, day);
     }
 
-    explicit RabByungDay(const int year, const int month, const int day) : RabByungDay(RabByungMonth(year, month), day)
-    {
-    }
-
-    explicit RabByungDay(const int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac,
-                         const int month, const int day)
-        : RabByungDay(RabByungMonth(rab_byung_index, element, zodiac, month), day)
-    {
-    }
+    static void validate(int year, int month, int day);
 
     static RabByungDay from_ymd(int year, int month, int day);
-
-    static RabByungDay from_element_zodiac(int rab_byung_index, const RabByungElement& element, const Zodiac& zodiac,
-                                           int month, int day);
 
     static RabByungDay from_solar_day(const SolarDay& solar_day);
 
@@ -5768,24 +5457,6 @@ public:
      * @return 藏历月
      */
     RabByungMonth get_rab_byung_month() const;
-
-    /**
-     * @brief 年
-     * @return 年
-     */
-    int get_year() const;
-
-    /**
-     * @brief 月
-     * @return 月
-     */
-    int get_month() const;
-
-    /**
-     * @brief 日
-     * @return 日
-     */
-    int get_day() const;
 
     /**
      * @brief 是否闰日
@@ -5819,16 +5490,6 @@ public:
     RabByungDay next(int n) const;
 
 protected:
-    /**
-     * @brief 藏历月
-     */
-    RabByungMonth month;
-
-    /**
-     * @brief 日
-     */
-    int day;
-
     /**
      * @brief 是否闰日
      */
@@ -5919,6 +5580,246 @@ protected:
      * @brief 天索引
      */
     int day_index;
+};
+
+class EventBuilder;
+
+/**
+ * @brief 事件
+ */
+class Event : public AbstractCulture
+{
+public:
+    ~Event() override = default;
+
+    explicit Event(string name, const string& data) : name(std::move(name)), data(data)
+    {
+        validate(data);
+    }
+
+    static void validate(const string& data);
+
+    static EventBuilder builder();
+
+    static optional<Event> from_name(const string& name);
+
+    /**
+     * @brief 指定公历日的事件列表
+     * @param d 公历日
+     * @return 事件列表
+     */
+    static vector<Event> from_solar_day(const SolarDay& d);
+
+    /**
+     * @brief 所有事件
+     * @return 事件列表
+     */
+    static vector<Event> all();
+
+    /**
+     * @brief 事件类型
+     * @return 事件类型
+     */
+    optional<EventType> get_type() const;
+
+    /**
+     * @brief 名称
+     * @return 名称
+     */
+    string get_name() const override;
+
+    /**
+     * @brief 数据
+     * @return 数据
+     */
+    string get_data() const;
+
+    /**
+     * @brief 起始年
+     * @return 年
+     */
+    int get_start_year() const;
+
+    /**
+     * @brief 公历日
+     * @param year 年
+     * @return 公历日，如果当年没有该事件，返回nullopt
+     */
+    optional<SolarDay> get_solar_day(int year) const;
+
+protected:
+    friend class EventBuilder;
+
+    optional<SolarDay> get_solar_day_by_solar_day(int year) const;
+
+    optional<SolarDay> get_solar_day_by_lunar_day(int year) const;
+
+    optional<SolarDay> get_solar_day_by_week(int year) const;
+
+    optional<SolarDay> get_solar_day_by_term(int year) const;
+
+    optional<SolarDay> get_solar_day_by_term_heaven_stem(int year) const;
+
+    optional<SolarDay> get_solar_day_by_term_earth_branch(int year) const;
+
+    /**
+     * @brief 名称
+     */
+    string name;
+
+    /**
+     * @brief 数据
+     */
+    string data;
+};
+
+/**
+ * @brief 事件构造器
+ */
+class EventBuilder
+{
+public:
+    EventBuilder() = default;
+
+    EventBuilder name(const string& name);
+
+    /**
+     * @brief 公历日
+     * @param solar_month 公历月（1至12）
+     * @param solar_day 公历日（1至31）
+     * @param delay_days 顺延天数，例如生日在2月29，非闰年没有2月29，是+1天，还是-1天（最远支持-31至31天）
+     * @return 事件构建器
+     */
+    EventBuilder solar_day(int solar_month, int solar_day, int delay_days);
+
+    /**
+     * @brief 农历日
+     * @param lunar_month 农历月（-12至-1，1至12，闰月为负）
+     * @param lunar_day 农历日（1至30）
+     * @param delay_days 顺延天数，例如生日在某月的三十，但下一年当月可能只有29天，是+1天，还是-1天（最远支持-31至31天）
+     * @return 事件构建器
+     */
+    EventBuilder lunar_day(int lunar_month, int lunar_day, int delay_days);
+
+    /**
+     * @brief 公历第几个星期几
+     * @param solar_month 公历月（1至12）
+     * @param week_index 第几个星期（1为第1个星期，-1为倒数第1个星期）
+     * @param week 星期几（0至6，0代表星期天，1代表星期一）
+     * @return 事件构建器
+     */
+    EventBuilder solar_week(int solar_month, int week_index, int week);
+
+    /**
+     * @brief 节气
+     * @param term_index 节气索引（0至23）
+     * @param delay_days 顺延天数（最远支持-31至31天）
+     * @return 事件构建器
+     */
+    EventBuilder term_day(int term_index, int delay_days);
+
+    /**
+     * @brief 节气天干
+     * @param term_index 节气索引（0至23）
+     * @param heaven_stem_index 天干索引（0至9）
+     * @param delay_days 顺延天数（最远支持-31至31天）
+     * @return 事件构建器
+     */
+    EventBuilder term_heaven_stem(int term_index, int heaven_stem_index, int delay_days);
+
+    /**
+     * @brief 节气地支
+     * @param term_index 节气索引（0至23）
+     * @param earth_branch_index 地支索引（0至11）
+     * @param delay_days 顺延天数（最远支持-31至31天）
+     * @return 事件构建器
+     */
+    EventBuilder term_earth_branch(int term_index, int earth_branch_index, int delay_days);
+
+    /**
+     * @brief 起始年
+     * @param year 年
+     * @return 事件构造器
+     */
+    EventBuilder start_year(int year);
+
+    /**
+     * @brief 偏移天数
+     * @param days 天数（最远支持-31至31天）
+     * @return 事件构造器
+     */
+    EventBuilder offset(int days);
+
+    /**
+     * @brief 生成事件
+     * @return 事件
+     */
+    Event build() const;
+
+protected:
+    EventBuilder& content(EventType type, int a, int b, int c);
+
+    /**
+     * @brief 编码事件类型
+     * @param type 事件类型
+     * @return 编码
+     */
+    static char encode_type(const EventType& type);
+
+    /**
+     * @brief 事件名称
+     */
+    string _name;
+
+    /**
+     * @brief 事件数据
+     */
+    array<char, 9> data = {'@', '_', '_', '_', '_', '_', '0', '0', '0'};
+};
+
+/**
+ * @brief 事件管理器
+ */
+class EventManager
+{
+public:
+    /**
+     * @brief 有效字符
+     */
+    static const string CHARS;
+
+    /**
+     * @brief 数据匹配的正则表达式
+     */
+    static const string REGEX;
+
+    /**
+     * @brief 全量事件数据
+     */
+    static string DATA;
+
+    /**
+     * @brief 删除事件
+     * @param name 名称
+     */
+    static void remove(const string& name);
+
+    /**
+     * @brief 新增或更新事件
+     * @param name 名称
+     * @param event 事件
+     */
+    static void update(const string& name, const Event& event);
+
+    /**
+     * @brief 新增或更新事件
+     * @param name 名称
+     * @param data 事件数据
+     */
+    static void update_data(const string& name, const string& data);
+
+protected:
+    static void save_or_update(const string& name, const string& data);
 };
 }   // namespace tyme
 #endif

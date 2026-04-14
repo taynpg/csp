@@ -27,9 +27,9 @@ QimenV2::~QimenV2()
 {
 }
 
-bool QimenV2::generate(const DateTime& dt, int ju)
+bool QimenV2::generate(const DateTime& dt, int ju, int angan_type)
 {
-    if (!Qimen::set_and_check(dt, ju)) {
+    if (!Qimen::set_and_check(dt, ju, angan_type)) {
         return false;
     }
     if (data_.ju == 0) {
@@ -53,6 +53,7 @@ bool QimenV2::generate(const DateTime& dt, int ju)
     cal_bashen();
     cal_tianpan();
     cal_other();
+    cal_angan();
 
     return true;
 }

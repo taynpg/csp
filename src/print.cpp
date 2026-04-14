@@ -6,7 +6,7 @@
 #include "csp_base.hpp"
 #include "zh_lang.h"
 
-constexpr auto SPLIT_LINE = "==============================================";
+constexpr auto SPLIT_LINE = "=======================================================";
 
 QimenPrint::QimenPrint() = default;
 
@@ -16,11 +16,11 @@ void QimenPrint::print_one(int g)
 {
     const auto& qmd = qm_->get_result();
     if (g == 8) {
-        std::cout << "              ";
+        std::cout << "                 ";
         return;
     }
     std::string bashen = CZhData::bs(qmd.bashenr[g]);
-    std::cout << ConsoleColor::BrightBlack << "  " << bashen << " ";
+    std::cout << ConsoleColor::BrightBlack << "     " << bashen << " ";
     if (g == qmd.maxing) {
         if (g == qmd.kongw[0] || g == qmd.kongw[1]) {
             std::cout << ConsoleColor::White << " (" << ConsoleColor::Green << CZhData::mx() + CZhData::kw()
@@ -41,9 +41,15 @@ void QimenPrint::print_two(int g)
 {
     const auto& qmd = qm_->get_result();
     if (g == 8) {
-        std::cout << "              ";
+        std::cout << "                 ";
         return;
     }
+
+    // 先打印暗干
+    std::string angan = CZhData::gan(qmd.angan[g]);
+    std::cout << " " << angan;
+
+
     std::string jiuxing = CZhData::jx(qmd.jiuxr[g]);
     std::cout << ConsoleColor::BrightGreen << "  " << jiuxing << "   ";
     bool isJi = false;
@@ -67,11 +73,11 @@ void QimenPrint::print_three(int g)
 {
     const auto& qmd = qm_->get_result();
     if (g == 8) {
-        std::cout << "              ";
+        std::cout << "                 ";
         return;
     }
     std::string bamen = CZhData::bm(qmd.bamenr[g]);
-    std::cout << ConsoleColor::Cyan << "  " << bamen << "   ";
+    std::cout << ConsoleColor::Cyan << "     " << bamen << "   ";
     bool isJi = false;
     std::string szJi;
     // 如果此宫的星是寄宫星，那么就寄到这里

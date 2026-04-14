@@ -51,9 +51,9 @@ QimenV1::QimenV1()
     wby_[9] = 55;
 }
 
-bool QimenV1::generate(const DateTime& dt, int ju)
+bool QimenV1::generate(const DateTime& dt, int ju, int angan_type)
 {
-    if (!Qimen::set_and_check(dt, ju)) {
+    if (!Qimen::set_and_check(dt, ju, angan_type)) {
         return false;
     }
     if (data_.ju == 0 && !cal_ju(dt)) {
@@ -67,6 +67,7 @@ bool QimenV1::generate(const DateTime& dt, int ju)
     cal_bashen();
     cal_tianpan();
     cal_other();
+    cal_angan();
 
     return true;
 }
@@ -187,6 +188,15 @@ void QimenV1::cal_tianpan()
     data_.tp[8] = data_.dp[8];
 }
 
+void QimenV1::cal_angan()
+{
+    if (anGanType_ == 0) {
+        gen_angan_v0();
+    } else {
+        gen_angan_v1();
+    }
+}
+
 void QimenV1::cal_other()
 {
     auto gen = [this](int j, int& a, int& b) {
@@ -204,6 +214,50 @@ void QimenV1::cal_other()
     data_.kongw[0] = data_.zhi[data_.xunkong[6]];
     data_.kongw[1] = data_.zhi[data_.xunkong[7]];
     data_.maxing = data_.zhi[data_.dzcong_[data_.sanhe_[jiazi.hi % 12]]];
+}
+
+void QimenV1::gen_angan_v1()
+{
+    auto jz = jiazi(*data_.dt_);
+
+    int ganStart = jz.hi % 10;
+    int menIndex = data_.bamenp[data_.duty];
+    int startPos = -1;
+    auto diPos = get_index(data_.bamenr, 8, menIndex);
+    auto s = data_.dp[diPos];
+
+    if (s != ganStart) {
+        startPos = diPos;
+    } else {
+        startPos = 8;
+    }
+
+    int nk = data_.is_yin ? -1 : 1;
+    int curGuaPos = data_.pos2gua[startPos];
+
+    for (int i = 0; i < gn; ++i) {
+        data_.angan[startPos] = ganStart;
+        ganStart = mod(gn + 1, ganStart += 1);
+        ganStart = (ganStart == 0 ? 1 : ganStart);
+        curGuaPos = mod(gn, curGuaPos += nk);
+        startPos = get_index(data_.pos2gua, gn, curGuaPos);
+    }
+
+    // 甲 和 丁丙乙顺序 单独处理一下吧，简单一些。
+    int z = get_index(data_.angan, gn, 0);
+    data_.angan[z] = 9;
+    int ai = get_index(data_.angan, gn, 3);
+    int bi = get_index(data_.angan, gn, 1);
+    auto t = data_.angan[ai];
+    data_.angan[ai] = data_.angan[bi];
+    data_.angan[bi] = t;
+}
+
+void QimenV1::gen_angan_v0()
+{
+    for (int i = 0; i < 8; ++i) {
+        data_.angan[i] = data_.dp[get_index(data_.bamenp, gn, data_.bamenr[i])];
+    }
 }
 
 bool QimenV1::inference()
@@ -245,7 +299,7 @@ bool QimenV1::inference()
     dif = std::abs(Qimen::between_days(cycleDt, tempDt));
     save_part(cycleDt, start, jiazi, -1, 15, std::abs(dif) < 9);
     save_part(cycleDt, start, jiazi, -1, 60);
-    //print();
+    // print();
     return true;
 }
 

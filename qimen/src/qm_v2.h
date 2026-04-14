@@ -13,7 +13,7 @@ public:
 
 public:
     // 排盘
-    bool generate(const DateTime& dt, int ju) override;
+    bool generate(const DateTime& dt, int ju, int angan_type) override;
 
 private:
     bool cal_ju(const DateTime& dt);

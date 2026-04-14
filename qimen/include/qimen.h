@@ -77,6 +77,7 @@ struct QimenData {
     int tp[gn]{};         // 天盘
     int dp[gn]{};         // 地盘 [定义位置：10天干]
     int wuxing[gn]{};     // 五行
+    int angan[gn]{};      // 暗干
     int jigong{};         // 天禽星寄宫
     int maxing{};         // 马星位置
     int kongw[2]{};       // 空亡位置
@@ -147,13 +148,13 @@ public:
     /// @param ju 指定局数。0 为自动，其他需要在 [-9, 9] 的范围。
     /// @param ct 使用日历类型
     /// @return
-    virtual bool generate(const DateTime& dt, int ju);
+    virtual bool generate(const DateTime& dt, int ju, int angan_type = 0);
 
     /// @brief 设置信息，并检查。
     /// @param dt 日期
     /// @param ct 日历类型
     /// @return
-    virtual bool set_and_check(const DateTime& dt, int ju);
+    virtual bool set_and_check(const DateTime& dt, int ju, int angan_type);
 
     /// @brief 设置各个位置上的五行 (金水木火土 数字代表 12345)
     virtual void set_wuxing();
@@ -202,6 +203,9 @@ public:
     /// @brief 排天盘
     virtual void cal_tianpan() = 0;
 
+    /// @brief 排暗干
+    virtual void cal_angan() = 0;
+
     /// @brief 排其他信息（如空亡、马星）
     virtual void cal_other() = 0;
 
@@ -209,6 +213,7 @@ public:
     QimenData get_result() const;
 
 protected:
+    int anGanType_{0};
     QimenData data_{};
 };
 

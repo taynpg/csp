@@ -4,6 +4,7 @@ project(tyme4cpp LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# v1.0.9
 set(SOURCES
 tyme.cpp
 tyme.h

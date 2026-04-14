@@ -36,7 +36,7 @@ public:
 
 public:
     // 排盘
-    bool generate(const DateTime& dt, int ju) override;
+    bool generate(const DateTime& dt, int ju, int angan_type) override;
 
     /// @brief 排地盘
     void cal_dipan() override;
@@ -56,8 +56,16 @@ public:
     /// @brief 排天盘
     void cal_tianpan() override;
 
+    /// @brief 排暗干
+    void cal_angan() override;
+
     /// @brief 排其他信息（如空亡、马星）
     void cal_other() override;
+
+private:
+    // 时干入值使门-暗干。
+    void gen_angan_v1();
+    void gen_angan_v0();
 
 private:
     // 推演一年的日历

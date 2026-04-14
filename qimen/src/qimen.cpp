@@ -113,13 +113,14 @@ std::shared_ptr<Qimen> Qimen::instance(QimenType type)
     return re;
 }
 
-bool Qimen::generate(const DateTime& dt, int ju)
+bool Qimen::generate(const DateTime& dt, int ju, int angan_type)
 {
     return false;
 }
 
-bool Qimen::set_and_check(const DateTime& dt, int ju)
+bool Qimen::set_and_check(const DateTime& dt, int ju, int angan_type)
 {
+    anGanType_ = angan_type;
     if (dt.year < 2 || dt.year > 9998) {
         std::cout << "Unsupported Year :" << dt.year << std::endl;
         return false;

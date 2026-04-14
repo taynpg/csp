@@ -33,7 +33,7 @@ bool CQimenUse::run(const CmdParam& param)
 
     // 时间偏移
 
-    if (!qm->generate(dt, param.ju)) {
+    if (!qm->generate(dt, param.ju, param.angan)) {
         return false;
     }
     print_.run(qm, param.type);

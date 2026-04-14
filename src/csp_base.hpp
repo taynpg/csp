@@ -1,7 +1,7 @@
 #ifndef CSP_HEADER_H
 #define CSP_HEADER_H
 
-constexpr auto CSP_VERSION = "v1.5.3";
+constexpr auto CSP_VERSION = "v1.5.4";
 
 #include <string>
 struct CmdParam {
@@ -14,6 +14,7 @@ struct CmdParam {
     int ju{};
     int type = -1;
     int zone = 0;
+    int angan = 0;
     bool is_auto{false};
     std::string str_dt{};
 };
