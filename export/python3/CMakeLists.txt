@@ -9,5 +9,6 @@ add_subdirectory(pybind11)
 pybind11_add_module(csp_qm csp_module.cpp 
 ../../src/qmuse.cpp
 ../../src/print.cpp
+../../src/jsonExport.cpp
 )
 target_link_libraries(csp_qm PRIVATE qimen zhcn base tyme4cpp)
