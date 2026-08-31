@@ -2,38 +2,73 @@
 // Created by Administrator on 2023-10-07.
 //
 
-#include <iostream>
+#include <cstdio>
+#include <fmt/color.h>
+#include <fmt/format.h>
 #include <regex>
 
-#include "CLI11.hpp"
+
 #include "csp_base.hpp"
 #include "qmuse.h"
+#include <CLI11.hpp>
 
 #ifdef _WIN32
-#include <fcntl.h>
-#include <io.h>
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
 #endif
 #endif
 
-void recovery_terminal_color()
+void set_output_supply()
 {
-#if defined(_WIN32)
-    HANDLE h_console = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (h_console == NULL) {
-        fprintf(stderr, "[ERROR] Couldn't handle terminal\n");
-        exit(1);
-    }
-    if (SetConsoleTextAttribute(h_console, 7) == 0) {
-        fprintf(stderr, "[ERROR] Couldn't set terminal color\n");
-        exit(1);
-    }
-#else
-    printf("\033[0m");
+#ifdef _WIN32
+    // 获取标准输出句柄
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    // 启用 ANSI 转义代码支持
+    DWORD mode;
+    GetConsoleMode(hConsole, &mode);
+    mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hConsole, mode);
 #endif
 }
+
+#ifdef _WIN32
+static HANDLE hOut = nullptr;
+class u8ConsoleBuf : public std::streambuf
+{
+protected:
+    int overflow(int c = EOF) override
+    {
+        if (c != EOF) {
+            char ch = static_cast<char>(c);
+            xsputn(&ch, 1);
+        }
+        return c;
+    }
+    std::streamsize xsputn(const char* s, std::streamsize n) override
+    {
+        int wideLen = MultiByteToWideChar(CP_UTF8, 0, s, static_cast<int>(n), nullptr, 0);
+        if (wideLen <= 0) {
+            return 0;
+        }
+
+        std::vector<wchar_t> buffer(wideLen);
+        MultiByteToWideChar(CP_UTF8, 0, s, static_cast<int>(n), buffer.data(), wideLen);
+
+        if (hOut == nullptr) {
+            hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        }
+
+        DWORD written;
+        WriteConsoleW(hOut, buffer.data(), wideLen, &written, nullptr);
+
+        return n;
+    }
+};
+#endif
 
 bool parse(const std::string& str, CmdParam& param)
 {
@@ -49,7 +84,7 @@ bool parse(const std::string& str, CmdParam& param)
         param.min = std::stoi(match[5].str());
         param.sec = std::stoi(match[6].str());
     } else {
-        std::cout << "日期字符串格式不正确。" << std::endl;
+        fmt::print("日期字符串格式不正确。\n");
         return false;
     }
     return true;
@@ -57,6 +92,11 @@ bool parse(const std::string& str, CmdParam& param)
 
 bool cmd(int argc, char** argv, CmdParam& param)
 {
+#ifdef _WIN32
+    static u8ConsoleBuf u8Buf;
+    std::cout.rdbuf(&u8Buf);
+#endif
+    set_output_supply();
     std::string intro("命令行排盘工具 csp ");
     intro.append(CSP_VERSION);
     intro.append(" => https://github.com/taynpg/csp");
@@ -73,48 +113,35 @@ bool cmd(int argc, char** argv, CmdParam& param)
                    "==> 输入日期(默认当前时间) <==\n"
                    "手动输入格式: 2000-2-3-15-32-11");
 
-    app.add_option("-j,--ju", param.ju, "局数(默认自动局数)");
+    app.add_option("--ju", param.ju, "局数(默认自动局数)");
     app.add_option("-z,--zone", param.zone, "与现在的时间差值(单位为小时，默认为0)");
     app.add_option("-a,--angan", param.angan,
                    "暗干排法（默认0）：\n"
                    "[0,门原宫位地盘]\n"
                    "[1,入值使门]");
 
+    app.add_flag("-j,--json", param.exportJson, "导出json文件");
+
     try {
         CLI11_PARSE(app, argc, argv);
         return true;
     } catch (const CLI::ParseError& e) {
-        std::cerr << "Error parsing command line: " << e.what() << std::endl;
+        fmt::print(stderr, "Error parsing command line: {}\n", e.what());
         return false;
     }
     return false;
 }
 
-void set_output_supply()
-{
-#ifdef _WIN32
-    // 获取标准输出句柄
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    // 启用 ANSI 转义代码支持
-    DWORD mode;
-    GetConsoleMode(hConsole, &mode);
-    mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    SetConsoleMode(hConsole, mode);
-#endif
-}
-
 int main(int argc, char** argv)
 {
-    std::shared_ptr<int> deleter(nullptr, [](void* p) { recovery_terminal_color(); });
     CmdParam param;
-    set_output_supply();
 
     if (!cmd(argc, argv, param)) {
         return 0;
     }
 
     if (param.type == -1) {
-        std::cout << "盘式类型为必填项，-t，可使用--help查看帮助。" << std::endl;
+        fmt::print("盘式类型为必填项，-t，可使用--help查看帮助。\n");
         return -1;
     }
 
@@ -134,7 +161,7 @@ int main(int argc, char** argv)
         break;
     }
     default: {
-        std::cout << "未匹配到支持的盘面类型，请使用 --help 查看帮助。" << std::endl;
+        fmt::print("未匹配到支持的盘面类型，请使用 --help 查看帮助。\n");
     }
     }
     return 0;

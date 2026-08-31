@@ -1,5 +1,6 @@
 #include "qmuse.h"
-#include <iostream>
+#include "jsonExport.h"
+#include <fmt/format.h>
 
 using namespace csp;
 
@@ -18,7 +19,7 @@ bool CQimenUse::run(const CmdParam& param)
     }
 
     if (param.type < 1 || param.type > 4) {
-        std::cout << "不支持的盘类型范围，应当在[1,4]。" << std::endl;
+        fmt::print("不支持的盘类型范围，应当在[1,4]。\n");
         return false;
     }
 
@@ -37,5 +38,14 @@ bool CQimenUse::run(const CmdParam& param)
         return false;
     }
     print_.run(qm, param.type);
+
+    JsonExport je;
+    if (param.exportJson) {
+        if (!je.exportJson(qm, param.type)) {
+            fmt::print("导出JSON失败。\n");
+            return false;
+        }
+    }
+
     return true;
 }

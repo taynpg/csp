@@ -4,8 +4,7 @@
 #include "qm_v3.h"
 #include "qm_v4.h"
 #include <chrono>
-#include <iomanip>
-#include <iostream>
+#include <fmt/format.h>
 
 namespace csp {
 
@@ -122,7 +121,7 @@ bool Qimen::set_and_check(const DateTime& dt, int ju, int angan_type)
 {
     anGanType_ = angan_type;
     if (dt.year < 2 || dt.year > 9998) {
-        std::cout << "Unsupported Year :" << dt.year << std::endl;
+        fmt::print("Unsupported Year :{}\n", dt.year);
         return false;
     }
     try {
@@ -131,7 +130,7 @@ bool Qimen::set_and_check(const DateTime& dt, int ju, int angan_type)
         data_.is_yin = ju < 0 ? true : false;
         return true;
     } catch (const std::exception& e) {
-        std::cout << "Invalid Datetime :" << e.what() << std::endl;
+        fmt::print("Invalid Datetime :{}\n", e.what());
         return false;
     }
 }

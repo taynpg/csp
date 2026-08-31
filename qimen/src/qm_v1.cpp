@@ -1,6 +1,5 @@
 #include "qm_v1.h"
-#include <iomanip>
-#include <iostream>
+#include <fmt/format.h>
 
 namespace csp {
 
@@ -362,8 +361,7 @@ void QimenV1::print()
     int i = 0;
     for (const auto& item : year_datas_) {
         ++i;
-        std::cout << "=>" << i << " 时间: " << item.dt.year << "-" << item.dt.mon << "-" << item.dt.day;
-        std::cout << "  " << item.ganzhi << " " << item.jq << std::endl;
+        fmt::print("=>{} 时间: {}-{}-{}  {} {}\n", i, item.dt.year, item.dt.mon, item.dt.day, item.ganzhi, item.jq);
     }
 }
 
