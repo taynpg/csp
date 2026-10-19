@@ -1,50 +1,99 @@
-# Prerequisites
-*.d
-.ccls-cache/
+# ---------------------------------------------------------------------------
+# 构建目录与 CMake 中间产物
+# ---------------------------------------------------------------------------
+build/
+build-*/
+out/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+CTestScript.cmake
+Testing/
+CMakeUserPresets.json
+compile_commands.json
+.ninja_deps
+.ninja_log
 
-# Compiled Object files
+# ---------------------------------------------------------------------------
+# 编译产物
+# ---------------------------------------------------------------------------
+*.d
 *.slo
 *.lo
 *.o
 *.obj
-dist
-csp_qm*
-
-# Precompiled Headers
 *.gch
 *.pch
-
-# Linker files
 *.ilk
-
-# Debugger Files
 *.pdb
-
-# Compiled Dynamic libraries
+*.dwo
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
 *.la
+*.lai
 *.a
 *.lib
-
-# Executables
 *.exe
 *.out
 *.app
+*.exp
+*.stackdump
 
-# debug information files
-*.dwo
+# 覆盖率
+*.gcda
+*.gcno
+*.profraw
+*.profdata
+coverage/
+lcov.info
 
-.DS_Store
-cmake-build-debug/
-cmake-build-release/
+# ---------------------------------------------------------------------------
+# Python 绑定
+# ---------------------------------------------------------------------------
+dist
+csp_qm*
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# ---------------------------------------------------------------------------
+# 编辑器 / IDE
+# ---------------------------------------------------------------------------
 .idea/
-build
+.vs/
+*.suo
+*.user
+*.VC.db
+.ccls-cache/
+.clangd/
+.cache/
+
+# ---------------------------------------------------------------------------
+# 系统文件
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# 运行产物
+# ---------------------------------------------------------------------------
+# 排盘导出的 JSON（测试用快照请放 tests/snapshot）
+csp_*.json
+*.log
+
+# 黄金输出与本地产物
+.golden/
+
+# 注意：tests/snapshot/ 下是测试基准，必须纳入版本库；
+# 重新生成用 CSP_UPDATE_SNAPSHOTS=1，生成后照常提交。

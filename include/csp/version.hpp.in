@@ -1,0 +1,12 @@
+#pragma once
+
+// 由 CMake 根据 project(VERSION ...) 生成，请勿手工修改。
+namespace csp {
+
+inline constexpr int kVersionMajor = @PROJECT_VERSION_MAJOR@;
+inline constexpr int kVersionMinor = @PROJECT_VERSION_MINOR@;
+inline constexpr int kVersionPatch = @PROJECT_VERSION_PATCH@;
+inline constexpr const char* kVersion = "v@PROJECT_VERSION@";
+inline constexpr const char* kProjectUrl = "https://github.com/taynpg/csp";
+
+}   // namespace csp

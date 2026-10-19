@@ -15,3 +15,5 @@ ColumnLimit: 120
 AllowShortBlocksOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: None
 AllowShortEnumsOnASingleLine: false
+Standard: c++17
+DerivePointerAlignment: false

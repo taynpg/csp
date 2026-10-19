@@ -1,14 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(csp_qm)
+project(csp_qm LANGUAGES CXX)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# pybind11 为 git submodule
 add_subdirectory(pybind11)
 
-# find_package (Python EXACT COMPONENTS Interpreter Development REQUIRED)
-pybind11_add_module(csp_qm csp_module.cpp 
-../../src/qmuse.cpp
-../../src/print.cpp
-../../src/jsonExport.cpp
-)
-target_link_libraries(csp_qm PRIVATE qimen zhcn base tyme4cpp)
+pybind11_add_module(csp_qm csp_module.cpp)
+target_include_directories(csp_qm PRIVATE ${CMAKE_SOURCE_DIR}/3rd)
+target_link_libraries(csp_qm PRIVATE csp_core)

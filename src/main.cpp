@@ -1,168 +1,87 @@
-//
-// Created by Administrator on 2023-10-07.
-//
-
+// csp - 奇门遁甲排盘工具，命令行入口
 #include <cstdio>
-#include <fmt/color.h>
-#include <fmt/format.h>
-#include <regex>
+#include <sstream>
+#include <string>
 
-
-#include "csp_base.hpp"
-#include "qmuse.h"
 #include <CLI11.hpp>
+#include <fmt/format.h>
 
-#ifdef _WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
-#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
-#endif
-#endif
+#include "csp/app.hpp"
+#include "csp/console.hpp"
+#include "csp/version.hpp"
 
-void set_output_supply()
+int main(int argc, char** argv)
 {
-#ifdef _WIN32
-    // 获取标准输出句柄
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    // 启用 ANSI 转义代码支持
-    DWORD mode;
-    GetConsoleMode(hConsole, &mode);
-    mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    SetConsoleMode(hConsole, mode);
-#endif
-}
+    csp::console::init();
+    // init() 在 Windows 下会把 std::cout / std::cerr 换成 UTF-8 适配的 streambuf：
+    // 控制台里转成宽字符写出，重定向到文件或管道时原样写字节。
+    // 类 Unix 系统不需要这一步（UTF-8 字节本身就是终端要的）。
 
-#ifdef _WIN32
-static HANDLE hOut = nullptr;
-class u8ConsoleBuf : public std::streambuf
-{
-protected:
-    int overflow(int c = EOF) override
-    {
-        if (c != EOF) {
-            char ch = static_cast<char>(c);
-            xsputn(&ch, 1);
-        }
-        return c;
-    }
-    std::streamsize xsputn(const char* s, std::streamsize n) override
-    {
-        int wideLen = MultiByteToWideChar(CP_UTF8, 0, s, static_cast<int>(n), nullptr, 0);
-        if (wideLen <= 0) {
-            return 0;
-        }
+    csp::Options options;
+    std::string date_text;
+    int type = -1;
+    int angan = 0;
+    bool no_color = false;
 
-        std::vector<wchar_t> buffer(wideLen);
-        MultiByteToWideChar(CP_UTF8, 0, s, static_cast<int>(n), buffer.data(), wideLen);
-
-        if (hOut == nullptr) {
-            hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-        }
-
-        DWORD written;
-        WriteConsoleW(hOut, buffer.data(), wideLen, &written, nullptr);
-
-        return n;
-    }
-};
-#endif
-
-bool parse(const std::string& str, CmdParam& param)
-{
-    std::regex dateRegex(R"((-?\d{1,4})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2}))");
-    std::smatch match;
-    bool is_valid = false;
-    // 使用正则表达式进行匹配
-    if (std::regex_search(str, match, dateRegex)) {
-        param.year = std::stoi(match[1].str());
-        param.mon = std::stoi(match[2].str());
-        param.day = std::stoi(match[3].str());
-        param.hour = std::stoi(match[4].str());
-        param.min = std::stoi(match[5].str());
-        param.sec = std::stoi(match[6].str());
-    } else {
-        fmt::print("日期字符串格式不正确。\n");
-        return false;
-    }
-    return true;
-}
-
-bool cmd(int argc, char** argv, CmdParam& param)
-{
-#ifdef _WIN32
-    static u8ConsoleBuf u8Buf;
-    std::cout.rdbuf(&u8Buf);
-#endif
-    set_output_supply();
-    std::string intro("命令行排盘工具 csp ");
-    intro.append(CSP_VERSION);
-    intro.append(" => https://github.com/taynpg/csp");
-    CLI::App app(intro);
-
-    app.add_option("-t,--type", param.type,
+    CLI::App app{fmt::format("命令行排盘工具 csp {} => {}", csp::kVersion, csp::kProjectUrl)};
+    app.set_help_flag("-h,--help", "显示帮助并退出");
+    app.set_version_flag("-v,--version", csp::kVersion, "显示版本并退出");
+    // CLI11 自带的报错是英文的，这里补一层中文提示
+    app.failure_message([](const CLI::App*, const CLI::Error& e) {
+        return fmt::format("参数错误：{}\n使用 -h 或 --help 查看帮助。\n", e.what());
+    });
+    app.add_option("-t,--type", type,
                    "==> 盘式类型(必填) <==\n"
                    "[1,时家转盘超接置润]\n"
                    "[2,时家转盘阴盘]\n"
                    "[3,时家转盘拆补]\n"
-                   "[4,时家茅山]");
-
-    app.add_option("-d,--date", param.str_dt,
+                   "[4,时家茅山]")
+        ->required()
+        ->check(CLI::Range(1, 4));
+    app.add_option("-d,--date", date_text,
                    "==> 输入日期(默认当前时间) <==\n"
                    "手动输入格式: 2000-2-3-15-32-11");
-
-    app.add_option("--ju", param.ju, "局数(默认自动局数)");
-    app.add_option("-z,--zone", param.zone, "与现在的时间差值(单位为小时，默认为0)");
-    app.add_option("-a,--angan", param.angan,
+    app.add_option("--ju", options.ju, "局数(默认自动局数；-9 到 9，负数为阴遁)")->check(CLI::Range(-9, 9));
+    app.add_option("-z,--zone", options.zone_hours, "与现在的时间差值(单位为小时，默认为0)")
+        ->check(CLI::Range(-24, 24));
+    app.add_option("-a,--angan", angan,
                    "暗干排法（默认0）：\n"
                    "[0,门原宫位地盘]\n"
-                   "[1,入值使门]");
+                   "[1,入值使门]")
+        ->check(CLI::Range(0, 1));
+    app.add_flag("-j,--json", options.export_json, "导出json文件");
+    app.add_flag("--no-color", no_color, "输出纯文本（便于重定向到文件）");
 
-    app.add_flag("-j,--json", param.exportJson, "导出json文件");
-
+    // CLI11 默认把 UTF-8 字节直接写 std::cout，而 Windows 控制台按本地代码页（简体中文为 936）
+    // 解释这些字节，帮助与错误信息会变成乱码。这里先把 CLI11 的输出收进字符串，
+    // 再交给 console 层按 UTF-8 转宽字符输出。
+    std::ostringstream brief;
+    std::ostringstream detail;
     try {
-        CLI11_PARSE(app, argc, argv);
-        return true;
+        app.parse(argc, argv);
     } catch (const CLI::ParseError& e) {
-        fmt::print(stderr, "Error parsing command line: {}\n", e.what());
-        return false;
-    }
-    return false;
-}
-
-int main(int argc, char** argv)
-{
-    CmdParam param;
-
-    if (!cmd(argc, argv, param)) {
-        return 0;
+        const int code = app.exit(e, brief, detail);
+        csp::console::write_error(detail.str());
+        csp::console::write(brief.str());
+        return code;
     }
 
-    if (param.type == -1) {
-        fmt::print("盘式类型为必填项，-t，可使用--help查看帮助。\n");
-        return -1;
-    }
+    options.type = static_cast<csp::QimenType>(type);
+    options.hidden_stem = static_cast<csp::HiddenStemStyle>(angan);
+    // 重定向到文件或管道时不输出 ANSI 转义序列，否则存下来的文本会夹着乱码
+    options.color = !no_color && csp::console::stdout_is_console();
+    options.date_text = date_text;
 
-    if (!param.str_dt.empty() && !parse(param.str_dt, param)) {
-        return -1;
-    }
-    switch (param.type) {
-    case 1:
-    case 2:
-    case 3:
-    case 4: {
-        CQimenUse qmuse;
-        if (param.str_dt.empty()) {
-            param.is_auto = true;
+    if (date_text.empty()) {
+        options.auto_time = true;
+    } else {
+        std::string error;
+        if (!csp::parse_datetime_text(date_text, options.time, &error)) {
+            csp::console::write_error(fmt::format("{}\n", error));
+            return 1;
         }
-        qmuse.run(param);
-        break;
     }
-    default: {
-        fmt::print("未匹配到支持的盘面类型，请使用 --help 查看帮助。\n");
-    }
-    }
-    return 0;
+
+    csp::Runner runner;
+    return runner.run(options) ? 0 : 1;
 }

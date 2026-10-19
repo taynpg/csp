@@ -1,0 +1,5 @@
+# 统一换行，避免不同平台检出差异
+* text=auto
+
+# 快照按字节比对，禁止换行转换
+tests/snapshot/** -text

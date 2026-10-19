@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="csp_qm",
-    version="1.5.5",
+    version="1.6.0",
     author="taynpg",
     author_email="taynpg@163.com",
     description="A cli tool for Qimen.",

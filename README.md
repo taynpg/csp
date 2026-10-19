@@ -1,103 +1,184 @@
-# 一、csp 简介
+# csp
 
-csp-(cpp shi pan，C++式盘)，一个cmd命令行奇门遁甲起盘工具。
+[![CI](https://github.com/taynpg/csp/actions/workflows/ci.yml/badge.svg)](https://github.com/taynpg/csp/actions/workflows/ci.yml)
+
+**csp**（cpp shi pan，C++ 式盘）是一个命令行奇门遁甲起盘工具，同时也可以作为 C++ 库嵌入其它程序。
 
 ## 特点
 
-- 单机本地、使用过程中无需联网。
-- 跨平台（即本项目编译成二进制可执行文件仅需要一个`支持C++17标准`的`编译器`）。
-- 支持时间范围广（`9998年跨度`）。
-- 支持手机移动端。
+- 单机本地运行，使用过程无需联网；
+- 跨平台：只要编译器支持 C++17 即可构建（Windows / Linux / macOS / 手机端）；
+- 支持时间范围宽（公元 2 年 - 9998 年）；
+- 终端输出与 JSON 输出，便于人工阅读或交给程序、AI 二次处理；
+- 可导出为 Python 模块（pybind11）。
 
-本项目会长期维护，欢迎您的`PR`。
+## 已实现的排盘方式
 
-**拉取项目请使用：**
+| `-t` | 盘式 | 定局 |
+| --- | --- | --- |
+| 1 | 时家转盘，超接置润法 | 超接置闰推演年历 |
+| 2 | 时家转盘，阴盘 | 年支 + 农历月 + 农历日 + 时支 |
+| 3 | 时家转盘，拆补法 | 符头 + 所在节气 |
+| 4 | 时家转盘，茅山法 | 交节后的天数定三元 |
+
+# 一、构建
+
+## 1.1 依赖
+
+- 支持 C++17 的编译器（GCC / Clang / MSVC 均可）；
+- CMake 3.16 及以上。
+
+第三方库（tyme4cpp、fmt、nlohmann/json、CLI11）已随源码提供，无需联网。
+
+## 1.2 构建与测试
 
 ```shell
 git clone https://github.com/taynpg/csp
+cd csp
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure   # 可选：跑单元测试与快照测试
 ```
 
-**如果您还需要制作python包**
+产物：`build/csp`（Windows 为 `build/csp.exe`）。
 
-同时使用`-DCSP_PYTHON_EXPORT=ON`开启。
+常用 CMake 选项：
+
+| 选项 | 默认 | 说明 |
+| --- | --- | --- |
+| `CSP_BUILD_TESTS` | `ON` | 构建单元测试与快照测试 |
+| `CSP_PYTHON_EXPORT` | `OFF` | 构建 Python 扩展模块 |
+| `CMAKE_BUILD_TYPE` | `Release` | 构建类型 |
+
+## 1.3 Python 模块
+
+需要先初始化 pybind11 子模块：
 
 ```shell
 git clone --recursive https://github.com/taynpg/csp
+cd csp
+cmake -B build -DCSP_PYTHON_EXPORT=ON
+cmake --build build --parallel
 ```
 
-# 二、用法
+产物为 `csp_qm` 扩展模块（Windows 下是 `.pyd`，需要与 `libstdc++-6.dll` 等运行时库放在一起）。
 
-## 2.1 使用
+## 1.4 打包
 
-请使用`--help`查看帮助信息。
+```shell
+cd build && cpack
+```
 
-![help](https://github.com/taynpg/csp/raw/main/images/help.png)
+# 二、命令行用法
 
-下面是一个示例排盘（暗干目前支持2种排法）：
+```shell
+csp -t 1 -d 2026-10-19-8-25-0
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `-t, --type` | 盘式类型（必填），取值 1-4 |
+| `-d, --date` | 排盘时间，格式 `年-月-日-时-分-秒`，缺省为当前时间 |
+| `--ju` | 手动指定局数，`0` 为自动；范围 -9 到 9，负数为阴遁 |
+| `-z, --zone` | 与本地时间的时差（小时），默认 0 |
+| `-a, --angan` | 暗干排法：`0` 门原宫位地盘、`1` 入值使门 |
+| `-j, --json` | 导出 JSON 文件到当前目录 |
+| `--no-color` | 强制输出纯文本（重定向到文件或管道时自动关闭颜色） |
+| `-v, --version` | 显示版本 |
+
+示例：
+
+```shell
+# 当前时间排盘
+csp -t 1
+
+# 指定时间、手动定局（阴遁五局）、导出 JSON
+csp -t 3 -d 1986-5-29-12-0-0 --ju -5 -j
+
+# 不输出颜色并保存（重定向时会自动去掉颜色）
+csp -t 2 -d 2026-10-19-8-25-0 > pan.txt
+```
 
 ![demo](https://github.com/taynpg/csp/raw/main/images/demo.png)
 
-关于`Python`的使用，本项目支持导出为`whl`模块供python使用，不过仅仅是导出了排盘接口。设定好参数（参数与csp命令行所需参数一致）打印排盘结果与
-使用csp类似，没有开放更多内部接口的使用，鉴于Python版本众多，本项目仅提供一版的`whl`安装包。
+> Windows 编码提示：程序内部一律使用 UTF-8。写控制台时转成宽字符（`WriteConsoleW`），
+> 所以 cmd/PowerShell 窗口里中文正常；重定向到文件或管道时按原始 UTF-8 字节写出，
+> 文件内容也是 UTF-8。只有在 PowerShell 5.1 里把输出**管道或重定向**给别的命令时，
+> 它才会按本地代码页（GBK）解码子进程输出，此时先执行一次
+> `[Console]::OutputEncoding = [Text.Encoding]::UTF8`。
 
-```python
-import csp_qm  # 导入安装的包
+# 三、作为 C++ 库使用
 
-def test_qimen_pan():
-
-    print("\n=== 测试 csp-qm 包 ===")
-
-    # 1. 创建排盘参数
-    param = csp_qm.CmdParam()
-    param.year = 2023
-    param.mon = 10
-    param.day = 7
-    param.hour = 15
-    param.type = 1
-
-    print("\n执行排盘...")
-    qm = csp_qm.CQimenUse()
-
-    # 这里打印结果
-    qm.run(param)
-
-    # 4. 检查结果
-    print("\n排盘完成！")
-    print("自动计算 is_auto:", param.is_auto)
-    print("局数 ju:", param.ju)
-
-if __name__ == "__main__":
-    test_qimen_pan()
+```cmake
+add_subdirectory(csp)
+target_link_libraries(your_target PRIVATE csp_core)
 ```
 
-## 2.2 支持时间范围
+```cpp
+#include <csp/app.hpp>
+#include <csp/qimen.hpp>
 
-公元`0002-01-01`至`9998-12-31`。
+// 方式一：直接排盘，读取结构化结果
+auto qimen = csp::Qimen::create(csp::QimenType::ZhiRun);
+if (!qimen->generate(csp::DateTime(2026, 10, 19, 8, 25, 0), 0)) {
+    return 1;
+}
+const csp::Chart& chart = qimen->chart();
+// chart.ju           局数
+// chart.yin_dun      是否阴遁
+// chart.stars        九星（宫位 -> 星）
+// chart.gates        八门
+// chart.deities      八神
+// chart.earth_stem   地盘
+// chart.heaven_stem  天盘
+// chart.hidden_stem  暗干
+// chart.void_palace  旬空宫位
+// chart.horse_palace 马星宫位
 
-# 三、已实现功能
+// 方式二：走应用层，拿到渲染好的文本或 JSON
+csp::Options options;
+options.type = csp::QimenType::ZhiRun;
+options.time = csp::DateTime(2026, 10, 19, 8, 25, 0);
 
-- 时家，转盘，超接置润法
-- 时家，转盘，阴盘
-- 时家，转盘，拆补
-- 时家，转盘，茅山
+csp::Result result;
+if (csp::prepare_result(options, result)) {
+    std::string text = csp::render_text(result.chart, options.type, false);
+    std::string json = csp::render_json(result);
+}
+```
 
-# 记录
+宫位下标（`0`-`8`）的定义：
 
-- 2026-8-31，v1.5.5版本开始，改成源码和执行集均为UTF-8编码。
+```
+------- ------- -------
+|  4   |   3  |   2  |
+------- ------- -------
+|  5   |   8  |   1  |
+------- ------- -------
+|  6   |   7  |   0  |
+------- ------- -------
+```
 
-- 2026-8-31，v1.5.5版本开始，支持导出结果为Json，给AI或者程序用。
+# 四、Python 用法
 
-- 2025-09-04，已完成`v1.5.0`版本，该版本为预览版。
+```python
+import csp_qm
 
-- 2025-09-03, tyme4cpp日历库已出，csp的`v1.5`大版本开始开发。
+param = csp_qm.Options()          # 等价于旧名 csp_qm.CmdParam()
+param.year, param.mon, param.day = 2023, 10, 7
+param.hour, param.type = 15, 1
 
-**以下是v1.5前的声明：**
+runner = csp_qm.Runner()          # 等价于旧名 csp_qm.CQimenUse()
+runner.run(param)                 # 打印排盘结果，并把自动定局的局数回填到 param.ju
 
-截止到目前`v1.4.6`版本，不少用户反馈有月干支错误的BUG，经查实确实存在，属于日历库的问题。现在在等 [tyme日历库](https://6tail.cn/tyme.html)出`cpp`版本，**后续将使用tyme库替换现有的2个日历库进行修正**。
+print(param.ju)
 
-csp在未来使用`tyme`日历库替换现有日历库以后将发布`1.5`版本并恢复使用cmake构建，csp计划将永久停留在`v1.5`版本，也就是说，csp将不再新增更多的排盘方式（除非有pull request合并请求），但csp**仍然会保持永久性维护**，仅限于处理后续可能遇到的`BUG`或者排盘错误的问题，尽可能保持高度的稳定和准确，并会伴有`v1.5.x`无限制的小版本更新发布。
+# 也可以不打印，直接拿文本或 JSON
+text = csp_qm.render(param)
+data = csp_qm.render_json(param)
+```
 
-## 导出结果示例
+# 五、JSON 输出
 
 ```json
 {
@@ -114,94 +195,92 @@ csp在未来使用`tyme`日历库替换现有日历库以后将发布`1.5`版本
             "暗干": "癸",
             "空亡": false,
             "马星": false
-        },
-         ...
+        }
     ],
     "基本信息": {
         "三元": "处暑下元",
-        "上一节气": {
-            "名称": "立秋",
-            "时间": "2026-08-07 19:42:43"
-        },
-        "下一节气": {
-            "名称": "处暑",
-            "时间": "2026-08-23 10:18:49"
-        },
+        "上一节气": { "名称": "立秋", "时间": "2026-08-07 19:42:43" },
+        "下一节气": { "名称": "处暑", "时间": "2026-08-23 10:18:49" },
         "五不遇时": false,
         "值使门": "伤门",
         "值符星": "天冲",
         "公历": "2026-08-31 13:07:16",
-        "农历": {
-            "年": 2026,
-            "日": "十九",
-            "时辰": "未",
-            "月": "七",
-            "闰月": false
-        },
-        "四柱": {
-            "年柱": "丙午",
-            "日柱": "丁丑",
-            "时柱": "丁未",
-            "月柱": "丙申"
-        },
+        "农历": { "年": 2026, "日": "十九", "时辰": "未", "月": "七", "闰月": false },
+        "四柱": { "年柱": "丙午", "日柱": "丁丑", "时柱": "丁未", "月柱": "丙申" },
         "局数": 7,
         "工具": "csp",
         "当日节气": "处暑",
-        "版本": "v1.5.5",
+        "版本": "v1.6.0",
         "盘式名称": "时家转盘拆补法",
         "盘式类型": 3,
         "阴阳遁": "阴遁"
     },
     "旬空": {
-        "年柱": [
-            "寅",
-            "卯"
-        ],
-        "日柱": [
-            "申",
-            "酉"
-        ],
-        "时柱": [
-            "寅",
-            "卯"
-        ],
-        "月柱": [
-            "辰",
-            "巳"
-        ]
+        "年柱": ["寅", "卯"],
+        "日柱": ["申", "酉"],
+        "时柱": ["寅", "卯"],
+        "月柱": ["辰", "巳"]
     }
 }
 ```
 
-# 四、构建
+# 六、目录结构
 
-## 4.1 依赖：
-
-- 支持C++17语法编译器
-
-## 4.2 构建方法：
-
-拉取项目请保证网络畅通（可访问`github`）。
-
-```shell
-$ git clone https://github.com/taynpg/csp
-$ cd csp
-$ cmake -Bbuild -DCMAKE_BUILG_TYPE=Release
-$ cmake --build build --config Release
+```
+include/csp/        公共头文件
+  types.hpp           基础类型、常量、枚举
+  chart.hpp           排盘结果 Chart
+  calendar.hpp        日历工具（tyme4cpp 的薄封装）
+  qimen.hpp           排盘基类
+  qimen_variants.hpp  四种盘式
+  zh.hpp              中文名称表
+  app.hpp             Options / Result / 渲染 / Runner
+  version.hpp.in      版本号模板（CMake 生成 version.hpp）
+src/
+  qimen/              定局与排盘实现
+  app/                参数处理、文本渲染、JSON 渲染、终端输出
+  zh/                 名称表实现
+  main.cpp            命令行入口
+tests/                单元测试与快照（ctest）
+tools/
+  compare_json.py     与上一版二进制做 JSON 逐字段对照
 ```
 
-## 4.3 手机端构建
+# 七、开发
 
-**由于软件排版格式上几乎完全一致，`Git`页面图片展示效果不一定是最新的，避免频繁更新图片导致仓库大占用。**
+```shell
+cmake -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
 
-### （1）安卓端可以使用termux（亲测可用）
+- 代码风格见 `.clang-format`（`clang-format -i <file>`）；
+- 改动排盘或渲染后，若确认输出变化符合预期，可用 `CSP_UPDATE_SNAPSHOTS=1` 重新生成快照；
+- 历史版本与接口变更见 [CHANGELOG.md](CHANGELOG.md)。
+
+### 回归验证方法
+
+重构或修改排盘算法后，建议与上一版的官方二进制做「同参数、逐字段」对照，而不是只依赖单元测试：
+
+```shell
+# 128 个定向用例：4 盘式 × 24 个日期 + 4 盘式 × 8 组参数（手动局数 / 时差 / 暗干 / 负局数）
+python tools/compare_json.py /path/to/v1.5.5/csp.exe ./build/csp.exe
+
+# 再加 200 个随机日期（每日期 4 盘式 × 两种暗干排法，共 1600 盘）
+python tools/compare_json.py /path/to/v1.5.5/csp.exe ./build/csp.exe --random 200
+```
+
+脚本会递归比对两份 JSON 的每个字段（只忽略 `基本信息.版本`），打印差异位置；
+遇到旧版崩溃的用例会单独列出，人工确认新版输出是否合理。
+v1.6.0 就是这样比对出 101/128 完全一致、其余 27 例均为预期修复的，差异逐条记在 CHANGELOG。
+
+# 八、其它
+
+- 支持范围：公元 `0002-01-01` 至 `9998-12-31`；
+- 手机端：安卓可用 termux，iPhone 可用 iSh 直接编译（见 `images/`）。
 
 ![termux](https://github.com/taynpg/csp/raw/main/images/csp_qm_sjzpcjzr_android.jpg)
 
-### （2）iPhone端可以使用iSh（亲测可用）
+# 九、许可证
 
-![iSh](https://github.com/taynpg/csp/raw/main/images/ish.png)
-
-# 五、最后
-
-如果您发现了BUG或者有好的建议可以提`issue`或致邮件`taynpg@163.com`（欢迎您的任何想法和咨询）。
+[MIT](LICENSE)。欢迎提 issue 或 PR。
