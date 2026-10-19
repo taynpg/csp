@@ -14,6 +14,7 @@
 #include <mutex>
 #include <optional>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <utility>
 
@@ -349,19 +350,19 @@ public:
 
     /**
      * @brief 通过索引初始化
-     * @param names 名称列表
+     * @param names 名称列表（注意：只保存引用，要求其生命周期覆盖本对象，库内部传入的均为静态常量表）
      * @param index 索引，支持负数，自动轮转
      */
-    LoopTyme(const vector<string>& names, const int index) : names(names), index(index_of(index))
+    LoopTyme(const vector<string>& names, const int index) : names(&names), index(index_of(index))
     {
     }
 
     /**
      * @brief 通过名称初始化
-     * @param names 名称列表
+     * @param names 名称列表（注意：只保存引用，要求其生命周期覆盖本对象，库内部传入的均为静态常量表）
      * @param name 名称
      */
-    LoopTyme(const vector<string>& names, const string& name) : names(names), index(index_of(name))
+    LoopTyme(const vector<string>& names, const string& name) : names(&names), index(index_of(name))
     {
     }
 
@@ -442,9 +443,9 @@ public:
 
 protected:
     /**
-     * @brief 名称列表
+     * @brief 名称列表（共享的静态常量表指针，避免每个实例拷贝整个 vector）
      */
-    vector<string> names;
+    const vector<string>* names;
 
     /**
      * @brief 索引，从0开始

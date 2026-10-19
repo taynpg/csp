@@ -11,6 +11,35 @@
 using namespace std;
 
 namespace tyme {
+    namespace {
+        /**
+         * @brief 线程安全的记忆化缓存。
+         * 天文计算（朔日/节气）开销大且结果只由入参决定，
+         * 同样的键在会话内会被反复请求（例如农历日构造时的合法性校验），
+         * 这里以 (long long) 复合键做进程级缓存。
+         */
+        template <typename V>
+        class MemoCache {
+        public:
+            template <typename F>
+            V get(const long long key, F &&compute) {
+                {
+                    lock_guard<mutex> lock(mutex_);
+                    if (const auto it = map_.find(key); it != map_.end()) {
+                        return it->second;
+                    }
+                }
+                const V value = compute();
+                lock_guard<mutex> lock(mutex_);
+                map_[key] = value;
+                return value;
+            }
+
+        private:
+            mutex mutex_;
+            map<long long, V> map_;
+        };
+    }
 
     void AbstractCulture::validate_range(const int value, const int min, const int max, const string& field) {
         if (value < min || value > max) {
@@ -115,16 +144,16 @@ namespace tyme {
     }
 
     int LoopTyme::get_size() const {
-        return static_cast<int>(names.size());
+        return static_cast<int>(names->size());
     }
 
     string LoopTyme::get_name() const {
-        return names[index];
+        return (*names)[index];
     }
 
     int LoopTyme::index_of(const string &name) const {
         for (int i = 0, j = get_size(); i < j; i++) {
-            if (name == names[i]) {
+            if (name == (*names)[i]) {
                 return i;
             }
         }
@@ -271,7 +300,8 @@ namespace tyme {
     }
 
     bool Element::equals(const Element &other) const {
-        return to_string() == other.to_string();
+        // 同名列表下的索引即唯一标识，直接比较索引
+        return index == other.get_index();
     }
 
 
@@ -660,7 +690,8 @@ namespace tyme {
     }
 
     bool Zodiac::equals(const Zodiac &other) const {
-        return to_string() == other.to_string();
+        // 同名列表下的索引即唯一标识，直接比较索引
+        return index == other.get_index();
     }
 
     EarthBranch Zodiac::get_earth_branch() const {
@@ -1471,7 +1502,8 @@ namespace tyme {
     }
 
     bool HeavenStem::equals(const HeavenStem &other) const {
-        return to_string() == other.to_string();
+        // 同名列表下的索引即唯一标识，直接比较索引
+        return index == other.get_index();
     }
 
     const vector<string> EarthBranch::NAMES = {
@@ -1965,12 +1997,16 @@ namespace tyme {
         if (year == -1) {
             return 11;
         }
-        for (int i = 0; i < 12; i++) {
-            if (vector<int> l = LEAP[i]; find(l.begin(), l.end(), year) != l.end()) {
-                return i + 1;
+        // 闰月表查找结果由年份唯一决定，做进程级缓存
+        static MemoCache<int> cache;
+        return cache.get(year, [this] {
+            for (int i = 0; i < 12; i++) {
+                if (vector<int> l = LEAP[i]; find(l.begin(), l.end(), year) != l.end()) {
+                    return i + 1;
+                }
             }
-        }
-        return 0;
+            return 0;
+        });
     }
 
     KitchenGodSteed LunarYear::get_kitchen_god_steed() const {
@@ -2032,25 +2068,30 @@ namespace tyme {
     }
 
     double LunarMonth::get_new_moon() const {
-        // 冬至
-        const double dong_zhi_jd = SolarTerm::from_index(year, 0).get_cursory_julian_day();
+        // 朔日由 (年, 月) 唯一决定，做进程级缓存
+        static MemoCache<double> cache;
+        const int m = get_month_with_leap();
+        return cache.get(static_cast<long long>(year) * 100 + m + 50, [this, m] {
+            // 冬至
+            const double dong_zhi_jd = SolarTerm::from_index(year, 0).get_cursory_julian_day();
 
-        // 冬至前的初一，今年首朔的日月黄经差
-        double w = ShouXingUtil::calc_shuo(dong_zhi_jd);
-        if (w > dong_zhi_jd) {
-            w -= 29.53;
-        }
+            // 冬至前的初一，今年首朔的日月黄经差
+            double w = ShouXingUtil::calc_shuo(dong_zhi_jd);
+            if (w > dong_zhi_jd) {
+                w -= 29.53;
+            }
 
-        // 正常情况正月初一为第3个朔日，但有些特殊的
-        int offset = 2;
-        if (year > 8 && year < 24) {
-            offset = 1;
-        } else if (LunarYear::from_year(year - 1).get_leap_month() > 10 && year != 239 && year != 240) {
-            offset = 3;
-        }
+            // 正常情况正月初一为第3个朔日，但有些特殊的
+            int offset = 2;
+            if (year > 8 && year < 24) {
+                offset = 1;
+            } else if (LunarYear::from_year(year - 1).get_leap_month() > 10 && year != 239 && year != 240) {
+                offset = 3;
+            }
 
-        // 本月初一
-        return w + 29.5306 * (offset + get_index_in_year());
+            // 本月初一
+            return w + 29.5306 * (offset + get_index_in_year());
+        });
     }
 
 
@@ -2066,9 +2107,14 @@ namespace tyme {
     }
 
     int LunarMonth::get_day_count() const {
-        const double w = get_new_moon();
-        // 本月天数 = 下月初一 - 本月初一
-        return static_cast<int>(ShouXingUtil::calc_shuo(w + 29.5306) - ShouXingUtil::calc_shuo(w));
+        // 月天数由 (年, 月) 唯一决定，且农历日构造校验会高频调用，做进程级缓存
+        static MemoCache<int> cache;
+        const int m = get_month_with_leap();
+        return cache.get(static_cast<long long>(year) * 100 + m + 50, [this, m] {
+            const double w = get_new_moon();
+            // 本月天数 = 下月初一 - 本月初一
+            return static_cast<int>(ShouXingUtil::calc_shuo(w + 29.5306) - ShouXingUtil::calc_shuo(w));
+        });
     }
 
     int LunarMonth::get_index_in_year() const {
@@ -2088,7 +2134,12 @@ namespace tyme {
     }
 
     JulianDay LunarMonth::get_first_julian_day() const {
-        return JulianDay::from_julian_day(JulianDay::J2000 + ShouXingUtil::calc_shuo(get_new_moon()));
+        // 农历日与公历日的互转都会用到，做进程级缓存
+        static MemoCache<double> cache;
+        const int m = get_month_with_leap();
+        return JulianDay::from_julian_day(JulianDay::J2000 + cache.get(static_cast<long long>(year) * 100 + m + 50, [this] {
+            return ShouXingUtil::calc_shuo(get_new_moon());
+        }));
     }
 
     bool LunarMonth::is_leap() const {
@@ -2299,7 +2350,8 @@ namespace tyme {
     }
 
     bool LunarDay::equals(const LunarDay& other) const {
-        return to_string() == other.to_string();
+        // 直接比较字段，避免构造 to_string 的临时字符串
+        return year == other.year && month == other.month && day == other.day;
     }
 
     bool LunarDay::is_before(const LunarDay& other) const {
@@ -2494,21 +2546,31 @@ namespace tyme {
         return provider->get_eight_char(*this);
     }
 
-    EightCharProvider* LunarHour::provider = new DefaultEightCharProvider();
+    namespace {
+        // 静态默认实例：修复原实现 new 出来永不释放导致的内存泄漏，
+        // provider 指针仍为公有扩展点，替换后由调用方自行管理生命周期
+        DefaultEightCharProvider default_eight_char_provider;
+    }
+
+    EightCharProvider* LunarHour::provider = &default_eight_char_provider;
 
     const vector<string> SolarTerm::NAMES = {
         "冬至", "小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪"
     };
 
     void SolarTerm::init_by_year(const int y, const int offset) {
-        const double jd = floor((y - 2000) * 365.2422 + 180);
-        // 355是2000.12冬至，得到较靠近jd的冬至估计值
-        double w = floor((jd - 355 + 183) / 365.2422) * 365.2422 + 355;
-        if (ShouXingUtil::calc_qi(w) > jd) {
-            w -= 365.2422;
-        }
+        // 节气儒略日由 (年, 序号) 唯一决定，做进程级缓存避免重复天文迭代
+        static MemoCache<double> cache;
+        cursory_julian_day = cache.get(static_cast<long long>(y) * 24 + offset, [y, offset] {
+            const double jd = floor((y - 2000) * 365.2422 + 180);
+            // 355是2000.12冬至，得到较靠近jd的冬至估计值
+            double w = floor((jd - 355 + 183) / 365.2422) * 365.2422 + 355;
+            if (ShouXingUtil::calc_qi(w) > jd) {
+                w -= 365.2422;
+            }
+            return ShouXingUtil::calc_qi(w + 15.2184 * offset);
+        });
         this->year = y;
-        cursory_julian_day = ShouXingUtil::calc_qi(w + 15.2184 * offset);
     }
 
     SolarTerm SolarTerm::from_index(const int year, const int index) {
@@ -2534,7 +2596,11 @@ namespace tyme {
     }
 
     JulianDay SolarTerm::get_julian_day() const {
-        return JulianDay::from_julian_day(ShouXingUtil::qi_accurate2(cursory_julian_day) + JulianDay::J2000);
+        // 精确儒略日同样由 (年, 序号) 唯一决定，缓存 qi_accurate2 的结果
+        static MemoCache<double> cache;
+        return JulianDay::from_julian_day(cache.get(static_cast<long long>(year) * 24 + index, [this] {
+            return ShouXingUtil::qi_accurate2(cursory_julian_day);
+        }) + JulianDay::J2000);
     }
 
     SolarDay SolarTerm::get_solar_day() const {
@@ -3061,7 +3127,8 @@ namespace tyme {
     }
 
     bool SolarDay::equals(const SolarDay &other) const {
-        return to_string() == other.to_string();
+        // 直接比较字段，避免构造 to_string 的临时字符串
+        return year == other.year && month == other.month && day == other.day;
     }
 
     LunarDay SolarDay::get_lunar_day() const {
@@ -3211,7 +3278,9 @@ namespace tyme {
     }
 
     bool SolarTime::equals(const SolarTime &other) const {
-        return to_string() == other.to_string();
+        // 直接比较字段，避免构造 to_string 的临时字符串
+        return year == other.year && month == other.month && day == other.day
+               && hour == other.hour && minute == other.minute && second == other.second;
     }
 
     SixtyCycleHour SolarTime::get_sixty_cycle_hour() const {
@@ -3433,7 +3502,13 @@ namespace tyme {
         return (yang && man) || (!yang && !man);
     }
 
-    ChildLimitProvider* ChildLimit::provider = new DefaultChildLimitProvider();
+    namespace {
+        // 静态默认实例：修复原实现 new 出来永不释放导致的内存泄漏，
+        // provider 指针仍为公有扩展点，替换后由调用方自行管理生命周期
+        DefaultChildLimitProvider default_child_limit_provider;
+    }
+
+    ChildLimitProvider* ChildLimit::provider = &default_child_limit_provider;
 
     ChildLimitInfo ChildLimit::get_info(const SolarTime &birth_time, const bool f) {
         SolarTerm term = birth_time.get_term();
@@ -4791,6 +4866,7 @@ namespace tyme {
     }
 
     bool HijriDay::equals(const HijriDay &other) const {
-        return to_string() == other.to_string();
+        // 直接比较字段，避免构造 to_string 的临时字符串
+        return year == other.year && month == other.month && day == other.day;
     }
 }
