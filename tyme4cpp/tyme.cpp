@@ -369,7 +369,7 @@ namespace tyme {
         const regex re(";" + string(buffer) + "(.[^;]*)");
         if (smatch match; regex_search(s, match, re)) {
             const string data= match[1];
-            for (unsigned long i = 0, j = data.size(); i < j; i += 2) {
+            for (size_t i = 0, j = data.size(); i < j; i += 2) {
                 l.push_back(from_index(stoi(data.substr(i, 2), nullptr, 16)));
             }
         }
@@ -571,7 +571,7 @@ namespace tyme {
                 int y = 0;
                 while (getline(sb, d, ',')) {
                     if (index == y) {
-                        for (unsigned long i = 0, j = d.size(); i < j; i += 2) {
+                        for (size_t i = 0, j = d.size(); i < j; i += 2) {
                             l.push_back(from_index(stoi(d.substr(i, 2), nullptr, 16)));
                         }
                         break;
@@ -3293,8 +3293,8 @@ namespace tyme {
     }
 
     Phase SolarTime::get_phase() const {
-        const LunarMonth month = get_lunar_hour().get_lunar_day().get_lunar_month().next(1);
-        Phase p = Phase::from_index(month.get_year(), month.get_month_with_leap(), 0);
+        const LunarMonth lunar_month = get_lunar_hour().get_lunar_day().get_lunar_month().next(1);
+        Phase p = Phase::from_index(lunar_month.get_year(), lunar_month.get_month_with_leap(), 0);
         while (p.get_solar_time().is_after(*this)) {
             p = p.next(-1);
         }

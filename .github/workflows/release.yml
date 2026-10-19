@@ -1,0 +1,133 @@
+name: Release
+
+# 推 tag（v1.6.0 这类）即自动构建三平台安装包并挂到 GitHub Release；
+# 也可在 Actions 页面手动触发（填一个已推送的 tag）。
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "要发布的 tag（例如 v1.6.0，需先推送该 tag）"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: 构建 ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux x86_64
+            os: ubuntu-22.04
+          - name: Windows x64
+            os: windows-latest
+          - name: macOS universal
+            os: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 配置（Unix）
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          args=(-B build -DCMAKE_BUILD_TYPE=Release)
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            # 静态链接 libstdc++ / libgcc，避免用户机器上的 libstdc++ 版本太旧
+            args+=("-DCMAKE_EXE_LINKER_FLAGS=-static-libstdc++ -static-libgcc")
+          else
+            # 一个 tar.gz 同时含 Intel 与 Apple Silicon
+            args+=("-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64")
+          fi
+          cmake "${args[@]}"
+
+      - name: 配置（Windows）
+        if: runner.os == 'Windows'
+        run: cmake -B build -A x64
+
+      - name: 构建
+        run: cmake --build build --config Release --parallel
+
+      - name: 测试
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: 打包工具（Linux）
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends dpkg-dev
+
+      - name: 安装 NSIS（Windows 打包用）
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Get-Command makensis -ErrorAction SilentlyContinue)) {
+            choco install nsis -y --no-progress
+            $env:Path += ";C:\Program Files (x86)\NSIS"
+            "C:\Program Files (x86)\NSIS" | Out-File -FilePath $env:GITHUB_PATH -Append
+          }
+          makensis /VERSION
+
+      - name: 打包
+        run: cpack --config build/CPackConfig.cmake -C Release -B dist
+
+      - name: 列出产物
+        shell: bash
+        run: ls -lh dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ matrix.name }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: 发布
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: 生成校验和
+        run: cd dist && sha256sum ./* > SHA256SUMS.txt && cat SHA256SUMS.txt
+
+      - name: 生成发布说明
+        run: |
+          # 取 CHANGELOG 里第一个 "## v" 段落作为更新说明
+          awk 'BEGIN { p = 0 } /^## v/ { p++; if (p == 2) exit } p == 1' CHANGELOG.md > RELEASE_NOTES.md
+          {
+            echo ""
+            echo "## 下载"
+            echo ""
+            echo "| 文件 | 大小 |"
+            echo "| --- | ---: |"
+            for f in dist/*; do
+              name=$(basename "$f")
+              [ "$name" = "SHA256SUMS.txt" ] && continue
+              echo "| \`$name\` | $(du -h "$f" | cut -f1) |"
+            done
+            echo ""
+            echo "- Windows：\`.exe\` 是安装包（装完自动加 PATH），\`.zip\` 解压即用；未签名，杀毒软件可能误报。"
+            echo "- Debian/Ubuntu：\`sudo dpkg -i csp_*.deb\`（或 \`sudo apt install ./csp_*.deb\` 自动补依赖）。"
+            echo "- 其他 Linux / macOS：解压后把 \`csp\` 放到 \`PATH\` 里；macOS 二进制未签名，首次运行前执行 \`xattr -d com.apple.quarantine csp\`。"
+            echo "- 校验：\`sha256sum -c SHA256SUMS.txt\`。"
+          } >> RELEASE_NOTES.md
+          cat RELEASE_NOTES.md
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: ${{ github.event.inputs.tag || github.ref_name }}
+          body_path: RELEASE_NOTES.md
+          files: dist/*
+          draft: false
+          prerelease: false

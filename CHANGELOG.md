@@ -68,6 +68,7 @@ C++ 侧全部统一为：类型 `PascalCase`、函数与变量 `snake_case`、�
 11. **茅山法月末日期崩溃**：`QimenV4::cal_ju()` 用「上个月 + 当前日」去构造时间，12-31 会构造出 `2100-11-31`，tyme 抛异常而进程直接 `terminate`（v1.5.5 同样崩溃）。现在把日期夹到上月最后一天，并在 `Runner` 里兜住日历库异常，改为返回错误信息。
 12. **`-a 1` 与旬首仪落中宫的组合**：四个盘式共用同一条暗干实现，上述越界对 1/2/3/4 号盘式同时存在。
 13. **Windows 控制台下帮助信息乱码**：CLI11 把 UTF-8 字节直接写 `std::cout`，简体中文 Windows 的控制台按本地代码页（936/GBK）解释这些字节，于是 `--help`、`-v` 和参数错误提示全是乱码（排盘正文不受影响——它走的是 `WriteConsoleW`）。现在 CLI11 的输出先收进字符串，统一经 `console` 层「UTF-8 → 宽字符 → `WriteConsoleW`」输出；控制台下的 `\n` 会补成 CRLF，避免旧版控制台把行首吞掉。同时错误提示改走 stderr，重定向 stdout 时不会和盘面混在一起。
+14. **MSVC `/W4` 告警**：CI 的 Windows 作业对内嵌的 `tyme.cpp` 报 3 处告警，现已清零——`God::get_day_gods` 与 `Taboo::get_taboos` 的循环变量把 `size_t` 写成了 `unsigned long`（C4267），改为 `size_t`；`SolarTime::get_phase` 的局部变量 `month` 遮蔽了基类 `MonthUnit::month`（C4458），改名 `lunar_month`。三处均属写法问题，排盘结果不变。
 
 ### 四、输出与行为
 
@@ -100,6 +101,20 @@ C++ 侧全部统一为：类型 `PascalCase`、函数与变量 `snake_case`、�
 - 渲染与落盘解耦：`render_text()` / `render_json()` 返回字符串，`Runner` 负责输出，测试可直接比对；
 - 局数表从「四位整数 + `%10`/`/1000` 解包」改为显式的 `JuPattern{upper, middle, lower, yang}`；
 - 命中 `-Wall -Wextra -Wpedantic` 零告警。
+
+### 六、发布产物
+
+推到 `v1.6.0` 标签后由 GitHub Actions 自动构建（三平台并行、构建前跑完整测试）：
+
+| 平台 | 文件 | 说明 |
+| --- | --- | --- |
+| Windows x64 | `csp-v1.6.0-msvc.x86_64.64Bit.exe` | NSIS 安装包，装完自动加入 PATH，带卸载项 |
+| Windows x64 | `csp-v1.6.0-msvc.x86_64.64Bit.zip` | 解压即用 |
+| Linux x86_64 | `csp_1.6.0_amd64.deb` | `sudo dpkg -i` 或 `sudo apt install ./csp_1.6.0_amd64.deb` |
+| Linux x86_64 | `csp-v1.6.0-gnu.x86_64.64Bit.tar.gz` | 解压后把 `csp` 放进 `PATH` |
+| macOS | `csp-v1.6.0-clang.universal.tar.gz` | 同时支持 Intel 与 Apple Silicon，未签名 |
+
+另附 `SHA256SUMS.txt`。可执行文件为动态链接，仅依赖系统 libc（Linux 侧 `-static-libstdc++ -static-libgcc`），Linux 构建在 Ubuntu 22.04 上完成（glibc ≥ 2.35）。
 
 ---
 

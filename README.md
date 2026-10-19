@@ -66,8 +66,21 @@ cmake --build build --parallel
 ## 1.4 打包
 
 ```shell
-cd build && cpack
+cmake --build build --parallel
+cpack --config build/CPackConfig.cmake -B dist
 ```
+
+生成器按平台自动选择：
+
+| 平台 | 生成器 | 产物 |
+| --- | --- | --- |
+| Windows | `NSIS64`、`ZIP` | `csp-v1.6.0-msvc.x86_64.64Bit.exe`（安装包，装完自动加 PATH）、同名 `.zip`（解压即用） |
+| Linux | `DEB`、`TGZ` | `csp_1.6.0_amd64.deb`（`dpkg -i` 直接装）、`csp-v1.6.0-gnu.x86_64.64Bit.tar.gz` |
+| macOS | `TGZ` | `csp-v1.6.0-clang.universal.tar.gz`（Intel + Apple Silicon 通用） |
+
+Windows 上打 NSIS 安装包需要 `makensis`（CI 里由 `choco install nsis` 提供）。
+
+推送 `v*` 标签会触发 [`.github/workflows/release.yml`](.github/workflows/release.yml)：三平台并行构建 → 跑测试 → 打包 → 汇总 `SHA256SUMS.txt` → 创建 GitHub Release 并上传附件；也可以在 Actions 页面手动触发（填一个已存在的标签）。
 
 # 二、命令行用法
 
