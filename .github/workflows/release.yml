@@ -82,7 +82,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: packages-${{ matrix.name }}
-          path: dist/*
+          # 只取安装包本身；dist 下的 _CPack_Packages 是打包中间目录，不能传
+          path: |
+            dist/*.exe
+            dist/*.zip
+            dist/*.deb
+            dist/*.tar.gz
           if-no-files-found: error
 
   release:
@@ -98,9 +103,17 @@ jobs:
           merge-multiple: true
 
       - name: 生成校验和
-        run: cd dist && sha256sum ./* > SHA256SUMS.txt && cat SHA256SUMS.txt
+        shell: bash
+        run: |
+          cd dist
+          shopt -s nullglob
+          files=(csp-* csp_*)
+          printf '%s\n' "${files[@]}" | sort -u
+          sha256sum "${files[@]}" > SHA256SUMS.txt
+          cat SHA256SUMS.txt
 
       - name: 生成发布说明
+        shell: bash
         run: |
           # 取 CHANGELOG 里第一个 "## v" 段落作为更新说明
           awk 'BEGIN { p = 0 } /^## v/ { p++; if (p == 2) exit } p == 1' CHANGELOG.md > RELEASE_NOTES.md
@@ -110,11 +123,12 @@ jobs:
             echo ""
             echo "| 文件 | 大小 |"
             echo "| --- | ---: |"
-            for f in dist/*; do
-              name=$(basename "$f")
-              [ "$name" = "SHA256SUMS.txt" ] && continue
-              echo "| \`$name\` | $(du -h "$f" | cut -f1) |"
+            cd dist
+            shopt -s nullglob
+            for f in csp-* csp_*; do
+              echo "| \`$f\` | $(du -h "$f" | cut -f1) |"
             done
+            cd ..
             echo ""
             echo "- Windows：\`.exe\` 是安装包（装完自动加 PATH），\`.zip\` 解压即用；未签名，杀毒软件可能误报。"
             echo "- Debian/Ubuntu：\`sudo dpkg -i csp_*.deb\`（或 \`sudo apt install ./csp_*.deb\` 自动补依赖）。"
